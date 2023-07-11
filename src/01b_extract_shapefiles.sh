@@ -26,20 +26,11 @@ set -e
 
 #pyenv activate ravenpy
 
-# Great Lakes
-version='1-0'
+
+
 basins=$( cat WQ_station_list/WQstations_100obs_TP_SRP.txt | cut -d ';' -f 1 | grep ^1601840900[0-9] )
 nbasins=$( cat WQ_station_list/WQstations_100obs_TP_SRP.txt | cut -d ';' -f 1 | grep ^[0-9] | wc -l )
 regions=$( \ls Ontario_Routing_Product/drainage_region_*_v1-0/finalcat_info_v1-0.shp )
-
-
-# # Wisconsin
-# version='2-1'
-# basins=$( cat WQ_station_list/WI_priority_lakes_for_watershed_analysis_20230612.csv | cut -d ',' -f 14 | grep ^[0-9] )  # hylak_id
-# nbasins=$( cat WQ_station_list/WI_priority_lakes_for_watershed_analysis_20230612.csv | cut -d ',' -f 14 | grep ^[0-9] | wc -l )
-# regions=$( \ls North_American_routing_product/drainage_region_*_v2-1/finalcat_info_v${version}.shp )
-
-
 
 cc=1
 for bb in ${basins} ; do
@@ -55,22 +46,11 @@ for bb in ${basins} ; do
     # search all files
     for rr in ${regions} ; do
 
-	# Great Lakes
 	# check if basin is contained
 	gauge_shapefile=$( echo ${rr} | rev | cut -d '/' -f 2- | rev )
 	gauge_shapefile=$( echo ${gauge_shapefile}'/obs_gauges_v1-0.shp' )  # this one is just way smaller and faster to check
 	python additional_processing/is_shp_containing_station.py -i ${gauge_shapefile} -a Obs_NM -b ${bb} > tmp.tmp
 	basin=$( cat tmp.tmp )
-
-	# # Wisconsin
-	# # check if basin is contained
-	# gauge_shapefile=$( echo ${rr} | rev | cut -d '/' -f 2- | rev )
-	# # this one is just way smaller and faster to check --> but has no 'HyLakeId' only 'Obs_NM'
-	# #gauge_shapefile=$( echo "${gauge_shapefile}/obs_gauges_v${version}.shp" )
-	# gauge_shapefile=$( echo ${rr} )
-	# python additional_processing/is_shp_containing_station.py -i ${gauge_shapefile} -a HyLakeId -b ${bb} > tmp.tmp
-	# basin=$( cat tmp.tmp )
-
 
 	# extract
 	if [[ ${basin} = 'One found:'* ]] ; then
