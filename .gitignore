@@ -1,6 +1,33 @@
 # MacOS
 .DS_Store
 
+# Python env
+env-3.10
+
+# Gridded data (too large to get on GitHub)
+
+## DEM
+# this is the important file but it's too large
+data/dem/na_ca_dem_3s.tif
+# these are temporary files
+data/dem/na_dem_3s_zip_bil.zip
+data/dem/na_dem_3s_zip_bil/
+data/dem/na_ca_dem_3s.hdr
+data/dem/na_ca_dem_3s.prj
+data/dem/na_ca_dem_3s.tif.aux.xml
+
+## SOIL
+# this is the important file but it's too large
+data/soil/*.nc
+# these are temporary files
+data/soil/*.zip
+
+## LANDCOVER
+# this is the important file but it's too large
+data/landcover/NA_NALCMS_2010_v2_land_cover_30m.tif
+
+## METEO
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
