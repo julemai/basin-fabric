@@ -41,6 +41,8 @@ from   fiona import transform
 import shapefile
 import numpy as np
 import sys
+import geopandas as gpd
+import json
 
 
 def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326):
@@ -128,8 +130,17 @@ def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326):
     prj.write(epsg)
     prj.close()
 
+    # ------------------------
+    # write as GeoJSON
+    # ------------------------
+    shape_subbasins = gpd.read_file(shapefile_out+'.shp')  # is a GeoPandas DataFrame
+    json_dict = json.loads(gpd.GeoDataFrame(shape_subbasins, crs="EPSG:4326").to_json())  # is a dictionary
+    with open(shapefile_out+".json", "w") as outfile:
+        json.dump(json_dict, outfile)
 
-    print('Saved data to: {}.[dbf,prj,shp,shx]'.format(shapefile_out))
+
+
+    print('Saved data to: {}.[dbf,prj,shp,shx,json]'.format(shapefile_out))
 
 
     return

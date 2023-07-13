@@ -19,12 +19,12 @@
 # along with Juliane Mai's personal code library.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
-# ./01_extract_shapefiles.sh
+# ./01_convert_shapefiles.sh
 
 
 set -e
 
-#pyenv activate env-3.8.5-neuralhydrology
+#pyenv activate env-3.8.5-ravenpy-new
 
 basins=$( \ls WQ_station_list/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 )
 nbasins=$( \ls WQ_station_list/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 | wc -l )
