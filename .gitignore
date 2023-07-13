@@ -1,8 +1,14 @@
 # MacOS
 .DS_Store
 
+# Slurm outputs
+src/slurm-*.out
+
 # Python env
 env-3.10
+
+# Regions (derived data)
+regions/*/forcings
 
 # Gridded data (too large to get on GitHub)
 
@@ -27,6 +33,10 @@ data/soil/*.zip
 data/landcover/NA_NALCMS_2010_v2_land_cover_30m.tif
 
 ## METEO
+data/meteorology/era5-land_grip-gl/*.nc
+data/meteorology/rdrs-v2.1_north-america/*.nc
+data/meteorology/rdrs-v2_grip-gl/*.nc
+
 
 
 # Byte-compiled / optimized / DLL files

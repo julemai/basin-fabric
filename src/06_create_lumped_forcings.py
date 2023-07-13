@@ -24,6 +24,12 @@ from __future__ import print_function
 
 # python 06_create_lumped_forcings.py -s Great-Lakes -b 03005400102 -f /Users/j6mai/Documents/Nandita/Great_Lakes_watersheds/gridded_data/rdrs_v2/ -y mac
 
+# takes 73.5 minutes
+# python 06_create_lumped_forcings.py -s Great-Lakes -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2_grip-gl/ -y graham
+
+# takes XXX minutes
+# python 06_create_lumped_forcings.py -s Great-Lakes -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+
 
 """
 
@@ -90,39 +96,44 @@ import pandas  as pd
 import xarray  as xr
 import netCDF4 as nc
 import subprocess
+import os
 
 
 if case_study == 'Wisconsin':
+    column_id = "FIRST_FLD"
     if system == 'mac':
         project_root = Path('/Users/j6mai/Documents/Nandita/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
     elif system == 'graham':
-        project_root = Path('/scratch/julemai/Nandita/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/Wisconsin_waterheds/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
     dimname="rlon,rlat"
     varname="lon,lat"
 
 elif case_study == 'Great-Lakes':
+    column_id = "FIRST_FLD"
     if system == 'mac':
         project_root = Path('/Users/j6mai/Documents/Nandita/Great_Lakes_watersheds')
     elif system == 'graham':
-        project_root = Path('/scratch/julemai/Nandita/Great_Lakes_watersheds')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/Great_Lakes_watersheds/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
 elif case_study == 'North-America':
+    column_id = "FIRST_FLD"
     if system == 'mac':
         project_root = Path('/Users/j6mai/Documents/Nandita/North_America_watersheds/')
     elif system == 'graham':
-        project_root = Path('/scratch/julemai/Nandita/North_America_watersheds/')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/North_America_watersheds/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
 elif case_study == 'GRIP-GL':
+    column_id = "FIRST_FLD"
     if system == 'mac':
         project_root = Path('/Users/j6mai/Documents/GitHub/GRIP-GL/data/shapefiles/great-lakes/')
     elif system == 'graham':
-        project_root = Path('/project/6008034/julemai/GRIP-GL/shapefiles/')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/GRIP-GL/shapefiles/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
@@ -131,7 +142,7 @@ else:
 
 
 if (basin is None):
-    raise ValueError("Basin to process. Shapefile of this basin is assumed to be found under {}/shapefiles/<basin>/<basin>_lp.json.".format(project_root))
+    raise ValueError("Basin to process. Shapefile of this basin is assumed to be found under {}/shapefiles/<basin>/<basin>_lp.shp.".format(project_root))
 
 do_forcings       = True
 
@@ -166,17 +177,29 @@ if do_forcings:
         lat = iff['lat']
         lon = iff['lon']
 
-    # 4- find shapefilep
-    shpfile = Path( project_root, 'shapefiles', basin, basin+'_lp.json' )
+    # 4- find shapefile
+    shpfile = Path( project_root, 'shapefiles', basin, basin+'_lp.shp' )
     if not( shpfile.exists() ):
         raise ValueError('No shapefile found under {} for basin {}'.format(shpfile, basin))
 
     # 5- generate grid weights
     #    python additional_processing/derive_grid_weights.py-i ${infile} -d ${dimname} -v ${varname} -r ${shapefile} -b ${basin} -o ${outfile} -a  -c ${columnID}
-    weightsfile = Path(project_root, 'shapefiles', basin, basin+'_gridweights_'+Path(filenames[0]).parent.name+'_lp.txt')
+    weightsfile = Path(project_root, 'forcings', basin, basin+'_gridweights_'+Path(filenames[0]).parent.name+'_lp.txt')
+
+    # Make directory if does not exist
+    if not os.path.exists(weightsfile.parent):
+        os.makedirs(weightsfile.parent)
 
     if not( weightsfile.exists() ):
-        subprocess.run(["/Users/j6mai/.pyenv/versions/env-3.8.5-ravenpy-new/bin/python", "additional_processing/derive_grid_weights.py",
+
+        if system == 'mac':
+            pyenv = "/Users/j6mai/.pyenv/versions/env-3.8.5-ravenpy-new/bin/python"
+        elif system == 'graham':
+            pyenv = "/home/julemai/env-3.10/bin/python"
+        else:
+            raise ValueError('System not known. Specify a valid one with (-y) option.')
+
+        subprocess.run([pyenv, "additional_processing/derive_grid_weights.py",
                         "-i", filenames[0],
                         "-d", "rlon,rlat",
                         "-v", "lon,lat",
@@ -184,35 +207,38 @@ if do_forcings:
                         "-b", basin,
                         "-o", weightsfile,
                         "-a",
-                        "-c", "id" ])
+                        "-c", column_id ])
     else:
         print("Weightsfile existed. Will not be overwritten.\nFile = {}\n".format(weightsfile))
 
     # 6- extract lumped variables
     outfiles_agg = []
-    outfile_merge = Path(project_root, 'shapefiles', basin, basin+'_agg_'+Path(filenames[0]).parent.name+'_lp.nc')
+    outfile_merge = Path(project_root, 'forcings', basin, basin+'_agg_'+Path(filenames[0]).parent.name+'_lp.nc')
 
     for filename in filenames:
 
         print("Aggregating: {}".format(filename))
 
         # name of aggregated output file
-        outfile_agg = Path(project_root, 'shapefiles', basin, basin+'_agg_'+Path(filename).parent.name+'_'+Path(filename).name+'_lp.nc')
+        outfile_agg = Path(project_root, 'forcings', basin, basin+'_agg_'+Path(filename).parent.name+'_'+Path(filename).name+'_lp.nc')
 
         if not( outfile_agg.exists() or outfile_merge.exists() ):
 
             # 3d variables in input file
             with nc.Dataset(filename) as iff:
                 ivars = list(iff.variables.keys())
-                ivars_3d = ' '.join([ ii for ii in ivars if len(iff[ii].dimensions) == 3 ])
+                # ivars_3d = ' '.join([ ii for ii in ivars if len(iff[ii].dimensions) == 3 ])
+                ivars_3d = [ ["--var-to-aggregate",ii] for ii in ivars if len(iff[ii].dimensions) == 3 ]
+            ivars_3d = [ item for sublist in ivars_3d for item in sublist]
 
             # ravenpy aggregate-forcings-to-hrus --dim-names rlon rlat --var-to-aggregate "RDRS_v2_A_PR0_SFC" --output-nc-file ${outfile_prec} ${infile_prec} ${weights_file}
-            subprocess.run(["ravenpy", "aggregate-forcings-to-hrus",
-                                "--dim-names", "rlon", "rlat",
-                                "--var-to-aggregate", ivars_3d,
+            args = ["ravenpy", "aggregate-forcings-to-hrus",
+                                "--dim-names", "rlon", "rlat" ] + ivars_3d + [   # n times "--var-to-aggregate"
                                 "--output-nc-file", outfile_agg,
                                 filename,
-                                weightsfile ])
+                                weightsfile ]
+            # print("args = ",args)
+            subprocess.run(args)
 
             # make time UNLIMITED
             subprocess.run(["ncks", "--mk_rec_dmn", "time", outfile_agg, str(outfile_agg)+"_new.nc"])

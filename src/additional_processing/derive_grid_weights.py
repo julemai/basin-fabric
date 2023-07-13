@@ -593,7 +593,10 @@ for ikk,kk in enumerate(keys):
 
                     ncells += 1
                     cell_ID = ilat*nlon+ilon
-                    data_to_write.append( [int(ibasin[key_colname]),ilat,ilon,cell_ID,area_intersect/area_basin] )
+                    if key_colname == 'FIRST_FLD':
+                        data_to_write.append( [0,ilat,ilon,cell_ID,area_intersect/area_basin] )
+                    else:
+                        data_to_write.append( [int(ibasin[key_colname]),ilat,ilon,cell_ID,area_intersect/area_basin] )
 
                     if dojson:
                         if cell_ID not in cells_to_write_to_geojson:
@@ -607,7 +610,10 @@ for ikk,kk in enumerate(keys):
 
     if abs(error) > area_error_threshold and area_basin > 500000.:
         # record all basins with errors larger 5% (if basin is larger than 0.5 km2)
-        error_dict[int(ibasin[key_colname])] = [ error, area_basin ]
+        if key_colname == 'FIRST_FLD':
+            error_dict[0] = [ error, area_basin ]
+        else:
+            error_dict[int(ibasin[key_colname])] = [ error, area_basin ]
         for idata in data_to_write:
             print("   >>> {0},{1},{2},{3},{4}".format(idata[0],idata[1],idata[2],idata[3],idata[4]))
             ff.write("    {0}   {1}   {2}\n".format(idata[0],idata[3],idata[4]))
@@ -624,7 +630,10 @@ for ikk,kk in enumerate(keys):
             area_all *= 1.0/(1.0-error)
         error    = 0.0
 
-    print('   >>> (Sub-)Basin: {0} ({1} of {2})'.format(int(ibasin[key_colname]),ikk+1,nsubbasins))
+    if key_colname == 'FIRST_FLD':
+        print('   >>> (Sub-)Basin: {0} ({1} of {2})'.format(0,ikk+1,nsubbasins))
+    else:
+        print('   >>> (Sub-)Basin: {0} ({1} of {2})'.format(int(ibasin[key_colname]),ikk+1,nsubbasins))
     print('   >>> Derived area of {0}  cells: {1}'.format(ncells,area_all))
     print('   >>> Read area from shapefile:   {0}'.format(area_basin))
     print('   >>> error:                      {0}%'.format(error*100.))
