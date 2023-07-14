@@ -37,6 +37,10 @@ data/meteorology/era5-land_grip-gl/*.nc
 data/meteorology/rdrs-v2.1_north-america/*.nc
 data/meteorology/rdrs-v2_grip-gl/*.nc
 
+## ROUTING
+data/routing/*/*.zip
+data/routing/*/*
+
 
 
 # Byte-compiled / optimized / DLL files
