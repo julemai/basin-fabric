@@ -60,30 +60,20 @@ dotitle   = True  # True: add catchment titles to subpanels
 import argparse
 from pathlib import Path
 
-pngbase      = ''
-pdffile      = ''
-usetex       = False
 case_study   = None
 
 
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Plot basin shape.''')
-parser.add_argument('-g', '--pngbase', action='store',
-                    default=pngbase, dest='pngbase', metavar='pngbase',
-                    help='Name basis for png output files (default: open screen window).')
-parser.add_argument('-p', '--pdffile', action='store',
-                    default=pdffile, dest='pdffile', metavar='pdffile',
-                    help='Name of pdf output file (default: open screen window).')
-parser.add_argument('-t', '--usetex', action='store_true', default=usetex, dest="usetex",
-                    help="Use LaTeX to render text in pdf.")
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
                     help="Case study. E.g. 'Wisconsin', 'Great-Lakes', 'North-America'.")
 
 args         = parser.parse_args()
-pngbase      = args.pngbase
-pdffile      = args.pdffile
-usetex       = args.usetex
 case_study   = args.case_study
+
+pdffile      = ''
+pngbase      = 'map'
+usetex       = False
 
 if case_study is None:
     raise ValueError("Case study (-s) must be specified!")
@@ -129,6 +119,7 @@ t1 = time.time()
 
 if case_study == 'Wisconsin':
     project_root = dir_path+'/../regions/Wisconsin_waterheds/shapefiles/'
+    outfolder    = dir_path+'/../regions/Wisconsin_waterheds/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -93.0
@@ -138,6 +129,7 @@ if case_study == 'Wisconsin':
 
 elif case_study == 'Great-Lakes':
     project_root = dir_path+'/../regions/Great_Lakes_watersheds/shapefiles/'
+    outfolder    = dir_path+'/../regions/Great_Lakes_watersheds/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -91.0
@@ -147,6 +139,7 @@ elif case_study == 'Great-Lakes':
 
 elif case_study == 'North-America':
     project_root = dir_path+'/../regions/North_America_watersheds/shapefiles/'
+    outfolder    = dir_path+'/../regions/North_America_watersheds/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -125.0
@@ -156,6 +149,7 @@ elif case_study == 'North-America':
 
 elif case_study == 'GRIP-GL':
     project_root = dir_path+'/../regions/GRIP-GL/shapefiles/'
+    outfolder    = dir_path+'/../regions/GRIP-GL/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -93.0
@@ -165,6 +159,9 @@ elif case_study == 'GRIP-GL':
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
+
+# Make sure output directory exists
+os.makedirs( Path(outfolder), exist_ok=True )
 
 catchfile_shp = [ '.'.join(ss.split('.')[0:-1]) for ss in shpfile ]
 print("Found {} shapefiles.".format(len(catchfile_shp)))
@@ -178,10 +175,10 @@ if (pdffile == ''):
         outtype = 'x'
     else:
         outtype = 'png'
-        pngbase = project_root+pngbase
+        pngbase = outfolder+pngbase
 else:
     outtype = 'pdf'
-    pdffile = project_root+pdffile
+    pdffile = outfolder+pdffile
 
 # Main plot
 nrow        = 1           # # of rows of subplots per figure
