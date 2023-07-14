@@ -1,1 +1,1 @@
-../../../GitHub/raven-models/src/raven_templates.py
+../../../raven-models/src/raven_templates.py

@@ -1,1 +1,1 @@
-../../../GitHub/raven-models/src/run_model.py
+../../../raven-models/src/run_model.py

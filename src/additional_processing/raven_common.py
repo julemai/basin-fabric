@@ -1,1 +1,1 @@
-../../../GitHub/raven-models/src/raven_common.py
+../../../raven-models/src/raven_common.py

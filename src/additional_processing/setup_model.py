@@ -1,1 +1,1 @@
-../../../GitHub/raven-models/src/setup_model.py
+../../../raven-models/src/setup_model.py

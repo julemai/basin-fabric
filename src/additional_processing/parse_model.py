@@ -1,1 +1,1 @@
-../../../GitHub/raven-models/src/parse_model.py
+../../../raven-models/src/parse_model.py
