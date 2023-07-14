@@ -9,12 +9,15 @@ env-3.10
 
 # Regions (derived data)
 regions/*/forcings
+regions/*/attributes
+regions/*/maps
 
 # Gridded data (too large to get on GitHub)
 
 ## DEM
 # this is the important file but it's too large
 data/dem/na_ca_dem_3s.tif
+data/dem/na_ca_dem_3s-slope.tif
 # these are temporary files
 data/dem/na_dem_3s_zip_bil.zip
 data/dem/na_dem_3s_zip_bil/
