@@ -38,10 +38,10 @@ sense and shapefiles are readible.
 ```
 pyenv activate env-3.8.5-nrcan
 cd basin-fabric/src
-python 04_plot_basin_map.py -s GRIP-GL -g map
+python 04_plot_basin_map.py -s GRIP-GL
 ```
 
-Creates: shapefiles/map.png
+Creates: maps/map.png
 
 
 ## Derive geophysical attributes
