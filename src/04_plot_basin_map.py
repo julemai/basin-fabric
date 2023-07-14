@@ -20,16 +20,17 @@ from __future__ import print_function
 # along with Juliane Mai's personal code library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+# pyenv activate env-3.8.5-nrcan
+
 # python 04_plot_basin_map.py -s Wisconsin -p map_wisconsin.pdf
 # python 04_plot_basin_map.py -s Great-Lakes -p map_great-lakes.pdf
 # python 04_plot_basin_map.py -s North-America -p map_north-america.pdf
+# python 04_plot_basin_map.py -s GRIP-GL -p map_grip-gl.pdf
 
 # python 04_plot_basin_map.py -s Wisconsin -g map_wisconsin
 # python 04_plot_basin_map.py -s Great-Lakes -g map_great-lakes
 # python 04_plot_basin_map.py -s North-America -g map_north-america
-
-# pyenv activate env-3.8.5-neuralhydrology
-# pyenv activate env-3.8.5-ravenpy-new
+# python 04_plot_basin_map.py -s GRIP-GL -g map_grip-gl
 
 
 """
@@ -62,7 +63,7 @@ from pathlib import Path
 pngbase      = ''
 pdffile      = ''
 usetex       = False
-case_study   = 'Great-Lakes'
+case_study   = None
 
 
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -83,6 +84,9 @@ pngbase      = args.pngbase
 pdffile      = args.pdffile
 usetex       = args.usetex
 case_study   = args.case_study
+
+if case_study is None:
+    raise ValueError("Case study (-s) must be specified!")
 
 if (pdffile != '') & (pngbase != ''):
     print('\nError: PDF and PNG are mutually exclusive. Only either -p or -g possible.\n')
@@ -124,7 +128,7 @@ t1 = time.time()
 
 
 if case_study == 'Wisconsin':
-    project_root = '/Users/j6mai/Documents/Nandita/Wisconsin_waterheds/shapefiles/'
+    project_root = dir_path+'/../regions/Wisconsin_waterheds/shapefiles/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -93.0
@@ -133,7 +137,7 @@ if case_study == 'Wisconsin':
     urcrnrlat =   47.2
 
 elif case_study == 'Great-Lakes':
-    project_root = '/Users/j6mai/Documents/Nandita/Great_Lakes_watersheds/shapefiles/'
+    project_root = dir_path+'/../regions/Great_Lakes_watersheds/shapefiles/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -91.0
@@ -142,13 +146,22 @@ elif case_study == 'Great-Lakes':
     urcrnrlat =   49.8
 
 elif case_study == 'North-America':
-    project_root = '/Users/j6mai/Documents/Nandita/North_America_watersheds/shapefiles/'
+    project_root = dir_path+'/../regions/North_America_watersheds/shapefiles/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -125.0
     urcrnrlon =  -70.0
     llcrnrlat =   23.5
     urcrnrlat =   49.5
+
+elif case_study == 'GRIP-GL':
+    project_root = dir_path+'/../regions/GRIP-GL/shapefiles/'
+    shpfile = glob.glob( project_root+'/*/*_lp.shp')
+
+    llcrnrlon =  -93.0
+    urcrnrlon =  -72.0
+    llcrnrlat =   39.0
+    urcrnrlat =   51.0
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
@@ -165,8 +178,10 @@ if (pdffile == ''):
         outtype = 'x'
     else:
         outtype = 'png'
+        pngbase = project_root+pngbase
 else:
     outtype = 'pdf'
+    pdffile = project_root+pdffile
 
 # Main plot
 nrow        = 1           # # of rows of subplots per figure
@@ -359,6 +374,9 @@ elif case_study == 'Great-Lakes':
 elif case_study == 'North-America':
     m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
+elif case_study == 'GRIP-GL':
+    m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
+    m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -431,7 +449,13 @@ if doabc:
                  fontsize=textsize+4,transform=sub.transAxes)
 
 # add title
-sub.text(0.5,1.0,str2tex(case_study.replace('-',' ').title(),usetex=usetex),
+if case_study == 'GRIP-GL':
+    sub.text(0.5,1.0,str2tex(case_study,usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+else:
+    sub.text(0.5,1.0,str2tex(case_study.replace('-',' ').title(),usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)
@@ -459,3 +483,8 @@ else:
 t2    = time.time()
 strin = '[m]: '+astr((t2-t1)/60.,1) if (t2-t1)>60. else '[s]: '+astr(t2-t1,0)
 print('Time ', strin)
+
+if (outtype == 'pdf'):
+    print('Wrote: {}'.format(pdffile))
+elif (outtype == 'png'):
+    print('Wrote: {}'.format(pngfile))

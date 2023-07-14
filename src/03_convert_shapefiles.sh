@@ -19,15 +19,65 @@
 # along with Juliane Mai's personal code library.  If not, see <http://www.gnu.org/licenses/>.
 #
 #
-# ./01_convert_shapefiles.sh
+# pyenv activate env-3.8.5-ravenpy-new
+# ./03_convert_shapefiles.sh -s North-America
+# ./03_convert_shapefiles.sh -s GRIP-GL
 
 
-set -e
+set -ex
 
-#pyenv activate env-3.8.5-ravenpy-new
+prog=$0
+pprog=$(basename ${prog})
+dprog=$(dirname ${prog})
+isdir=${PWD}
+pid=$$
 
-basins=$( \ls WQ_station_list/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 )
-nbasins=$( \ls WQ_station_list/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 | wc -l )
+case_study="None"
+while getopts "hs:" Option ; do
+    case ${Option} in
+        h) exit 0;;
+        s) case_study="${OPTARG}";;
+        *) printf "Error ${pprog}: unimplemented option.\n\n";  exit 1;;
+    esac
+done
+shift $((${OPTIND} - 1))
+
+# Check if case_study is given
+if [[ ${case_study} == 'None' ]] ; then
+    printf "Error ${pprog}: Case study (-s) must be given.\n"
+    exit 1
+fi
+case ${case_study} in
+    'North-America') ok='True' ;;
+    'GRIP-GL') ok='True' ;;
+    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'North-America', 'GRIP-GL'.\n\n"; exit 1;;
+esac
+
+
+if [[ ${case_study} == 'North-America' ]] ; then
+    # North America
+    region_tag='North_America_watersheds'
+
+    basins=$(  \ls ${dprog}/../regions/${region_tag}/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 )
+    nbasins=$( \ls ${dprog}/../regions/${region_tag}/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 | wc -l )
+else
+    if [[ ${case_study} == 'GRIP-GL' ]] ; then
+	# GRIP-GL
+	region_tag='GRIP-GL'
+
+	basins=$(  \ls ${dprog}/../regions/${region_tag}/shapefiles_raw/*/*.shp | rev | cut -d '/' -f 1 | rev | cut -d '.' -f 1 )
+	nbasins=$( \ls ${dprog}/../regions/${region_tag}/shapefiles_raw/*/*.shp | rev | cut -d '/' -f 1 | rev | cut -d '.' -f 1 | wc -l )
+    else
+	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'North-America', 'GRIP-GL'.\n\n"
+	exit 1
+    fi
+fi
+
+
+# create directory
+if [ ! -e ${dprog}/../regions/${region_tag}/shapefiles ] ; then
+    mkdir ${dprog}/../regions/${region_tag}/shapefiles
+fi
 
 cc=1
 for bb in ${basins} ; do
@@ -36,12 +86,30 @@ for bb in ${basins} ; do
     echo "${bb} (${cc} of ${nbasins})"
 
     # create directory
-    if [ ! -e shapefiles/${bb} ] ; then
-    	mkdir shapefiles/${bb}
+    if [ ! -e ${dprog}/../regions/${region_tag}/shapefiles/${bb} ] ; then
+    	mkdir ${dprog}/../regions/${region_tag}/shapefiles/${bb}
     fi
 
-    # convert Wei's shapefile with weird projection into standard one
-    python additional_processing/convert_coords_to_espg.py -i WQ_station_list/20230612_Wei_selected_US_sites_shapefile/b_${bb}.shp -o shapefiles/${bb}/${bb}_lp -e 4326
+    if [[ ${case_study} == 'North-America' ]] ; then
+	# North America
+	# convert Wei's shapefile with weird projection into standard one (add ESPG and save only longest feature)
+	python additional_processing/convert_coords_to_espg.py \
+	       -i ${dprog}/../regions/${region_tag}/20230612_Wei_selected_US_sites_shapefile/b_${bb}.shp \
+	       -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
+	       -e 4326
+    else
+	if [[ ${case_study} == 'GRIP-GL' ]] ; then
+	    # GRIP-GL
+	    # convert GRIP-GL shapefile with into standard one (save only longest feature; add ESPG; but it's actually just a rename...)
+	    python additional_processing/convert_coords_to_espg.py \
+		   -i ${dprog}/../regions/${region_tag}/shapefiles_raw/${bb}/${bb}.shp \
+		   -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
+		   -e 4326
+	else
+	    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'North-America', 'GRIP-GL'.\n\n"
+	    exit 1
+	fi
+    fi
 
     cc=$(( cc+1 ))
 

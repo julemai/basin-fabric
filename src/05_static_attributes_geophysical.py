@@ -20,8 +20,8 @@ from __future__ import print_function
 # along with Juliane Mai's personal code library.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-# pyenv activate env-3.8.5-neuralhydrology
 # pyenv activate env-3.8.5-ravenpy-new
+# python 05_static_attributes_geophysical.py -s Wisconsin
 
 
 """
@@ -95,6 +95,13 @@ del parser, args
 
 
 
+# -----------------------
+# add subolder scripts/lib to search path
+# -----------------------
+import sys
+import os
+dir_path = os.path.dirname(os.path.realpath(__file__))
+sys.path.append(dir_path+'/lib')
 
 from pathlib import Path
 
@@ -108,23 +115,23 @@ from rasterio import mask
 
 
 if case_study == 'Wisconsin':
-    project_root = Path('/Users/j6mai/Documents/Nandita/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
+    project_root = Path(dir_path+'/../regions/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
 elif case_study == 'Great-Lakes':
-    project_root = Path('/Users/j6mai/Documents/Nandita/Great_Lakes_watersheds')
+    project_root = Path(dir_path+'/../regions/Great_Lakes_watersheds')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
 elif case_study == 'North-America':
-    project_root = Path('/Users/j6mai/Documents/Nandita/North_America_watersheds/')
+    project_root = Path(dir_path+'/../regions/North_America_watersheds/')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
 elif case_study == 'GRIP-GL':
-    project_root = Path('/Users/j6mai/Documents/GitHub/GRIP-GL/data/shapefiles/great-lakes/')
-    types = ['calibration', 'validation']
+    project_root = Path(dir_path+'/../regions/GRIP-GL/')
+    types = ['shapefiles']
     filepattern = '*/*.shp'
 
 else:
@@ -167,17 +174,11 @@ if True: #do_area:
 
 
     # -------------
-    # GRIP-GL
-    # for typ in ['calibration', 'validation']:
-    #     gl_shapes = Path(project_root / f'../../GitHub/GRIP-GL/data/shapefiles/great-lakes/{typ}/').glob('*/*.shp')
+    # GRIP-GL (212 basins)
     # -------------
-    # WISCONSIN
-    # for typ in ['shapefiles']:
-    #     gl_shapes = Path(project_root / f'{typ}/').glob('*/*_lp.shp')
+    # WISCONSIN (47 basins)
     # -------------
     # NORTH AMERICA (WEI's 513 basins)
-    # for typ in ['20230612_Wei_selected_US_sites_shapefile']:
-    #     gl_shapes = Path(project_root / f'../North_America_watersheds/WQ_station_list/{typ}/').glob('b_*.shp')
     # -------------
     # GREAT LAKES (WEI+NANDITA 361 basins)
     for typ in types:
@@ -220,7 +221,7 @@ if do_landcover:
     }
     lc_fractions = pd.DataFrame(columns=lc_classes.values(), index=shapes.keys())
 
-    with rio.open(project_root / 'gridded' / 'landcover' / 'NA_NALCMS_2010_v2_land_cover_30m/NA_NALCMS_2010_v2_land_cover_30m.tif') as gridded_ds:
+    with rio.open(project_root / '../..' / 'data' / 'landcover' / 'NA_NALCMS_2010_v2_land_cover_30m.tif') as gridded_ds:
         for basin, shape in shapes.items():
 
             # transform shape to gridded_ds crs
@@ -253,7 +254,7 @@ if do_soildata:
             # soil data is split in two nc files, one containing the first 4 soil layers the other the second 4.
             cropped = []
             for i in [1, 2]:
-                with rio.open(project_root / 'gridded' / 'soil' / f'{soil_set}{i}.nc') as gridded_ds:
+                with rio.open(project_root / '../..' / 'data' / 'soil' / f'{soil_set}{i}.nc') as gridded_ds:
                         # crop to basin outline
                         cropped_ds, _ = mask.mask(gridded_ds, [transformed_shape], crop=True,
                                                   filled=True, nodata=gridded_ds.nodata)
@@ -273,7 +274,7 @@ if do_dem:
     dem_info = pd.DataFrame(columns=['mean_elev', 'mean_slope', 'std_elev', 'std_slope'],
                             index=shapes.keys())
 
-    with rio.open(project_root / 'gridded' / 'dem' / 'na_ca_dem_3s.tif') as gridded_ds:
+    with rio.open(project_root / '../..' / 'data' / 'dem' / 'na_ca_dem_3s.tif') as gridded_ds:
         for basin, shape in shapes.items():
 
             # transform shape to gridded_ds crs
@@ -293,7 +294,7 @@ if do_dem:
     # !/system/apps/userenv/gauch/nh/bin/gdaldem slope -s 111120 gridded/dem/na_ca_dem_3s.tif /tmp/tmp-slope.tif
     # --> DONE: see gridded/dem/README.md
 
-    with rio.open(project_root / 'gridded' / 'dem' / 'na_ca_dem_3s-slope.tif', driver='GTiff') as gridded_ds:
+    with rio.open(project_root / '../..' / 'data' / 'dem' / 'na_ca_dem_3s-slope.tif', driver='GTiff') as gridded_ds:
         for basin, shape in shapes.items():
 
             # transform shape to gridded_ds crs
@@ -324,8 +325,11 @@ if do_soildata:
 if do_dem:
     static_attrs = static_attrs.join(dem_info)
 
+# Make sure output directory exists
+os.makedirs( Path(project_root / 'attributes'), exist_ok=True )
+
 static_attrs.index.set_names('basin', inplace=True)
-filename_out = Path(project_root / 'attributes' / 'static_attributes.csv')
+filename_out = Path(project_root / 'attributes' / 'static_attributes_geophysical.csv')
 static_attrs.to_csv(filename_out)
 
 print('Saved information to: {}'.format(filename_out))

@@ -70,6 +70,9 @@ if basin is None:
 
 shapefile_data = gpd.read_file(shapefile)
 all_basins     = np.array(shapefile_data[attribute])[np.where( np.array(shapefile_data[attribute]) != np.array(None) )]
+all_basins     = [ str(bb).strip() for bb in all_basins ]
+
+# print("is_shp_containing_station: all basins found = {}".format(all_basins))
 
 basin_id_found = [ bb for bb in all_basins if basin in bb.split('&') ]
 
