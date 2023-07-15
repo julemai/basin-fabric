@@ -37,6 +37,7 @@ pip install geojson --no-index
 pip install fiona --no-index
 pip install scipy --no-index
 pip install xarray --no-index
+pip install dask --no-index
 pip install rasterio --no-index
 pip install ipython --no-index
 pip install -U pytest --no-index
