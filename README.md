@@ -50,3 +50,34 @@ pip install --no-index cf_xarray    # for ravenpy
 
 pip install ravenpy[gis] --no-dependencies
 ```
+
+### On MacOS
+
+```
+pyenv virtualenv 3.8.5 env-3.8.5-basin-fabric
+pyenv activate env-3.8.5-basin-fabric
+
+pip install --upgrade pip
+
+pip install GDAL==$(gdal-config --version) --global-option=build_ext --global-option="-I/usr/include/gdal"
+pip install argparse
+pip install numpy
+pip install scipy
+pip install geopandas
+pip install geojson
+pip install rasterio
+pip install fiona
+pip install netCDF4
+pip install xarray
+pip install dask
+pip install matplotlib
+python -m pip install basemap
+pip install -U pytest
+
+pip install ravenpy[gis]
+pip install neuralhydrology
+pip install hydroDL  # didnt work
+
+# optional
+pip install ipython
+```
