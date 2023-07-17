@@ -84,3 +84,23 @@ pip install hydroDL  # didnt work
 pip install ipython
 pip isnatll jupyter
 ```
+
+### Run CUDA on Graham
+
+```
+# Login to Cedar
+ssh -Y julemai@cedar.computecanada.ca
+
+# Request interactive node with GPU
+salloc --time=01:00:00 --mem=3G --ntasks=1 --account=def-julemai --gpus-per-node=1
+
+# Load Python env
+source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+
+# Do some stuff
+cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+nh-run evaluate --run-dir test
+
+### DOES NOT FIND
+scaler_file = run_dir / "train_data" / "train_data_scaler.yml"
+```
