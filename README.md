@@ -80,4 +80,5 @@ pip install hydroDL  # didnt work
 
 # optional
 pip install ipython
+pip isnatll jupyter
 ```
