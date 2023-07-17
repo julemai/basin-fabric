@@ -49,6 +49,7 @@ pip install --no-index pymbolic     # for ravenpy
 pip install --no-index cf_xarray    # for ravenpy
 
 pip install ravenpy[gis] --no-dependencies
+pip install neuralhydrology
 ```
 
 ### On MacOS
