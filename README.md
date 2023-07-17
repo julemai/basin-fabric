@@ -71,6 +71,7 @@ pip install netCDF4
 pip install xarray
 pip install dask
 pip install matplotlib
+pip install timezonefinder
 python -m pip install basemap
 pip install -U pytest
 
