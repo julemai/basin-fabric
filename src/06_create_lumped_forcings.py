@@ -151,7 +151,7 @@ do_forcings       = True
 if do_forcings:
 
     # 1- find all netcdf files in forcing folder
-    filenames = glob.glob(forcings+'/*.nc')
+    filenames = np.sort( glob.glob(forcings+'/*.nc') )
 
     # 2- check they are consistent regarding lat/lon/time
     irlat = None
@@ -255,26 +255,33 @@ if do_forcings:
     # 7- merge all files (individual variables and/or time periods) into one
     if not( outfile_merge.exists() ):
 
-        # MergeTime (does not work :((( )
-        # subprocess.run(["/Users/j6mai/.pyenv/versions/env-3.8.5-ravenpy-new/bin/python", "additional_processing/mergeTime.py",
-        #                         outfile_merge] +
-        #                         [str(ii) for ii in outfiles_agg] +
-        #                         ["--dimvar", "time",
-        #                         "--dim", "time",
-        #                         "--overwrite"])
+        # ds = xr.merge([ xr.open_dataset(ff) for ff in outfiles_agg ])
+        ds = xr.open_mfdataset(outfiles_agg)  # using dask; more efficient
+        ds.to_netcdf(outfile_merge)
 
-        # ncks file1.nc merge.nc
-        # ncks file2.nc merge.nc
-        for outfile_agg in outfiles_agg:
-            subprocess.run(["ncks", "-A", str(outfile_agg), str(outfile_merge)])
-
-            # cleanup aggregated file
-            subprocess.run(["rm", str(outfile_agg)])
+        # # testing
+        # import glob as glob
+        # import xarray as xr
+        # outfiles_agg = list(np.sort(glob.glob('/scratch/julemai/basin-fabric/regions/Wisconsin_waterheds/forcings/1032267/1032267_agg_rdrs-v2.1_north-america_*_RDRS_v2.1_*.nc_lp.nc')))
+        # outfile_merge='test-merge.nc'
+        # ds = xr.open_mfdataset(outfiles_agg)
+        # ds.to_netcdf(outfile_merge)
 
     else:
         print("Merged file existed. Will not be overwritten.\nFile = {}\n".format(outfile_merge))
 
     print('\n\nMerged file written: {}\n'.format(outfile_merge))
+
+
+
+
+    # cd regions/Wisconsin_waterheds/forcings/
+    # basins=$( \ls -d * )
+
+    # for bb in $basins ; do echo "----------------" ; ff=$( \ls -latrh ${bb}/*.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; echo $ff ; done
+    # for bb in $basins ; do echo "----------------" ; ff=$( \ls -latrh ${bb}/*.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; rm $ff ; done
+
+
 
 
 
