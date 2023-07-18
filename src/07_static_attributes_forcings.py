@@ -131,10 +131,10 @@ else:
 
 
 if forcing == 'rdrs-v2.1_north-america':
-    unit_precip = 'm'
-    var_precip = 'RDRS_v2.1_A_PR0_SFC'   # precipitation
-    var_temp   = 'RDRS_v2.1_P_TT_1.5m'   # temperature
-    var_swrad  = 'RDRS_v2.1_P_FB_SFC'    # shortwave radiation
+    var_precip  = 'RDRS_v2.1_A_PR0_SFC'   # precipitation (primary)
+    var_precip2 = 'RDRS_v2.1_P_PR0_SFC'   # precipitation (secondary); set to None is not existing
+    var_temp    = 'RDRS_v2.1_P_TT_1.5m'   # temperature
+    var_swrad   = 'RDRS_v2.1_P_FB_SFC'    # shortwave radiation
 else:
     raise ValueError('Forcing details not known for this forcing. Please specify.')
 
@@ -151,8 +151,6 @@ if do_forcings:
     # load static attributes
     static_attributes_basin   = pd.read_csv(project_root / 'basins.csv', index_col=[0])
     static_attributes_geophys = pd.read_csv(project_root / 'attributes' / 'static_attributes_geophysical.csv', index_col=[0])
-
-    stop
 
     clim_indices = {}
 
@@ -207,7 +205,9 @@ if do_forcings:
             daily_forcings = daily_resampled.mean()
 
             # precip
-            daily_forcings[var_precip] = daily_resampled[var_precip].sum(min_count=1)
+            daily_forcings[var_precip]  = daily_resampled[var_precip].sum(min_count=1)
+            if not(var_precip2 is None):
+                daily_forcings[var_precip2] = daily_resampled[var_precip2].sum(min_count=1)
             # temp
             daily_forcings[var_temp+'_min'] = daily_resampled[var_temp].min()
             daily_forcings[var_temp+'_max'] = daily_resampled[var_temp].max()
@@ -221,9 +221,9 @@ if do_forcings:
 
             if ii == 0:
                 # since window_length is length of forcings, there will only be one date returned, so we can do .iloc[0]
-                if unit_precip == 'm':
+                if attributes_ori[var_precip]['units'] == 'm':
                     mult = 1000. # m to mm
-                elif unit_precip == 'mm':
+                elif attributes_ori[var_precip]['units'] == 'mm':
                     mult = 1. # mm to mm
                 else:
                     raise ValueError('Unit for precipitation not known. Please implement conversion factor to get [mm].')
@@ -241,9 +241,7 @@ if do_forcings:
 
         # replace original data (hourly) with resampled (daily) and save as NetCDF
         xr_forcings['time'] = forcings.index  # shift time
-        xr_forcings         = xr_forcings.resample(time='1D').pad()  # make daily
-
-        xr_forcings[var_precip] = daily_forcings[var_precip]   # precip is sum not average
+        xr_forcings         = xr_forcings.resample(time='1D').pad()  # make daily (especially time variable and dimension)
 
         variables = list(daily_forcings.columns)
         for vv in variables:
@@ -263,7 +261,7 @@ if do_forcings:
                 xr_forcings[vv].attrs['long_name'] = attributes_ori[var_temp]['long_name']+' (minimum)'
             elif vv == 'potential_evapotranspiration':
                 attrs = {
-                    'long_name': 'Potential evapotranspiration based on Priestley-Taylor using NeuralHydrologies get_priestley_taylor_pet()',
+                    'long_name': 'Potential evapotranspiration based on Priestley-Taylor using get_priestley_taylor_pet() of NeuralHydrology',
                     'coordinates': 'lon lat',
                     'grid_mapping': 'rotated_pole',
                     'cell_methods': 'time: mean',

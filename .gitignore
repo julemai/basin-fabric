@@ -9,8 +9,8 @@ env-3.10
 
 # Regions (derived data)
 regions/*/forcings
-regions/*/attributes
-regions/*/maps
+#regions/*/attributes
+#regions/*/maps
 
 # Gridded data (too large to get on GitHub)
 
