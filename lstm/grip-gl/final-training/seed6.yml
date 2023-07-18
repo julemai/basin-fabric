@@ -3,7 +3,7 @@ batch_size: 64
 clip_gradient_norm: 1
 clip_targets_to_zero:
 - qobs_mm_per_day
-data_dir: ../
+data_dir: /scratch/julemai/basin-fabric/lstm/grip-gl
 dataset: generic
 device: cuda:0
 dynamic_inputs:
