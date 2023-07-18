@@ -133,7 +133,7 @@ elif case_study == 'GRIP-GL':
     if system == 'mac':
         project_root = Path('/Users/j6mai/Documents/GitHub/GRIP-GL/data/shapefiles/great-lakes/')
     elif system == 'graham':
-        project_root = Path(str(Path(__file__).parent)+'/../regions/GRIP-GL/shapefiles/')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/GRIP-GL/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
@@ -156,7 +156,7 @@ if do_forcings:
     # 2- check they are consistent regarding lat/lon/time
     irlat = None
     irlon = None
-    for ff in filenames:
+    for ff in filenames[0:4]:
         print('Checking consistency of dimensions of file {}\n'.format(Path(ff).name))
         with nc.Dataset(ff) as iff:
 

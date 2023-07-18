@@ -3,19 +3,29 @@
 # submit with:
 #       sbatch submit-06_create_lumped_forcings.sh
 
-#SBATCH --account=rpp-julemai                      # rpp-julemai                      # your group
+#SBATCH --account=rpp-julemai                      # rpp-julemai    # your group
 #SBATCH --mail-user=juliane.mai@uwaterloo.ca       # email address for notifications
 #SBATCH --mail-type=FAIL                           # email send only in case of failure
 
-#SBATCH --job-name=agg-na                         # name of job in queque
-#SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
-#SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-#SBATCH --array=1-257
+##SBATCH --job-name=agg-na                         # name of job in queque
+##SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+##SBATCH --array=1-257
 
 ##SBATCH --job-name=agg-wi                          # name of job in queque
 ##SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
 ##SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
 ##SBATCH --array=1-47
+
+##SBATCH --job-name=agg-grip                       # name of job in queque
+##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+##SBATCH --array=1-212
+
+#SBATCH --job-name=agg-great                      # name of job in queque
+#SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
+#SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+#SBATCH --array=1-361
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
 # task-id :: ${SLURM_ARRAY_TASK_ID}
@@ -43,17 +53,29 @@ cd /scratch/julemai/basin-fabric/src/
 
 # ----------------------------------------------------------------------------------------
 
-# set number of tasks (make sure it is consistent with above)
-ntasks=257                          # <<<<<<<<<<<<<<<<
-region="North_America_watersheds"   # <<<<<<<<<<<<<<<<
-region_tag_python="North-America"
-forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=257                          # <<<<<<<<<<<<<<<<
+# region="North_America_watersheds"   # <<<<<<<<<<<<<<<<
+# region_tag_python="North-America"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # # set number of tasks (make sure it is consistent with above)
-# ntasks=47                          # <<<<<<<<<<<<<<<<
-# region="Wisconsin_waterheds"       # <<<<<<<<<<<<<<<<
+# ntasks=47                           # <<<<<<<<<<<<<<<<
+# region="Wisconsin_waterheds"        # <<<<<<<<<<<<<<<<
 # region_tag_python="Wisconsin"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=212                          # <<<<<<<<<<<<<<<<
+# region="GRIP-GL"                    # <<<<<<<<<<<<<<<<
+# region_tag_python="GRIP-GL"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
+# set number of tasks (make sure it is consistent with above)
+ntasks=361                            # <<<<<<<<<<<<<<<<
+region="Great_Lakes_watersheds"       # <<<<<<<<<<<<<<<<
+region_tag_python="Great-Lakes"
+forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # ----------------------------------------------------------------------------------------
 
@@ -61,8 +83,8 @@ forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america
 basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
 
-ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
-#ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
+#ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
+ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
@@ -93,3 +115,19 @@ done
 # ------------------
 # JOBID
 # 9383028   --> all basins                        ;  1GB ; 24h   ; 47 tasks (each 1 basin)
+
+
+# ------------------
+# region_tag_python="GRIP-GL"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# ------------------
+# JOBID
+# 9523378   --> all basins                        ;  1GB ; 24h   ; 212 tasks (each 1 basin)
+
+
+# ------------------
+# region_tag_python="Great-Lakes"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# ------------------
+# JOBID
+# 9523633   --> all basins                        ;  1GB ; 24h   ; 361 tasks (each 1 basin)
