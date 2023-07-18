@@ -84,7 +84,7 @@ Creates: attributes/static_attributes.csv
 
 ## Clip forcings
 
-Extract forcings for each basin from RDRS-v2.1.
+Extract forcings for each basin XXXX from RDRS-v2.1.
 
 ```
 source env-3.10/bin/activate

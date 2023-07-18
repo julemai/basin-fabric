@@ -64,12 +64,15 @@ Creates: attributes/static_attributes.csv
 
 ## Clip forcings
 
-Extract forcings for each basin from RDRS-v2.1.
+Extract forcings for each basin XXXX from RDRS-v2.1.
 
 ```
 source env-3.10/bin/activate
-python 06_create_lumped_forcings.py -s Great-Lakes
+pyenv activate env-3.8.5-basin-fabric
+python src/06_create_lumped_forcings.py -s Great-Lakes -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
+
+Creates: forcings/*_agg_*_*_lp.nc
 
 
 ## Derive meteorologic attributes
@@ -78,5 +81,9 @@ Derive attributes based on meteorology.
 
 ```
 source env-3.10/bin/activate
-python 07_static_attributes_forcings.py -s Great-Lakes
+pyenv activate env-3.8.5-basin-fabric
+python src/07_static_attributes_forcings.py -s Great-Lakes
 ```
+
+Creates: attributes/climate_indices.csv
+Creates: forcings/*_agg_*_*_lp_daily_local.nc

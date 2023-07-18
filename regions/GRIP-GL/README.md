@@ -60,19 +60,18 @@ Creates: attributes/static_attributes.csv
 
 ## Clip forcings
 
-Extract forcings for each basin from RDRS-v2.1.
+Extract forcings for each basin from RDRS-v2. This was done in GRIP-GL
+and data have been just transferred from there (using Martin Gauch's
+forcing.ipynb and forcings.py).
 
-```
-source env-3.10/bin/activate
-python 06_create_lumped_forcings.py -s GRIP-GL
-```
+Creates: forcings/*_agg_*_*_lp.nc
 
 
 ## Derive meteorologic attributes
 
-Derive attributes based on meteorology.
+Extract forcings for each basin from RDRS-v2. This was done in GRIP-GL
+and data have been just transferred from there (using Martin Gauch's
+forcing.ipynb and forcings.py).
 
-```
-source env-3.10/bin/activate
-python 07_static_attributes_forcings.py -s GRIP-GL
-```
+Creates: attributes/climate_indices.csv
+Creates: forcings/*_agg_*_*_lp_daily_local.nc
