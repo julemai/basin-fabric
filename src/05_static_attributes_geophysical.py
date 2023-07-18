@@ -329,7 +329,7 @@ if do_dem:
 os.makedirs( Path(project_root / 'attributes'), exist_ok=True )
 
 static_attrs.index.set_names('basin', inplace=True)
-filename_out = Path(project_root / 'attributes' / 'static_attributes_geophysical.csv')
+filename_out = Path(project_root / 'attributes' / 'static_attributes.csv')
 static_attrs.to_csv(filename_out)
 
 print('Saved information to: {}'.format(filename_out))

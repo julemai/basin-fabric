@@ -135,6 +135,11 @@ if forcing == 'rdrs-v2.1_north-america':
     var_precip2 = 'RDRS_v2.1_P_PR0_SFC'   # precipitation (secondary); set to None is not existing
     var_temp    = 'RDRS_v2.1_P_TT_1.5m'   # temperature
     var_swrad   = 'RDRS_v2.1_P_FB_SFC'    # shortwave radiation
+elif forcing == 'rdrs-v2_grip-gl':
+    var_precip  = 'RDRS_v2_A_PR0_SFC'   # precipitation (primary)
+    var_precip2 = None                  # precipitation (secondary); set to None is not existing
+    var_temp    = 'RDRS_v2_P_TT_1.5m'   # temperature
+    var_swrad   = 'RDRS_v2_P_FB_SFC'    # shortwave radiation
 else:
     raise ValueError('Forcing details not known for this forcing. Please specify.')
 
@@ -151,7 +156,7 @@ if do_forcings:
     # load static attributes
     static_attributes_basin   = pd.read_csv(project_root / 'basins.csv', index_col=[0],
                                                 dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float'})
-    static_attributes_geophys = pd.read_csv(project_root / 'attributes' / 'static_attributes_geophysical.csv', index_col=[0],
+    static_attributes_geophys = pd.read_csv(project_root / 'attributes' / 'static_attributes.csv', index_col=[0],
                                                 dtype={'basin':'str'})
 
     clim_indices = {}
@@ -293,7 +298,7 @@ static_attrs = clim_indices
 static_attrs = pd.DataFrame(clim_indices).T
 static_attrs.index.set_names('basin', inplace=True)
 static_attrs.columns = [col.split('_dyn')[0] for col in static_attrs.columns]
-filename_out = Path(project_root / 'attributes' / 'static_attributes_forcings.csv')
+filename_out = Path(project_root / 'attributes' / 'climate_indices.csv')
 static_attrs.to_csv(filename_out)
 
 print('\nSaved information to: {}'.format(filename_out))
