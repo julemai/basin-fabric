@@ -160,7 +160,7 @@ if do_forcings:
 
         basin_rdrsv2_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp.nc'
         if not basin_rdrsv2_file.exists():
-            no_forcings_basins.append(basin)
+            no_forcing_basins.append(basin)
             continue
 
         lat = static_attributes_basin.loc[basin, 'lat']
