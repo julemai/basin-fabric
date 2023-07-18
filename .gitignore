@@ -14,6 +14,10 @@ regions/*/forcings
 
 # Gridded data (too large to get on GitHub)
 
+## Observations
+data/observations/streamflow/Hydat.sqlite3
+data/observations/streamflow/Hydat_sqlite3_20230505.zip
+
 ## DEM
 # this is the important file but it's too large
 data/dem/na_ca_dem_3s.tif

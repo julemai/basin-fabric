@@ -93,10 +93,21 @@ pip install jupyter
 ssh -Y julemai@cedar.computecanada.ca
 
 # Request interactive node with GPU
-salloc --time=01:00:00 --mem=3G --ntasks=1 --account=def-julemai --gpus-per-node=1
+cd /scratch/julemai/basin-fabric/
+salloc --time=03:20:00 --mem=3G --ntasks=1 --account=def-julemai --gpus-per-node=1
+
+# Load some modules
+module load mpi4py/3.1.3
 
 # Load Python env
 source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+
+# Do training
+cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+nh-run train --config-file final-training/seed1.yml
+nh-run train --config-file final-training/seed2.yml
+...
+nh-run train --config-file final-training/seed10.yml
 
 # Do some stuff
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/

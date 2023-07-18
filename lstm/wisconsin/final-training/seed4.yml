@@ -38,7 +38,7 @@ output_activation: linear
 output_dropout: 0.4
 predict_last_n: 1
 run_dir: None
-seed: 1
+seed: 4
 seq_length: 365
 static_attributes:
 - p_mean
