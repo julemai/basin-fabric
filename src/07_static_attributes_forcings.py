@@ -278,6 +278,10 @@ if do_forcings:
                     }
                 xr_forcings[vv].attrs = attrs
 
+        # rename time --> date
+        xr_forcings = xr_forcings.rename_dims({'time':'date'})
+        xr_forcings = xr_forcings.rename_vars({'time':'date'})
+
         # ds = xr.Dataset.from_dataframe(daily_forcings)
         filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
         xr_forcings.to_netcdf( filename )
