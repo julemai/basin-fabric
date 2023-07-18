@@ -3,7 +3,7 @@ batch_size: 64
 clip_gradient_norm: 1
 clip_targets_to_zero:
 - qobs_mm_per_day
-data_dir: /publicwork/gauch/GRIP-GL/scripts/MachineLearning
+data_dir: ../
 dataset: generic
 device: cuda:0
 dynamic_inputs:
@@ -17,7 +17,7 @@ dynamic_inputs:
 - RDRS_v2_P_P0_SFC_mb
 - potential_evapotranspiration
 epochs: 30
-experiment_name: gripGL-finalTraining-seed1
+experiment_name: grip-gl-finalTraining-seed1
 head: regression
 hidden_size: 256
 initial_forget_bias: 3
