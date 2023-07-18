@@ -1,0 +1,1 @@
+../../../regions/GRIP-GL/forcings/02EC018/02EC018_agg_rdrs-v2_grip-gl_lp_daily_local.nc

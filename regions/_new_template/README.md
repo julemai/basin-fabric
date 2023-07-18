@@ -79,7 +79,7 @@ pyenv activate env-3.8.5-ravenpy-new
 python src/05_static_attributes_geophysical.py -s XXXX
 ```
 
-Creates: attributes/static_attributes_geophysical.csv
+Creates: attributes/static_attributes.csv
 
 
 ## Clip forcings
@@ -88,8 +88,11 @@ Extract forcings for each basin from RDRS-v2.1.
 
 ```
 source env-3.10/bin/activate
-python src/06_create_lumped_forcings.py -s XXXX
+pyenv activate env-3.8.5-basin-fabric
+python src/06_create_lumped_forcings.py -s XXXX -b XXXX -f XXXX -y graham
 ```
+
+Creates: forcings/*_agg_*_*_lp.nc
 
 
 ## Derive meteorologic attributes
@@ -98,5 +101,9 @@ Derive attributes based on meteorology.
 
 ```
 source env-3.10/bin/activate
+pyenv activate env-3.8.5-basin-fabric
 python src/07_static_attributes_forcings.py -s XXXX
 ```
+
+Creates: attributes/climate_indices.csv
+Creates: forcings/*_agg_*_*_lp_daily_local.nc

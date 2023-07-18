@@ -59,7 +59,7 @@ pyenv activate env-3.8.5-ravenpy-new
 python 05_static_attributes_geophysical.py -s Great-Lakes
 ```
 
-Creates: attributes/static_attributes_geophysical.csv
+Creates: attributes/static_attributes.csv
 
 
 ## Clip forcings

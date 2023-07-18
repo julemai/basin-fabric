@@ -55,7 +55,7 @@ pyenv activate env-3.8.5-ravenpy-new
 python 05_static_attributes_geophysical.py -s GRIP-GL
 ```
 
-Creates: attributes/static_attributes_geophysical.csv
+Creates: attributes/static_attributes.csv
 
 
 ## Clip forcings
@@ -64,7 +64,7 @@ Extract forcings for each basin from RDRS-v2.1.
 
 ```
 source env-3.10/bin/activate
-python 06_create_lumped_forcings.py -s Wisconsin
+python 06_create_lumped_forcings.py -s GRIP-GL
 ```
 
 
@@ -74,5 +74,5 @@ Derive attributes based on meteorology.
 
 ```
 source env-3.10/bin/activate
-python 07_static_attributes_forcings.py -s Wisconsin
+python 07_static_attributes_forcings.py -s GRIP-GL
 ```

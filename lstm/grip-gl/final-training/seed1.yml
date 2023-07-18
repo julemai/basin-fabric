@@ -73,15 +73,15 @@ static_attributes:
 - SILT
 target_variables:
 - qobs_mm_per_day
-test_basin_file: basins/basins_grip_gl.txt
+test_basin_file: basins/basins.txt
 test_end_date: 31/12/2010
 test_start_date: 01/01/2000
-train_basin_file: basins/basins_grip_gl.txt
+train_basin_file: basins/basins.txt
 train_end_date: 31/12/2010
 train_start_date: 01/01/2000
 validate_every: 3
 validate_n_random_basins: 9999
-validation_basin_file: basins/basins_grip_gl.txt
+validation_basin_file: basins/basins.txt
 validation_end_date: 31/12/2010
 validation_start_date: 01/01/2000
 log_interval: 20
