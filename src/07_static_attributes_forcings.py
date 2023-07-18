@@ -149,18 +149,22 @@ do_forcings       = True
 if do_forcings:
 
     # load static attributes
-    static_attributes_basin   = pd.read_csv(project_root / 'basins.csv', index_col=[0])
-    static_attributes_geophys = pd.read_csv(project_root / 'attributes' / 'static_attributes_geophysical.csv', index_col=[0])
+    static_attributes_basin   = pd.read_csv(project_root / 'basins.csv', index_col=[0],
+                                                dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float'})
+    static_attributes_geophys = pd.read_csv(project_root / 'attributes' / 'static_attributes_geophysical.csv', index_col=[0],
+                                                dtype={'basin':'str'})
 
     clim_indices = {}
 
     no_forcing_basins = []
     no_discharge_basins  = []
-    for basin in sorted(static_attributes_basin.index):
+    nbasins = len(static_attributes_basin.index)
+    for ibasin,basin in enumerate(sorted(static_attributes_basin.index)):
 
-        basin_rdrsv2_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp.nc'
-        if not basin_rdrsv2_file.exists():
+        basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp.nc'
+        if not basin_forcing_file.exists():
             no_forcing_basins.append(basin)
+            print("File not found for basin {}: {}".format(basin,basin_forcing_file))
             continue
 
         lat = static_attributes_basin.loc[basin, 'lat']
@@ -171,7 +175,7 @@ if do_forcings:
         # print("Shift time: UTC{}h".format(timezone_offset_hrs))
 
         # read data
-        xr_forcings = xr.open_dataset(basin_rdrsv2_file)
+        xr_forcings = xr.open_dataset(basin_forcing_file)
 
         # save all attributes for later
         vars_in_ori = list(xr_forcings.variables)
@@ -270,9 +274,11 @@ if do_forcings:
                 xr_forcings[vv].attrs = attrs
 
         # ds = xr.Dataset.from_dataframe(daily_forcings)
-        xr_forcings.to_netcdf(project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc')
+        filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
+        xr_forcings.to_netcdf( filename )
+        print('Wrote: {} (basin {} of {})'.format(filename,ibasin+1,nbasins))
 
-    print(f'No forcings for basins:  ({len(no_forcing_basins)}) {no_forcing_basins}')
+    print(f'\nNo forcings for basins:  ({len(no_forcing_basins)}) {no_forcing_basins}')
     # print(f'No discharge for basins: ({len(no_discharge_basins)}) {no_discharge_basins}')
 
     # print('clim_indices = {}'.format(clim_indices))
@@ -290,4 +296,4 @@ static_attrs.columns = [col.split('_dyn')[0] for col in static_attrs.columns]
 filename_out = Path(project_root / 'attributes' / 'static_attributes_forcings.csv')
 static_attrs.to_csv(filename_out)
 
-print('Saved information to: {}'.format(filename_out))
+print('\nSaved information to: {}'.format(filename_out))
