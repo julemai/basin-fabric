@@ -94,7 +94,7 @@ ssh -Y julemai@cedar.computecanada.ca
 
 # Request interactive node with GPU
 cd /scratch/julemai/basin-fabric/
-salloc --time=03:20:00 --mem=3G --ntasks=1 --account=def-julemai --gpus-per-node=1
+salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1
 
 # Load some modules
 module load mpi4py/3.1.3
@@ -102,12 +102,25 @@ module load mpi4py/3.1.3
 # Load Python env
 source /scratch/julemai/basin-fabric/env-cuda/bin/activate
 
-# Do training
+# Do training (each about 3h20)
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
 nh-run train --config-file final-training/seed1.yml
 nh-run train --config-file final-training/seed2.yml
 ...
 nh-run train --config-file final-training/seed10.yml
+
+# Evaluate trained model (each about 2m30)
+cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed1_*
+nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed2_*
+...
+nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed10_*
+
+# Merge ensembles (average their predictions)
+cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+nh-results-ensemble --run-dirs runs/grip-gl-finalTraining-seed* --save-file final-training/grip-gl-finalTraining-ensemble1-10.p
+
+# Validation
 
 # Do some stuff
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
