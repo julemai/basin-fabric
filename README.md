@@ -118,7 +118,7 @@ nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed10_*
 
 # Merge ensembles (average their predictions)
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
-nh-results-ensemble --run-dirs runs/grip-gl-finalTraining-seed* --save-file final-training/grip-gl-finalTraining-ensemble1-10.p
+nh-results-ensemble --run-dirs runs/grip-gl-finalTraining-seed* --output-dir final-training
 
 # Validation
 
