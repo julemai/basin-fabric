@@ -256,7 +256,7 @@ if do_forcings:
     if not( outfile_merge.exists() ):
 
         # ds = xr.merge([ xr.open_dataset(ff) for ff in outfiles_agg ])
-        ds = xr.open_mfdataset(outfiles_agg)  # using dask; more efficient
+        ds = xr.open_mfdataset(outfiles_agg, engine='netcdf4')  # using dask; more efficient
         ds.to_netcdf(outfile_merge)
 
         # # testing

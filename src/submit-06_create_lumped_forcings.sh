@@ -17,15 +17,15 @@
 ##SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
 ##SBATCH --array=1-47
 
-##SBATCH --job-name=agg-grip                       # name of job in queque
-##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
-##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-##SBATCH --array=1-212
-
-#SBATCH --job-name=agg-great                      # name of job in queque
+#SBATCH --job-name=agg-grip                       # name of job in queque
 #SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-#SBATCH --array=1-361
+#SBATCH --array=1-212
+
+##SBATCH --job-name=agg-great                      # name of job in queque
+##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+##SBATCH --array=1-361
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
 # task-id :: ${SLURM_ARRAY_TASK_ID}
@@ -65,17 +65,17 @@ cd /scratch/julemai/basin-fabric/src/
 # region_tag_python="Wisconsin"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
-# # set number of tasks (make sure it is consistent with above)
-# ntasks=212                          # <<<<<<<<<<<<<<<<
-# region="GRIP-GL"                    # <<<<<<<<<<<<<<<<
-# region_tag_python="GRIP-GL"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
-
 # set number of tasks (make sure it is consistent with above)
-ntasks=361                            # <<<<<<<<<<<<<<<<
-region="Great_Lakes_watersheds"       # <<<<<<<<<<<<<<<<
-region_tag_python="Great-Lakes"
+ntasks=212                          # <<<<<<<<<<<<<<<<
+region="GRIP-GL"                    # <<<<<<<<<<<<<<<<
+region_tag_python="GRIP-GL"
 forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=361                            # <<<<<<<<<<<<<<<<
+# region="Great_Lakes_watersheds"       # <<<<<<<<<<<<<<<<
+# region_tag_python="Great-Lakes"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # ----------------------------------------------------------------------------------------
 
@@ -93,13 +93,32 @@ basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | 
 
 for bb in ${basins} ; do
 
+    # # check if and old file needs to be deleted
+    # if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then
+    # 	last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev )
+    # 	rm ${last}
+    # fi
+
     echo "Aggregate forcings for basin ${bb}"
 
     python 06_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham
+    touch /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}.done
 
 done
 
 
+
+# # remove last NC file created
+
+# region='Great_Lakes_watersheds'
+# region='GRIP-GL'
+
+# basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
+
+# for bb in $basins ; do if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 ) ; echo $bb ${last} ; fi ; done
+
+# miss_file='/scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat'
+# for bb in $basins ; do if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; echo ${bb} > ${miss_file} ; rm ${last} ; fi ; done
 
 
 # ------------------
@@ -123,6 +142,7 @@ done
 # ------------------
 # JOBID
 # 9523378   --> all basins                        ;  1GB ; 24h   ; 212 tasks (each 1 basin)
+# 9555769   --> all basins (hiccup graham)        ;  1GB ; 24h   ; 212 tasks (each 1 basin)
 
 
 # ------------------
@@ -131,3 +151,30 @@ done
 # ------------------
 # JOBID
 # 9523633   --> all basins                        ;  1GB ; 24h   ; 361 tasks (each 1 basin)
+# 9555757   --> all basins (hiccup graham)        ;  1GB ; 24h   ; 361 tasks (each 1 basin)
+
+
+
+
+
+
+
+# ls /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
+# ls /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
+
+# ls /scratch/julemai/basin-fabric/regions/Great_Lakes_watersheds/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
+# ls /scratch/julemai/basin-fabric/regions/Great_Lakes_watersheds/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
+
+# missing=$( comm -23 done_exists.dat merge_exists.dat )
+# echo ${missing}
+
+# 02HL008 02LC029 04040500
+
+# for bb in ${missing} ; do python 06_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done
+
+# --> delete corruped files manually
+# /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/02HL008/02HL008_agg_rdrs-v2.1_north-america_1989_RDRS_v2.1_A_PR0_SFC.nc_lp.nc
+# /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/02LC029/02LC029_agg_rdrs-v2.1_north-america_1987_RDRS_v2.1_P_PR0_SFC.nc_lp.nc
+# /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/04040500/04040500_agg_rdrs-v2.1_north-america_1985_RDRS_v2.1_P_UU_10m.nc_lp.nc
+
+# for bb in ${missing} ; do python 06_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done
