@@ -26,7 +26,7 @@ from __future__ import print_function
 # python 07_static_attributes_forcings.py -s 'Wisconsin'     -f 'rdrs-v2.1_north-america' -p 'all'
 # python 07_static_attributes_forcings.py -s 'North-America' -f 'rdrs-v2.1_north-america' -p 'all'
 # python 07_static_attributes_forcings.py -s 'Great-Lakes'   -f 'rdrs-v2.1_north-america' -p 'all'
-# python 07_static_attributes_forcings.py -s 'GRIP-GL      ' -f 'rdrs-v2.1_north-america' -p 'all'
+# python 07_static_attributes_forcings.py -s 'GRIP-GL'       -f 'rdrs-v2.1_north-america' -p 'all'
 
 
 """
@@ -43,7 +43,25 @@ Derives static basin attributes from forcings (9).
 	low_prec_freq
 	low_prec_dur
 
+License
+-------
+This file is part of the Basin Fabric which contains scripts to
+process data for basins, deriving attributes, processing forcings,
+and setting up and training data-driven models.
 
+The Basin Fabric code is free software: you can redistribute it
+and/or modify it under the terms of the MIT License.
+
+The Basin Fabric code library is distributed in the hope that it will
+be useful,but WITHOUT ANY WARRANTY; without even the implied warranty
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT
+License for more details.
+
+You should have received a copy of the MIT License along with the
+Basin Fabric code. If not, see
+<https://github.com/julemai/basin-fabric/blob/main/LICENSE>.
+
+Copyright 2023 Juliane Mai - juliane.mai@uwaterloo.ca
 
 History
 -------

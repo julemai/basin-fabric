@@ -1,5 +1,28 @@
 #!/bin/bash
 
+
+# License
+# -------
+# This file is part of the Basin Fabric which contains scripts to
+# process data for basins, deriving attributes, processing forcings,
+# and setting up and training data-driven models.
+
+# The Basin Fabric code is free software: you can redistribute it
+# and/or modify it under the terms of the MIT License.
+
+# The Basin Fabric code library is distributed in the hope that it will
+# be useful,but WITHOUT ANY WARRANTY; without even the implied warranty
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the MIT
+# License for more details.
+
+# You should have received a copy of the MIT License along with the
+# Basin Fabric code. If not, see
+# <https://github.com/julemai/basin-fabric/blob/main/LICENSE>.
+
+# Copyright 2023 Juliane Mai - juliane.mai@uwaterloo.ca
+
+
+
 # submit with:
 #       sbatch submit-06_create_lumped_forcings.sh
 
@@ -20,7 +43,7 @@
 #SBATCH --job-name=agg-grip                       # name of job in queque
 #SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-#SBATCH --array=1-212
+#SBATCH --array=142,146,147,150,154               # 1-212
 
 ##SBATCH --job-name=agg-great                      # name of job in queque
 ##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
