@@ -17,6 +17,7 @@ regions/*/forcings
 ## Observations
 data/observations/streamflow/Hydat.sqlite3
 data/observations/streamflow/Hydat_sqlite3_20230505.zip
+data/observations/nutrients/Provincial_Water_Quality_Monitoring_Network_PWQMN_cleaned.csv
 
 ## DEM
 # this is the important file but it's too large
