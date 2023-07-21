@@ -434,7 +434,7 @@ def write_streamflow_nc(info_dict=None,data_dict=None,filename='streamflow.nc',w
 
 
     data_val = np.full((nstations,ntime),np.nan)
-    data_sym = np.full((nstations,ntime),np.nan)
+    data_sym = np.full((nstations,ntime),"")
     for istation,station in enumerate(stations):
 
         for idate in data_dict[station].keys():
@@ -538,7 +538,9 @@ def write_streamflow_nc(info_dict=None,data_dict=None,filename='streamflow.nc',w
 
     # Convert the array of strings to a fixed-size numpy array
     name_data_fixed_size = np.zeros((nstations, string_length), dtype='S1')
+    # print(name_data)
     for ii, string in enumerate(name_data):
+        string = string.replace('\xc9','E').replace('\xc0','A')
         name_data_fixed_size[ii,:len(string)] = np.array(list(string), dtype='S1')
 
     # Write data: name

@@ -321,10 +321,14 @@ def get_info_station(source=None,filename='/tmp/test',station=None,pairsfile=Non
                     try:
                         idx = usgs[0].index('drain_area_va')
                     except:
-                        raise ValueError('drain_area_va not found in list of attributes: {}'.format(usgs[0]))
+                        raise ValueError('   "drain_area_va" not found in list of attributes: {}'.format(usgs[0]))
 
                     # set area (given in mi**2)
-                    tmp['area_km2'] = float(usgs[2][idx]) * 1.609344**2
+                    if usgs[2][idx] != '':
+                        tmp['area_km2'] = float(usgs[2][idx]) * 1.609344**2
+                    else:
+                        print("   Area for station {} not found. Set to nan.".format(station))
+                        tmp['area_km2'] = np.nan
 
                 # add station info to list
                 if station in data.keys():

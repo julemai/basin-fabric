@@ -79,6 +79,7 @@ parser.add_argument('-p', '--period', action='store', default=period, dest='peri
 
 args         = parser.parse_args()
 case_study   = args.case_study
+period       = args.period
 
 if (case_study is None):
     raise ValueError("Case study (-s) must be specified and need to be one of the following: ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL']")
@@ -140,7 +141,7 @@ if not(period is None):
 
 # find list of basins
 static_attributes_basin   = pd.read_csv(project_root / 'basins.csv', index_col=[0],
-                                        dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float'})
+                                        dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float', 'obs_q': 'str'})
 
 obs_q = static_attributes_basin['obs_q'].values
 
@@ -204,7 +205,7 @@ print('Write to NetCDF ... ')
 outfolder = project_root / 'observations'
 os.makedirs( Path(outfolder), exist_ok=True )
 
-filename     = outfolder / 'daily_streamflow.nc'
+filename     = str( outfolder / 'daily_streamflow.nc' )
 
 filenames_streamflow = write_streamflow_nc(info_dict=info_streamflow,
                                                data_dict=data_streamflow,
