@@ -23,10 +23,10 @@ from __future__ import print_function
 # source env-3.10/bin/activate
 # pyenv activate env-3.8.5-basin-fabric
 
-# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'     -f 'rdrs-v2.1_north-america' -p 'all'
-# python 08_static_attributes_forcings.py -s 'conus-zhi' -f 'rdrs-v2.1_north-america' -p 'all'
-# python 08_static_attributes_forcings.py -s 'ontario-zhi'   -f 'rdrs-v2.1_north-america' -p 'all'
-# python 08_static_attributes_forcings.py -s 'grip-gl-mai'       -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'  -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'conus-zhi'        -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all'
 
 
 """

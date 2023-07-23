@@ -1,4 +1,4 @@
-# Workflow for Wisconsin basins
+# Workflow for Abby Lewis's Wisconsin basins
 
 ## Basin IDs and some information
 
@@ -13,7 +13,7 @@ Extract data from North American routing product v2.1
 ```
 pyenv activate ravenpy
 cd basin-fabric/src
-./01_extract_shapefiles.sh -s Wisconsin
+./01_extract_shapefiles.sh -s wisconsin-lewis
 ```
 
 Creates: shapefiles/*/*_ds.*
@@ -26,7 +26,7 @@ converted into lumped geometries.
 ```
 pyenv activate ravenpy
 cd basin-fabric/src
-./02_create_lumped_shapefile.sh -s Wisconsin
+./02_create_lumped_shapefile.sh -s wisconsin-lewis
 ```
 
 Creates: shapefiles/*/*_lp.*
@@ -39,10 +39,28 @@ sense and shapefiles are readible.
 ```
 pyenv activate env-3.8.5-nrcan
 cd basin-fabric/src
-python 04_plot_basin_map.py -s Wisconsin
+python 04_plot_basin_map.py -s wisconsin-lewis
 ```
 
 Creates: maps/map.png
+
+
+## Retrieve observations
+
+Retrieves streamflow observations for streamflow gauge stations listed
+in clumn `obs_q` in `basins.csv`. Data are either retrieved from
+downloaded HYDAT database
+(`data/observations/streamflow/Hydat.sqlite3`) or directly from
+USGS. Data should be downloaded at least for the period the forcings
+will be available for (option -p).
+
+```
+source env-3.10/bin/activate
+pyenv activate env-3.8.5-ravenpy-new
+python 05_retrieve_observations.py -s conus-zhi -p 1980-01-01:2018-12-31
+```
+
+Creates: observations/daily_streamflow.nc
 
 
 ## Derive geophysical attributes
@@ -53,7 +71,7 @@ and landcover, and save them in a CSV file.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-ravenpy-new
-python 05_static_attributes_geophysical.py -s Wisconsin
+python 06_static_attributes_geophysical.py -s wisconsin-lewis
 ```
 
 Creates: attributes/static_attributes.csv
@@ -66,7 +84,7 @@ Extract forcings for each basin XXXX from RDRS-v2.1.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/06_create_lumped_forcings.py -s Wisconsin -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+python src/07_create_lumped_forcings.py -s wisconsin-lewis -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
 
 Creates: forcings/*_agg_*_*_lp.nc
@@ -79,7 +97,7 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/07_static_attributes_forcings.py -s Wisconsin
+python src/08_static_attributes_forcings.py -s wisconsin-lewis -f 'rdrs-v2_north-america' -p 'all'
 ```
 
 Creates: attributes/climate_indices.csv
