@@ -20,8 +20,8 @@
 #
 #
 # pyenv activate ravenpy
-# ./01_extract_shapefiles.sh -s Wisconsin
-# ./01_extract_shapefiles.sh -s Great-Lakes
+# ./01_extract_shapefiles.sh -s wisconsin-lewis
+# ./01_extract_shapefiles.sh -s ontario-zhi
 
 
 set -ex
@@ -48,26 +48,26 @@ if [[ ${case_study} == 'None' ]] ; then
     exit 1
 fi
 case ${case_study} in
-    'Wisconsin') ok='True' ;;
-    'Great-Lakes') ok='True' ;;
-    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'Wisconsin', 'Great-Lakes'.\n\n";  exit 1;;
+    'wisconsin-lewis') ok='True' ;;
+    'ontario-zhi') ok='True' ;;
+    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'wisconsin-lewis', 'ontario-zhi'.\n\n";  exit 1;;
 esac
 
 
-if [[ ${case_study} == 'Great-Lakes' ]] ; then
-    # Great Lakes
-    region_tag='Great_Lakes_watersheds'
+if [[ ${case_study} == 'ontario-zhi' ]] ; then
+    # Ontario
+    region_tag='ontario-zhi'
     version='1-0'
     regions=$( \ls ${dprog}/../data/routing/Ontario_Routing_Product/drainage_region_*_v${version}/finalcat_info_v${version}.shp )
 
 else
-    if [[ ${case_study} == 'Wisconsin' ]] ; then
-	# Wisconsin
-	region_tag='Wisconsin_waterheds'
+    if [[ ${case_study} == 'wisconsin-lewis' ]] ; then
+	# wisconsin-lewis
+	region_tag='wisconsin-lewis'
 	version='2-1'
 	regions=$( \ls ${dprog}/../data/routing/North_American_routing_product/drainage_region_*_v${version}/finalcat_info_v${version}.shp )
     else
-	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'Wisconsin', 'Great-Lakes'.\n\n"
+	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'wisconsin-lewis', 'ontario-zhi'.\n\n"
 	exit 1
     fi
 fi
@@ -95,8 +95,8 @@ for bb in ${basins} ; do
     # search all files
     for rr in ${regions} ; do
 
-	if [[ ${case_study} == 'Great-Lakes' ]] ; then
-	    # Great Lakes
+	if [[ ${case_study} == 'ontario-zhi' ]] ; then
+	    # Ontario
 	    # check if basin is contained
 	    gauge_shapefile=$( echo ${rr} | rev | cut -d '/' -f 2- | rev )
 	    gauge_shapefile=$( echo ${gauge_shapefile}'/obs_gauges_v1-0.shp' )  # this one is just way smaller and faster to check
@@ -104,8 +104,8 @@ for bb in ${basins} ; do
 	    basin=$( cat tmp.tmp )
 	    rm tmp.tmp
 	else
-	    if [[ ${case_study} == 'Wisconsin' ]] ; then
-		# Wisconsin
+	    if [[ ${case_study} == 'wisconsin-lewis' ]] ; then
+		# wisconsin-lewis
 		# check if basin is contained
 		gauge_shapefile=$( echo ${rr} | rev | cut -d '/' -f 2- | rev )
 		# this one is just way smaller and faster to check --> but has no 'HyLakeId' only 'Obs_NM'
@@ -115,7 +115,7 @@ for bb in ${basins} ; do
 		basin=$( cat tmp.tmp )
 		rm tmp.tmp
 	    else
-		echo "Error ${pprog}: Option (-s) needs to be one of the following: 'Wisconsin', 'Great-Lakes'.\n\n"
+		echo "Error ${pprog}: Option (-s) needs to be one of the following: 'wisconsin-lewis', 'ontario-zhi'.\n\n"
 		exit 1
 	    fi
 	fi
@@ -125,13 +125,13 @@ for bb in ${basins} ; do
 	    basin=$( echo ${basin} | cut -d ':' -f 2 )  # get the basin ID found; can be "03003000202&02FB010" or "03003000202"
 	    basin=$( echo ${basin} )
 	    set +e
-	    if [[ ${case_study} == 'Great-Lakes' ]] ; then
+	    if [[ ${case_study} == 'ontario-zhi' ]] ; then
 		ravenpy collect-subbasins-upstream-of-gauge ${rr} ${basin} -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_ds.shp
 	    else
-		if [[ ${case_study} == 'Wisconsin' ]] ; then
+		if [[ ${case_study} == 'wisconsin-lewis' ]] ; then
 		    ravenpy collect-subbasins-upstream-of-gauge ${rr} ${basin} -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_ds.shp -a 'HyLakeId'
 		else
-		    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'Wisconsin', 'Great-Lakes'.\n\n"
+		    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'wisconsin-lewis', 'ontario-zhi'.\n\n"
 		    exit 1
 		fi
 	    fi

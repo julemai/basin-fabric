@@ -24,7 +24,7 @@
 
 
 # submit with:
-#       sbatch submit-06_create_lumped_forcings.sh
+#       sbatch submit-07_create_lumped_forcings.sh
 
 #SBATCH --account=rpp-julemai                      # rpp-julemai    # your group
 #SBATCH --mail-user=juliane.mai@uwaterloo.ca       # email address for notifications
@@ -78,26 +78,26 @@ cd /scratch/julemai/basin-fabric/src/
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=257                          # <<<<<<<<<<<<<<<<
-# region="North_America_watersheds"   # <<<<<<<<<<<<<<<<
-# region_tag_python="North-America"
+# region="conus-zhi"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="conus-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=47                           # <<<<<<<<<<<<<<<<
-# region="Wisconsin_waterheds"        # <<<<<<<<<<<<<<<<
-# region_tag_python="Wisconsin"
+# region="wisconsin-lewis"            # <<<<<<<<<<<<<<<<
+# region_tag_python="wisconsin-lewis"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # set number of tasks (make sure it is consistent with above)
-ntasks=212                          # <<<<<<<<<<<<<<<<
-region="GRIP-GL"                    # <<<<<<<<<<<<<<<<
-region_tag_python="GRIP-GL"
+ntasks=212                            # <<<<<<<<<<<<<<<<
+region="grip-gl-mai"                  # <<<<<<<<<<<<<<<<
+region_tag_python="grip-gl-mai"
 forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=361                            # <<<<<<<<<<<<<<<<
-# region="Great_Lakes_watersheds"       # <<<<<<<<<<<<<<<<
-# region_tag_python="Great-Lakes"
+# region="ontario-zhi"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="ontario-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # ----------------------------------------------------------------------------------------
@@ -124,7 +124,7 @@ for bb in ${basins} ; do
 
     echo "Aggregate forcings for basin ${bb}"
 
-    python 06_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham
+    python 07_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham
     touch /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}.done
 
 done
@@ -133,8 +133,8 @@ done
 
 # # remove last NC file created
 
-# region='Great_Lakes_watersheds'
-# region='GRIP-GL'
+# region='ontario-zhi'
+# region='grip-gl-mai'
 
 # basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 
@@ -145,14 +145,14 @@ done
 
 
 # ------------------
-# region_tag_python="North-America"
+# region_tag_python="conus-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 # ------------------
 # JOBID
 # 9383171   --> all basins                        ;  1GB ; 72h   ; 257 tasks (each 2 basins)
 
 # ------------------
-# region_tag_python="Wisconsin"
+# region_tag_python="wisconsin-lewis"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 # ------------------
 # JOBID
@@ -160,7 +160,7 @@ done
 
 
 # ------------------
-# region_tag_python="GRIP-GL"
+# region_tag_python="grip-gl-mai"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 # ------------------
 # JOBID
@@ -169,7 +169,7 @@ done
 
 
 # ------------------
-# region_tag_python="Great-Lakes"
+# region_tag_python="ontario-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 # ------------------
 # JOBID
@@ -182,22 +182,22 @@ done
 
 
 
-# ls /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
-# ls /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
+# ls /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
+# ls /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
 
-# ls /scratch/julemai/basin-fabric/regions/Great_Lakes_watersheds/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
-# ls /scratch/julemai/basin-fabric/regions/Great_Lakes_watersheds/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
+# ls /scratch/julemai/basin-fabric/regions/ontario-zhi/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
+# ls /scratch/julemai/basin-fabric/regions/ontario-zhi/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
 
 # missing=$( comm -23 done_exists.dat merge_exists.dat )
 # echo ${missing}
 
 # 02HL008 02LC029 04040500
 
-# for bb in ${missing} ; do python 06_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done
+# for bb in ${missing} ; do python 07_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done
 
 # --> delete corruped files manually
-# /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/02HL008/02HL008_agg_rdrs-v2.1_north-america_1989_RDRS_v2.1_A_PR0_SFC.nc_lp.nc
-# /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/02LC029/02LC029_agg_rdrs-v2.1_north-america_1987_RDRS_v2.1_P_PR0_SFC.nc_lp.nc
-# /scratch/julemai/basin-fabric/regions/GRIP-GL/forcings/04040500/04040500_agg_rdrs-v2.1_north-america_1985_RDRS_v2.1_P_UU_10m.nc_lp.nc
+# /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/02HL008/02HL008_agg_rdrs-v2.1_north-america_1989_RDRS_v2.1_A_PR0_SFC.nc_lp.nc
+# /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/02LC029/02LC029_agg_rdrs-v2.1_north-america_1987_RDRS_v2.1_P_PR0_SFC.nc_lp.nc
+# /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/04040500/04040500_agg_rdrs-v2.1_north-america_1985_RDRS_v2.1_P_UU_10m.nc_lp.nc
 
-# for bb in ${missing} ; do python 06_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done
+# for bb in ${missing} ; do python 07_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done

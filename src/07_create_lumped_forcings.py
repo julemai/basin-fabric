@@ -22,13 +22,13 @@ from __future__ import print_function
 
 # pyenv activate env-3.8.5-ravenpy-new
 
-# python 06_create_lumped_forcings.py -s Great-Lakes -b 03005400102 -f /Users/j6mai/Documents/Nandita/Great_Lakes_watersheds/gridded_data/rdrs_v2/ -y mac
+# python 07_create_lumped_forcings.py -s ontario-zhi -b 03005400102 -f /Users/j6mai/Documents/Nandita/ontario-zhi/gridded_data/rdrs_v2/ -y mac
 
 # takes 73.5 minutes
-# python 06_create_lumped_forcings.py -s Great-Lakes -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2_grip-gl/ -y graham
+# python 07_create_lumped_forcings.py -s ontario-zhi -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2_grip-gl/ -y graham
 
 # takes XXX minutes
-# python 06_create_lumped_forcings.py -s Great-Lakes -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+# python 07_create_lumped_forcings.py -s ontario-zhi -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 
 
 """
@@ -78,7 +78,7 @@ system       = None
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Derive static geophysical attributes.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. One of ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL'].")
+                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai'].")
 parser.add_argument('-f', '--forcings', action='store', default=forcings, dest='forcings',
                     help="Name of folder containing forcings for a larger region (e.g., Great Lakes or North America).")
 parser.add_argument('-b', '--basin', action='store', default=basin, dest='basin',
@@ -93,7 +93,7 @@ basin        = args.basin
 system       = args.system
 
 if (case_study is None):
-    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL']")
+    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
 
 if (forcings is None):
     raise ValueError("Name of folder containing gridded forcings for larger domain (-f) must be specified.")
@@ -119,41 +119,41 @@ import subprocess
 import os
 
 
-if case_study == 'Wisconsin':
+if case_study == 'wisconsin-lewis':
     column_id = "FIRST_FLD"
     if system == 'mac':
-        project_root = Path('/Users/j6mai/Documents/Nandita/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
+        project_root = Path('/Users/j6mai/Documents/Nandita/wisconsin-lewis')
     elif system == 'graham':
-        project_root = Path(str(Path(__file__).parent)+'/../regions/Wisconsin_waterheds/')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/wisconsin-lewis/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
     dimname="rlon,rlat"
     varname="lon,lat"
 
-elif case_study == 'Great-Lakes':
+elif case_study == 'ontario-zhi':
     column_id = "FIRST_FLD"
     if system == 'mac':
-        project_root = Path('/Users/j6mai/Documents/Nandita/Great_Lakes_watersheds')
+        project_root = Path('/Users/j6mai/Documents/Nandita/ontario-zhi')
     elif system == 'graham':
-        project_root = Path(str(Path(__file__).parent)+'/../regions/Great_Lakes_watersheds/')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/ontario-zhi/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
-elif case_study == 'North-America':
+elif case_study == 'conus-zhi':
     column_id = "FIRST_FLD"
     if system == 'mac':
-        project_root = Path('/Users/j6mai/Documents/Nandita/North_America_watersheds/')
+        project_root = Path('/Users/j6mai/Documents/Nandita/conus-zhi/')
     elif system == 'graham':
-        project_root = Path(str(Path(__file__).parent)+'/../regions/North_America_watersheds/')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/conus-zhi/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
-elif case_study == 'GRIP-GL':
+elif case_study == 'grip-gl-mai':
     column_id = "FIRST_FLD"
     if system == 'mac':
-        project_root = Path('/Users/j6mai/Documents/GitHub/GRIP-GL/data/shapefiles/great-lakes/')
+        project_root = Path('/Users/j6mai/Documents/GitHub/grip-gl-mai/data/shapefiles/great-lakes/')
     elif system == 'graham':
-        project_root = Path(str(Path(__file__).parent)+'/../regions/GRIP-GL/')
+        project_root = Path(str(Path(__file__).parent)+'/../regions/grip-gl-mai/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
@@ -282,7 +282,7 @@ if do_forcings:
         # # testing
         # import glob as glob
         # import xarray as xr
-        # outfiles_agg = list(np.sort(glob.glob('/scratch/julemai/basin-fabric/regions/Wisconsin_waterheds/forcings/1032267/1032267_agg_rdrs-v2.1_north-america_*_RDRS_v2.1_*.nc_lp.nc')))
+        # outfiles_agg = list(np.sort(glob.glob('/scratch/julemai/basin-fabric/regions/wisconsin-lewis/forcings/1032267/1032267_agg_rdrs-v2.1_north-america_*_RDRS_v2.1_*.nc_lp.nc')))
         # outfile_merge='test-merge.nc'
         # ds = xr.open_mfdataset(outfiles_agg)
         # ds.to_netcdf(outfile_merge)
@@ -295,7 +295,7 @@ if do_forcings:
 
 
 
-    # cd regions/Wisconsin_waterheds/forcings/
+    # cd regions/wisconsin-lewis/forcings/
     # basins=$( \ls -d * )
 
     # for bb in $basins ; do echo "----------------" ; ff=$( \ls -latrh ${bb}/*.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; echo $ff ; done

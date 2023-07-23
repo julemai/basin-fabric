@@ -20,8 +20,8 @@
 #
 #
 # pyenv activate ravenpy
-# ./02_create_lumped_shapefile.sh -s Wisconsin
-# ./02_create_lumped_shapefile.sh -s Great-Lakes
+# ./02_create_lumped_shapefile.sh -s wisconsin-lewis
+# ./02_create_lumped_shapefile.sh -s ontario-zhi
 
 
 set -ex
@@ -49,22 +49,22 @@ if [[ ${case_study} == 'None' ]] ; then
     exit 1
 fi
 case ${case_study} in
-    'Wisconsin') ok='True' ;;
-    'Great-Lakes') ok='True' ;;
-    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'Wisconsin', 'Great-Lakes'.\n\n";  usage 1>&2; exit 1;;
+    'wisconsin-lewis') ok='True' ;;
+    'ontario-zhi') ok='True' ;;
+    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'wisconsin-lewis', 'ontario-zhi'.\n\n";  usage 1>&2; exit 1;;
 esac
 
 
 
-if [[ ${case_study} == 'Great-Lakes' ]] ; then
-    # Great Lakes
-    region_tag='Great_Lakes_watersheds'
+if [[ ${case_study} == 'ontario-zhi' ]] ; then
+    # Ontario
+    region_tag='ontario-zhi'
 else
-    if [[ ${case_study} == 'Wisconsin' ]] ; then
-	# Wisconsin
-	region_tag='Wisconsin_waterheds'
+    if [[ ${case_study} == 'wisconsin-lewis' ]] ; then
+	# wisconsin-lewis
+	region_tag='wisconsin-lewis'
     else
-	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'Wisconsin', 'Great-Lakes'.\n\n"
+	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'wisconsin-lewis', 'ontario-zhi'.\n\n"
 	exit 1
     fi
 fi

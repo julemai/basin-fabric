@@ -21,10 +21,10 @@ from __future__ import print_function
 #
 
 # pyenv activate env-3.8.5-basin-fabric
-# python 04_retrieve_observations.py -s Wisconsin -p 1980-01-01:2018-12-31
-# python 04_retrieve_observations.py -s GRIP-GL   -p 1980-01-01:2018-12-31
-# python 04_retrieve_observations.py -s Wisconsin -p 1980-01-01:2018-12-31
-# python 04_retrieve_observations.py -s Wisconsin -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s wisconsin-lewis -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s grip-gl-mai     -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s ontario-zhi     -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s conus-zhi       -p 1980-01-01:2018-12-31
 
 """
 
@@ -73,7 +73,7 @@ period       = None
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Retrieve observations.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. One of ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL'].")
+                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai'].")
 parser.add_argument('-p', '--period', action='store', default=period, dest='period',
                     help="Period to retrieve data for. Format: YYYY-MM-DD:YYYY-MM-DD. Default: None (=all data found).")
 
@@ -82,7 +82,7 @@ case_study   = args.case_study
 period       = args.period
 
 if (case_study is None):
-    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL']")
+    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
 
 del parser, args
 
@@ -112,23 +112,23 @@ from b2_read_streamflow import read_streamflow
 from b3_write_streamflow import write_streamflow_nc
 
 
-if case_study == 'Wisconsin':
-    project_root = Path(dir_path+'/../regions/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
+if case_study == 'wisconsin-lewis':
+    project_root = Path(dir_path+'/../regions/wisconsin-lewis')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
-elif case_study == 'Great-Lakes':
-    project_root = Path(dir_path+'/../regions/Great_Lakes_watersheds')
+elif case_study == 'ontario-zhi':
+    project_root = Path(dir_path+'/../regions/ontario-zhi')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
-elif case_study == 'North-America':
-    project_root = Path(dir_path+'/../regions/North_America_watersheds/')
+elif case_study == 'conus-zhi':
+    project_root = Path(dir_path+'/../regions/conus-zhi')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
-elif case_study == 'GRIP-GL':
-    project_root = Path(dir_path+'/../regions/GRIP-GL/')
+elif case_study == 'grip-gl-mai':
+    project_root = Path(dir_path+'/../regions/grip-gl-mai')
     types = ['shapefiles']
     filepattern = '*/*.shp'
 

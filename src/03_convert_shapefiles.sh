@@ -20,8 +20,8 @@
 #
 #
 # pyenv activate env-3.8.5-ravenpy-new
-# ./03_convert_shapefiles.sh -s North-America
-# ./03_convert_shapefiles.sh -s GRIP-GL
+# ./03_convert_shapefiles.sh -s conus-zhi
+# ./03_convert_shapefiles.sh -s grip-gl-mai
 
 
 set -ex
@@ -48,27 +48,27 @@ if [[ ${case_study} == 'None' ]] ; then
     exit 1
 fi
 case ${case_study} in
-    'North-America') ok='True' ;;
-    'GRIP-GL') ok='True' ;;
-    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'North-America', 'GRIP-GL'.\n\n"; exit 1;;
+    'conus-zhi') ok='True' ;;
+    'grip-gl-mai') ok='True' ;;
+    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai'.\n\n"; exit 1;;
 esac
 
 
-if [[ ${case_study} == 'North-America' ]] ; then
-    # North America
-    region_tag='North_America_watersheds'
+if [[ ${case_study} == 'conus-zhi' ]] ; then
+    # conus-zhi
+    region_tag='conus-zhi'
 
     basins=$(  \ls ${dprog}/../regions/${region_tag}/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 )
     nbasins=$( \ls ${dprog}/../regions/${region_tag}/20230612_Wei_selected_US_sites_shapefile/b_*.shp | rev | cut -d '/' -f 1 | rev | cut -d '_' -f 2 | cut -d '.' -f 1 | wc -l )
 else
-    if [[ ${case_study} == 'GRIP-GL' ]] ; then
-	# GRIP-GL
-	region_tag='GRIP-GL'
+    if [[ ${case_study} == 'grip-gl-mai' ]] ; then
+	# grip-gl-mai
+	region_tag='grip-gl-mai'
 
 	basins=$(  \ls ${dprog}/../regions/${region_tag}/shapefiles_raw/*/*.shp | rev | cut -d '/' -f 1 | rev | cut -d '.' -f 1 )
 	nbasins=$( \ls ${dprog}/../regions/${region_tag}/shapefiles_raw/*/*.shp | rev | cut -d '/' -f 1 | rev | cut -d '.' -f 1 | wc -l )
     else
-	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'North-America', 'GRIP-GL'.\n\n"
+	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai'.\n\n"
 	exit 1
     fi
 fi
@@ -90,23 +90,23 @@ for bb in ${basins} ; do
     	mkdir ${dprog}/../regions/${region_tag}/shapefiles/${bb}
     fi
 
-    if [[ ${case_study} == 'North-America' ]] ; then
-	# North America
+    if [[ ${case_study} == 'conus-zhi' ]] ; then
+	# conus-zhi
 	# convert Wei's shapefile with weird projection into standard one (add ESPG and save only longest feature)
 	python additional_processing/convert_coords_to_espg.py \
 	       -i ${dprog}/../regions/${region_tag}/20230612_Wei_selected_US_sites_shapefile/b_${bb}.shp \
 	       -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
 	       -e 4326
     else
-	if [[ ${case_study} == 'GRIP-GL' ]] ; then
-	    # GRIP-GL
-	    # convert GRIP-GL shapefile with into standard one (save only longest feature; add ESPG; but it's actually just a rename...)
+	if [[ ${case_study} == 'grip-gl-mai' ]] ; then
+	    # grip-gl-mai
+	    # convert grip-gl-mai shapefile with into standard one (save only longest feature; add ESPG; but it's actually just a rename...)
 	    python additional_processing/convert_coords_to_espg.py \
 		   -i ${dprog}/../regions/${region_tag}/shapefiles_raw/${bb}/${bb}.shp \
 		   -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
 		   -e 4326
 	else
-	    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'North-America', 'GRIP-GL'.\n\n"
+	    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai'.\n\n"
 	    exit 1
 	fi
     fi

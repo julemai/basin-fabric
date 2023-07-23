@@ -21,7 +21,7 @@ from __future__ import print_function
 #
 
 # pyenv activate env-3.8.5-ravenpy-new
-# python 05_static_attributes_geophysical.py -s Wisconsin
+# python 06_static_attributes_geophysical.py -s wisconsin-lewis
 
 
 """
@@ -83,13 +83,13 @@ case_study   = None
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Derive static geophysical attributes.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. One of ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL'].")
+                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai'].")
 
 args         = parser.parse_args()
 case_study   = args.case_study
 
 if (case_study is None):
-    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL']")
+    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
 
 del parser, args
 
@@ -114,23 +114,23 @@ import rasterio as rio
 from rasterio import mask
 
 
-if case_study == 'Wisconsin':
-    project_root = Path(dir_path+'/../regions/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
+if case_study == 'wisconsin-lewis':
+    project_root = Path(dir_path+'/../regions/wisconsin-lewis')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
-elif case_study == 'Great-Lakes':
-    project_root = Path(dir_path+'/../regions/Great_Lakes_watersheds')
+elif case_study == 'ontario-zhi':
+    project_root = Path(dir_path+'/../regions/ontario-zhi')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
-elif case_study == 'North-America':
-    project_root = Path(dir_path+'/../regions/North_America_watersheds/')
+elif case_study == 'conus-zhi':
+    project_root = Path(dir_path+'/../regions/conus-zhi/')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
-elif case_study == 'GRIP-GL':
-    project_root = Path(dir_path+'/../regions/GRIP-GL/')
+elif case_study == 'grip-gl-mai':
+    project_root = Path(dir_path+'/../regions/grip-gl-mai/')
     types = ['shapefiles']
     filepattern = '*/*.shp'
 
@@ -174,7 +174,7 @@ if True: #do_area:
 
 
     # -------------
-    # GRIP-GL (212 basins)
+    # grip-gl-mai (212 basins)
     # -------------
     # WISCONSIN (47 basins)
     # -------------

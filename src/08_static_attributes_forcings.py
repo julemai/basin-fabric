@@ -23,10 +23,10 @@ from __future__ import print_function
 # source env-3.10/bin/activate
 # pyenv activate env-3.8.5-basin-fabric
 
-# python 07_static_attributes_forcings.py -s 'Wisconsin'     -f 'rdrs-v2.1_north-america' -p 'all'
-# python 07_static_attributes_forcings.py -s 'North-America' -f 'rdrs-v2.1_north-america' -p 'all'
-# python 07_static_attributes_forcings.py -s 'Great-Lakes'   -f 'rdrs-v2.1_north-america' -p 'all'
-# python 07_static_attributes_forcings.py -s 'GRIP-GL'       -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'     -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'conus-zhi' -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'ontario-zhi'   -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'grip-gl-mai'       -f 'rdrs-v2.1_north-america' -p 'all'
 
 
 """
@@ -85,7 +85,7 @@ period       = 'all'
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Derive static geophysical attributes.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. One of ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL'].")
+                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai'].")
 parser.add_argument('-f', '--forcing', action='store', default=forcing, dest='forcing',
                     help="Forcing type needs to be specified. E.g., one of ['rdrs-v2.1_north-america']. These files need to be available for each basin: 'regions/<case_study>/forcings/<basin>/<basin>_agg_<forcing>_lp.nc'.")
 parser.add_argument('-p', '--period', action='store', default=period, dest='period',
@@ -97,7 +97,7 @@ forcing      = args.forcing
 period       = args.period
 
 if (case_study is None):
-    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['Wisconsin', 'Great-Lakes', 'North-America', 'GRIP-GL']")
+    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
 if (forcing is None):
     raise ValueError("Forcing type (-f) must be specified.E.g., one of ['rdrs-v2.1_north-america']. These files need to be available for each basin: 'regions/<case_study>/forcings/<basin>/<basin>_agg_<forcing>_lp.nc'.")
 if (period != 'all'):
@@ -131,17 +131,17 @@ from neuralhydrology.datautils.climateindices import calculate_dyn_climate_indic
 from neuralhydrology.datautils.pet import get_priestley_taylor_pet
 
 
-if case_study == 'Wisconsin':
-    project_root = Path(dir_path+'/../regions/Wisconsin_waterheds')  #Path('/publicwork/gauch/GRIP-GL/scripts/MachineLearning')
+if case_study == 'wisconsin-lewis':
+    project_root = Path(dir_path+'/../regions/wisconsin-lewis')
 
-elif case_study == 'Great-Lakes':
-    project_root = Path(dir_path+'/../regions/Great_Lakes_watersheds')
+elif case_study == 'ontario-zhi':
+    project_root = Path(dir_path+'/../regions/ontario-zhi')
 
-elif case_study == 'North-America':
-    project_root = Path(dir_path+'/../regions/North_America_watersheds/')
+elif case_study == 'conus-zhi':
+    project_root = Path(dir_path+'/../regions/conus-zhi')
 
-elif case_study == 'GRIP-GL':
-    project_root = Path(dir_path+'/../regions/GRIP-GL/')
+elif case_study == 'grip-gl-mai':
+    project_root = Path(dir_path+'/../regions/grip-gl-mai')
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))

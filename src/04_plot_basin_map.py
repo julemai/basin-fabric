@@ -22,15 +22,15 @@ from __future__ import print_function
 
 # pyenv activate env-3.8.5-nrcan
 
-# python 04_plot_basin_map.py -s Wisconsin -p map_wisconsin.pdf
-# python 04_plot_basin_map.py -s Great-Lakes -p map_great-lakes.pdf
-# python 04_plot_basin_map.py -s North-America -p map_north-america.pdf
-# python 04_plot_basin_map.py -s GRIP-GL -p map_grip-gl.pdf
+# python 04_plot_basin_map.py -s wisconsin-lewis -p map_wisconsin.pdf
+# python 04_plot_basin_map.py -s ontario-zhi -p map_great-lakes.pdf
+# python 04_plot_basin_map.py -s conus-zhi -p map_north-america.pdf
+# python 04_plot_basin_map.py -s grip-gl-mai -p map_grip-gl.pdf
 
-# python 04_plot_basin_map.py -s Wisconsin -g map_wisconsin
-# python 04_plot_basin_map.py -s Great-Lakes -g map_great-lakes
-# python 04_plot_basin_map.py -s North-America -g map_north-america
-# python 04_plot_basin_map.py -s GRIP-GL -g map_grip-gl
+# python 04_plot_basin_map.py -s wisconsin-lewis -g map_wisconsin
+# python 04_plot_basin_map.py -s ontario-zhi -g map_great-lakes
+# python 04_plot_basin_map.py -s conus-zhi -g map_north-america
+# python 04_plot_basin_map.py -s grip-gl-mai -g map_grip-gl
 
 
 """
@@ -66,7 +66,7 @@ case_study   = None
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Plot basin shape.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. E.g. 'Wisconsin', 'Great-Lakes', 'North-America'.")
+                    help="Case study. E.g. 'wisconsin-lewis', 'ontario-zhi', 'conus-zhi'.")
 
 args         = parser.parse_args()
 case_study   = args.case_study
@@ -117,9 +117,9 @@ from   mpl_toolkits.basemap import Basemap
 t1 = time.time()
 
 
-if case_study == 'Wisconsin':
-    project_root = dir_path+'/../regions/Wisconsin_waterheds/shapefiles/'
-    outfolder    = dir_path+'/../regions/Wisconsin_waterheds/maps/'
+if case_study == 'wisconsin-lewis':
+    project_root = dir_path+'/../regions/wisconsin-lewis/shapefiles/'
+    outfolder    = dir_path+'/../regions/wisconsin-lewis/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -93.0
@@ -127,9 +127,9 @@ if case_study == 'Wisconsin':
     llcrnrlat =   42.0
     urcrnrlat =   47.2
 
-elif case_study == 'Great-Lakes':
-    project_root = dir_path+'/../regions/Great_Lakes_watersheds/shapefiles/'
-    outfolder    = dir_path+'/../regions/Great_Lakes_watersheds/maps/'
+elif case_study == 'ontario-zhi':
+    project_root = dir_path+'/../regions/ontario-zhi/shapefiles/'
+    outfolder    = dir_path+'/../regions/ontario-zhi/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -91.0
@@ -137,9 +137,9 @@ elif case_study == 'Great-Lakes':
     llcrnrlat =   40.5
     urcrnrlat =   49.8
 
-elif case_study == 'North-America':
-    project_root = dir_path+'/../regions/North_America_watersheds/shapefiles/'
-    outfolder    = dir_path+'/../regions/North_America_watersheds/maps/'
+elif case_study == 'conus-zhi':
+    project_root = dir_path+'/../regions/conus-zhi/shapefiles/'
+    outfolder    = dir_path+'/../regions/conus-zhi/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -125.0
@@ -147,9 +147,9 @@ elif case_study == 'North-America':
     llcrnrlat =   23.5
     urcrnrlat =   49.5
 
-elif case_study == 'GRIP-GL':
-    project_root = dir_path+'/../regions/GRIP-GL/shapefiles/'
-    outfolder    = dir_path+'/../regions/GRIP-GL/maps/'
+elif case_study == 'grip-gl-mai':
+    project_root = dir_path+'/../regions/grip-gl-mai/shapefiles/'
+    outfolder    = dir_path+'/../regions/grip-gl-mai/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
     llcrnrlon =  -93.0
@@ -333,7 +333,7 @@ else:
 ifig = 0
 
 # -------------------------------------------------------------------------
-# Fig 2: Domain of Great Lakes and gauge stations
+# Fig 2: Domain of region
 #
 ifig += 1
 iplot = 0
@@ -362,16 +362,16 @@ for ishape in range(len(catchfile_shp)):
 
 # draw parallels and meridians.
 # labels: [left, right, top, bottom]
-if case_study == 'Wisconsin':
+if case_study == 'wisconsin-lewis':
     m.drawparallels(np.arange( -80., 81., 2.),labels=[1,0,1,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181., 2.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'Great-Lakes':
+elif case_study == 'ontario-zhi':
     m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'North-America':
+elif case_study == 'conus-zhi':
     m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'GRIP-GL':
+elif case_study == 'grip-gl-mai':
     m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 else:
@@ -446,7 +446,7 @@ if doabc:
                  fontsize=textsize+4,transform=sub.transAxes)
 
 # add title
-if case_study == 'GRIP-GL':
+if case_study == 'grip-gl-mai':
     sub.text(0.5,1.0,str2tex(case_study,usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
