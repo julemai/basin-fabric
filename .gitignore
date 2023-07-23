@@ -18,6 +18,7 @@ regions/*/forcings/*/*.done
 #regions/*/forcings
 #regions/*/attributes
 #regions/*/maps
+regions/*.zip
 
 # Gridded data (too large to get on GitHub)
 
