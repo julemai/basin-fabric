@@ -105,3 +105,8 @@ python src/08_static_attributes_forcings.py -s ontario-zhi -f 'rdrs-v2_north-ame
 
 Creates: attributes/climate_indices.csv
 Creates: forcings/*_agg_*_*_lp_daily_local.nc
+
+Add produced files to Git:
+```
+git add regions/ontario-zhi/forcings/*/*_agg_*_daily_local.nc
+```

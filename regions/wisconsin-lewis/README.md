@@ -102,3 +102,8 @@ python src/08_static_attributes_forcings.py -s wisconsin-lewis -f 'rdrs-v2_north
 
 Creates: attributes/climate_indices.csv
 Creates: forcings/*_agg_*_*_lp_daily_local.nc
+
+Add produced files to Git:
+```
+git add regions/wisconsin-lewis/forcings/*/*_agg_*_daily_local.nc
+```

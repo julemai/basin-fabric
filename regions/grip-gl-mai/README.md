@@ -117,3 +117,8 @@ python src/08_static_attributes_forcings.py -s grip-gl-mai -f 'rdrs-v2.1_north-a
 
 Creates: attributes/climate_indices.csv
 Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
+
+Add produced files to Git:
+```
+git add regions/grip-gl-mai/forcings/*/*_agg_*_daily_local.nc
+```

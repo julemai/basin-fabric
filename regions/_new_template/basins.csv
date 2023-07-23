@@ -1,2 +1,2 @@
-id,name,lat,lon
-XXXX,None,48.48247952,-89.18801899
+id,name,lat,lon,obs_q
+XXXX,YYYY,48.48247952,-89.18801899,ZZZZ

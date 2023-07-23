@@ -7,11 +7,15 @@ src/slurm-*.out
 # Python env
 env-3.10
 
-# Regions (derived data)
-#regions/*/forcings/*_agg_rdrs-v2.1_north-america_[0-9][0-9][0-9][0-9]_RDRS_v2.1_*.nc_lp.nc
-#regions/*/forcings/*_agg_rdrs-v2.1_north-america_lp.nc
-#regions/*/forcings/*.done
-regions/*/forcings
+# Regions (derived data) --> adding only *_daily_local.nc
+regions/*/forcings/*/*_agg_rdrs-v2_grip-gl_[0-9][0-9][0-9][0-9]_RDRS_v2_*.nc_lp.nc
+regions/*/forcings/*/*_agg_rdrs-v2_grip-gl_lp.nc
+regions/*/forcings/*/*_agg_rdrs-v2.1_north-america_[0-9][0-9][0-9][0-9]_RDRS_v2.1_*.nc_lp.nc
+regions/*/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc
+regions/*/forcings/*/*_gridweights_rdrs-v2.1_north-america_lp.txt
+regions/*/forcings/*/*_gridweights_rdrs-v2.1_north-america_lp_aggregated.rvt
+regions/*/forcings/*/*.done
+#regions/*/forcings
 #regions/*/attributes
 #regions/*/maps
 
