@@ -167,10 +167,10 @@ if forcing == 'rdrs-v2.1_north-america':
     var_temp    = 'RDRS_v2.1_P_TT_1.5m'   # temperature
     var_swrad   = 'RDRS_v2.1_P_FB_SFC'    # shortwave radiation
 elif forcing == 'rdrs-v2_grip-gl':
-    var_precip  = 'RDRS_v2_A_PR0_SFC'   # precipitation (primary)
-    var_precip2 = None                  # precipitation (secondary); set to None is not existing
-    var_temp    = 'RDRS_v2_P_TT_1.5m'   # temperature
-    var_swrad   = 'RDRS_v2_P_FB_SFC'    # shortwave radiation
+    var_precip  = 'RDRS_v2_A_PR0_SFC_m'      # precipitation (primary)
+    var_precip2 = None                       # precipitation (secondary); set to None is not existing
+    var_temp    = 'RDRS_v2_P_TT_1.5m_degC'   # temperature
+    var_swrad   = 'RDRS_v2_P_FB_SFC_W_m2'    # shortwave radiation
 else:
     raise ValueError('Forcing details not known for this forcing. Please specify.')
 
@@ -273,16 +273,32 @@ if do_forcings:
                 daily_forcings = forcing_set
 
             # see if units need to be converted
-            if attributes_ori[var_precip]['units'] == 'm':
-                mult = 1000. # m to mm
-            elif attributes_ori[var_precip]['units'] == 'mm':
-                mult = 1. # mm to mm
+            if 'units' in list(attributes_ori[var_precip]):
+                if attributes_ori[var_precip]['units'] == 'm':
+                    mult = 1000. # m to mm
+                elif attributes_ori[var_precip]['units'] == 'mm':
+                    mult = 1. # mm to mm
+                else:
+                    raise ValueError('Unit for precipitation not known. Please implement conversion factor to get [mm].')
+            elif forcing == 'rdrs-v2_grip-gl':
+                mult = 1000. # assuming it is 'm'
             else:
-                raise ValueError('Unit for precipitation not known. Please implement conversion factor to get [mm].')
+                raise ValueError('Unit for precipitation not known. Dont know what to do.')
 
             # since window_length is length of forcings, there will only be one date returned, so we can do .iloc[0]
             if ii == 0:
-                clim_indices[basin] = calculate_dyn_climate_indices(daily_forcings[var_precip] * mult,
+                if forcing == 'rdrs-v2_grip-gl':
+                    print('daily_forcings[var_precip] = ',daily_forcings[var_precip])
+                    print('daily_forcings["max_"+var_temp] = ',daily_forcings['max_'+var_temp])
+                    print('daily_forcings["min_"+var_temp] = ',daily_forcings['min_'+var_temp])
+                    print('daily_forcings["potential_evapotranspiration"] = ',daily_forcings['potential_evapotranspiration'])
+                    clim_indices[basin] = calculate_dyn_climate_indices(daily_forcings[var_precip] * mult,
+                                                                       daily_forcings['max_'+var_temp],
+                                                                       daily_forcings['min_'+var_temp],
+                                                                       daily_forcings['potential_evapotranspiration'],
+                                                                       window_length=len(daily_forcings)).iloc[0]
+                else:
+                    clim_indices[basin] = calculate_dyn_climate_indices(daily_forcings[var_precip] * mult,
                                                                        daily_forcings[var_temp+'_max'],
                                                                        daily_forcings[var_temp+'_min'],
                                                                        daily_forcings['potential_evapotranspiration'],

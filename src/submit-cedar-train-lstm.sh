@@ -14,7 +14,7 @@
 
 #SBATCH --job-name=lstm-grip                       # name of job in queque
 #SBATCH --time=0-04:00:00                          # time (DD-HH:MM:SS);
-#SBATCH --mem=3G                                   # memory; default unit is megabytes
+#SBATCH --mem=4G                                   # memory; default unit is megabytes
 
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
@@ -45,3 +45,4 @@ nh-run train --config-file final-training/seed${SLURM_ARRAY_TASK_ID}.yml
 # ------------------
 # JOBID
 # 7606862   --> all basins                        ;  3GB ; 4h   ; 10 tasks (each 1 seed)
+# 7622981   --> basins that were OUT_OF_MEM       ;  4GB ; 4h   ;  4 tasks (each 1 seed)
