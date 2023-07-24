@@ -288,10 +288,6 @@ if do_forcings:
             # since window_length is length of forcings, there will only be one date returned, so we can do .iloc[0]
             if ii == 0:
                 if forcing == 'rdrs-v2_grip-gl':
-                    print('daily_forcings[var_precip] = ',daily_forcings[var_precip])
-                    print('daily_forcings["max_"+var_temp] = ',daily_forcings['max_'+var_temp])
-                    print('daily_forcings["min_"+var_temp] = ',daily_forcings['min_'+var_temp])
-                    print('daily_forcings["potential_evapotranspiration"] = ',daily_forcings['potential_evapotranspiration'])
                     clim_indices[basin] = calculate_dyn_climate_indices(daily_forcings[var_precip] * mult,
                                                                        daily_forcings['max_'+var_temp],
                                                                        daily_forcings['min_'+var_temp],
