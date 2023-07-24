@@ -320,7 +320,7 @@ static_attrs = clim_indices
 static_attrs = pd.DataFrame(clim_indices).T
 static_attrs.index.set_names('basin', inplace=True)
 static_attrs.columns = [col.split('_dyn')[0] for col in static_attrs.columns]
-filename_out = Path(project_root / 'attributes' / 'climate_indices.csv')
+filename_out = Path(project_root / 'attributes' / 'climate_indices_'+forcing+'.csv')
 static_attrs.to_csv(filename_out)
 
 print('\nSaved information to: {}'.format(filename_out))
