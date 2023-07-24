@@ -103,6 +103,8 @@ module load mpi4py/3.1.3
 source /scratch/julemai/basin-fabric/env-cuda/bin/activate
 
 # Do training (each about 3h20)
+# - first numbers: [number of basins]
+# - second numbers (epoch): [????]
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
 nh-run train --config-file final-training/seed1.yml
 nh-run train --config-file final-training/seed2.yml
