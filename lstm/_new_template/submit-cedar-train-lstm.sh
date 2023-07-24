@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # submit with:
-#       cd /scratch/julemai/basin-fabric/src
 #       sbatch submit-cedar-train-lstm.sh
 
 #SBATCH --account=def-julemai                      # rpp-julemai    # your group
