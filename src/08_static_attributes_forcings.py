@@ -23,11 +23,17 @@ from __future__ import print_function
 # source env-3.10/bin/activate
 # pyenv activate env-3.8.5-basin-fabric
 
+# INCLUDING AGGREGATION OF HOURLY->DAILY FORCINGS
+# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'  -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'conus-zhi'        -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all' -a
+
+# NO AGGREGATION OF HOURLY->DAILY FORCINGS
 # python 08_static_attributes_forcings.py -s 'wisconsin-lewis'  -f 'rdrs-v2.1_north-america' -p 'all'
 # python 08_static_attributes_forcings.py -s 'conus-zhi'        -f 'rdrs-v2.1_north-america' -p 'all'
 # python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all'
 # python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all'
-
 
 """
 
@@ -81,6 +87,7 @@ from pathlib import Path
 case_study   = None
 forcing      = None
 period       = 'all'
+aggregate    = False
 
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Derive static geophysical attributes.''')
@@ -90,11 +97,16 @@ parser.add_argument('-f', '--forcing', action='store', default=forcing, dest='fo
                     help="Forcing type needs to be specified. E.g., one of ['rdrs-v2.1_north-america']. These files need to be available for each basin: 'regions/<case_study>/forcings/<basin>/<basin>_agg_<forcing>_lp.nc'.")
 parser.add_argument('-p', '--period', action='store', default=period, dest='period',
                     help="Time period to evaluate attributes for. Format: YYYY-MM-DD_HH:MM:SS;YYYY-MM-DD_HH:MM:SS. The two timesteps need to exist in NetCDF file. Default: all")
+parser.add_argument('-a', '--aggregate', action='store_true',
+                    default=aggregate, dest='aggregate',
+                    help='If set, aggregation of hourly forcings will be performed before and attributes are derived (from daily forcings). Default: not set (False).')
+
 
 args         = parser.parse_args()
 case_study   = args.case_study
 forcing      = args.forcing
 period       = args.period
+aggregate    = args.aggregate
 
 if (case_study is None):
     raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
@@ -184,7 +196,10 @@ if do_forcings:
     nbasins = len(static_attributes_basin.index)
     for ibasin,basin in enumerate(sorted(static_attributes_basin.index)):
 
-        basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp.nc'
+        if aggregate:
+            basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp.nc'
+        else:
+            basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
         if not basin_forcing_file.exists():
             no_forcing_basins.append(basin)
             print("File not found for basin {}: {}".format(basin,basin_forcing_file))
@@ -193,9 +208,10 @@ if do_forcings:
         lat = static_attributes_basin.loc[basin, 'lat']
         lon = static_attributes_basin.loc[basin, 'lon']
 
-        # get time shift
-        timezone_offset_hrs = get_time_zone(lat,lon)
-        # print("Shift time: UTC{}h".format(timezone_offset_hrs))
+        if aggregate:
+            # get time shift
+            timezone_offset_hrs = get_time_zone(lat,lon)
+            # print("Shift time: UTC{}h".format(timezone_offset_hrs))
 
         # read data
         xr_forcings = xr.open_dataset(basin_forcing_file)
@@ -208,13 +224,15 @@ if do_forcings:
 
         forcings = xr_forcings.to_dataframe()
         forcings.index.name = 'time'
-        forcings = forcings.reset_index(level='nHRU')   # nHRU is an index column --> make regular column
-        forcings = forcings.drop(['nHRU'], axis=1)      # remove nHRU column entirely (is 0 everywhere anyway in lumped forcings)
+        if aggregate:
+            forcings = forcings.reset_index(level='nHRU')   # nHRU is an index column --> make regular column
+            forcings = forcings.drop(['nHRU'], axis=1)      # remove nHRU column entirely (is 0 everywhere anyway in lumped forcings)
 
-        # shift time
-        # print("forcings before: ",forcings)
-        forcings = forcings.shift(timezone_offset_hrs, freq='H')
-        # print("forcings after: ",forcings)
+        if aggregate:
+            # shift time
+            # print("forcings before: ",forcings)
+            forcings = forcings.shift(timezone_offset_hrs, freq='H')
+            # print("forcings after: ",forcings)
 
         climidx_forcings = forcings
         if period != 'all':
@@ -228,32 +246,41 @@ if do_forcings:
         # resample to daily values: sum(precip), min/max(temp), mean for all other variables
         # run once with calibration data (for climate index calculation), once with full data (for actual forcings)
         for ii, forcing_set in enumerate([climidx_forcings, forcings]):
-            daily_resampled = forcing_set.resample('1D')
-            daily_forcings = daily_resampled.mean()
 
-            # precip
-            daily_forcings[var_precip]  = daily_resampled[var_precip].sum(min_count=1)
-            if not(var_precip2 is None):
-                daily_forcings[var_precip2] = daily_resampled[var_precip2].sum(min_count=1)
-            # temp
-            daily_forcings[var_temp+'_min'] = daily_resampled[var_temp].min()
-            daily_forcings[var_temp+'_max'] = daily_resampled[var_temp].max()
-            daily_forcings['potential_evapotranspiration'] = \
-                get_priestley_taylor_pet(daily_forcings[var_temp+'_min'].values,
+            if aggregate:
+
+                daily_resampled = forcing_set.resample('1D')
+                daily_forcings = daily_resampled.mean()
+
+                # precip
+                daily_forcings[var_precip]  = daily_resampled[var_precip].sum(min_count=1)
+                if not(var_precip2 is None):
+                    daily_forcings[var_precip2] = daily_resampled[var_precip2].sum(min_count=1)
+                # temp
+                daily_forcings[var_temp+'_min'] = daily_resampled[var_temp].min()
+                daily_forcings[var_temp+'_max'] = daily_resampled[var_temp].max()
+                daily_forcings['potential_evapotranspiration'] = \
+                  get_priestley_taylor_pet(daily_forcings[var_temp+'_min'].values,
                                          daily_forcings[var_temp+'_max'].values,
                                          daily_forcings[var_swrad].values,
                                          lat=lat,
                                          elev=static_attributes_geophys.loc[basin, 'mean_elev'],
                                          doy=daily_forcings.index.dayofyear.values)
 
+            else:
+
+                daily_forcings = forcing_set
+
+            # see if units need to be converted
+            if attributes_ori[var_precip]['units'] == 'm':
+                mult = 1000. # m to mm
+            elif attributes_ori[var_precip]['units'] == 'mm':
+                mult = 1. # mm to mm
+            else:
+                raise ValueError('Unit for precipitation not known. Please implement conversion factor to get [mm].')
+
+            # since window_length is length of forcings, there will only be one date returned, so we can do .iloc[0]
             if ii == 0:
-                # since window_length is length of forcings, there will only be one date returned, so we can do .iloc[0]
-                if attributes_ori[var_precip]['units'] == 'm':
-                    mult = 1000. # m to mm
-                elif attributes_ori[var_precip]['units'] == 'mm':
-                    mult = 1. # mm to mm
-                else:
-                    raise ValueError('Unit for precipitation not known. Please implement conversion factor to get [mm].')
                 clim_indices[basin] = calculate_dyn_climate_indices(daily_forcings[var_precip] * mult,
                                                                        daily_forcings[var_temp+'_max'],
                                                                        daily_forcings[var_temp+'_min'],
@@ -266,44 +293,47 @@ if do_forcings:
         # if discharge is None:
         #     no_discharge_basins.append(basin)
 
-        # replace original data (hourly) with resampled (daily) and save as NetCDF
-        xr_forcings['time'] = forcings.index  # shift time
-        xr_forcings         = xr_forcings.resample(time='1D').pad()  # make daily (especially time variable and dimension)
 
-        variables = list(daily_forcings.columns)
-        for vv in variables:
+        if aggregate:
 
-            # set values
-            if vv != 'time':
-                xr_forcings[vv] = daily_forcings[vv]
+            # replace original data (hourly) with resampled (daily) and save as NetCDF
+            xr_forcings['time'] = forcings.index  # shift time
+            xr_forcings         = xr_forcings.resample(time='1D').pad()  # make daily (especially time variable and dimension)
 
-            # set attributes
-            if vv in vars_in_ori:
-                xr_forcings[vv].attrs = attributes_ori[vv]
-            elif vv == var_temp+'_max':
-                xr_forcings[vv].attrs = attributes_ori[var_temp]
-                xr_forcings[vv].attrs['long_name'] = attributes_ori[var_temp]['long_name']+' (maximum)'
-            elif vv == var_temp+'_min':
-                xr_forcings[vv].attrs = attributes_ori[var_temp]
-                xr_forcings[vv].attrs['long_name'] = attributes_ori[var_temp]['long_name']+' (minimum)'
-            elif vv == 'potential_evapotranspiration':
-                attrs = {
-                    'long_name': 'Potential evapotranspiration based on Priestley-Taylor using get_priestley_taylor_pet() of NeuralHydrology',
-                    'coordinates': 'lon lat',
-                    'grid_mapping': 'rotated_pole',
-                    'cell_methods': 'time: mean',
-                    'units': 'mm/day',
-                    }
-                xr_forcings[vv].attrs = attrs
+            variables = list(daily_forcings.columns)
+            for vv in variables:
 
-        # rename time --> date
-        xr_forcings = xr_forcings.rename_dims({'time':'date'})
-        xr_forcings = xr_forcings.rename_vars({'time':'date'})
+                # set values
+                if vv != 'time':
+                    xr_forcings[vv] = daily_forcings[vv]
 
-        # ds = xr.Dataset.from_dataframe(daily_forcings)
-        filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
-        xr_forcings.to_netcdf( filename )
-        print('Wrote: {} (basin {} of {})'.format(filename,ibasin+1,nbasins))
+                # set attributes
+                if vv in vars_in_ori:
+                    xr_forcings[vv].attrs = attributes_ori[vv]
+                elif vv == var_temp+'_max':
+                    xr_forcings[vv].attrs = attributes_ori[var_temp]
+                    xr_forcings[vv].attrs['long_name'] = attributes_ori[var_temp]['long_name']+' (maximum)'
+                elif vv == var_temp+'_min':
+                    xr_forcings[vv].attrs = attributes_ori[var_temp]
+                    xr_forcings[vv].attrs['long_name'] = attributes_ori[var_temp]['long_name']+' (minimum)'
+                elif vv == 'potential_evapotranspiration':
+                    attrs = {
+                        'long_name': 'Potential evapotranspiration based on Priestley-Taylor using get_priestley_taylor_pet() of NeuralHydrology',
+                        'coordinates': 'lon lat',
+                        'grid_mapping': 'rotated_pole',
+                        'cell_methods': 'time: mean',
+                        'units': 'mm/day',
+                        }
+                    xr_forcings[vv].attrs = attrs
+
+            # rename time --> date
+            xr_forcings = xr_forcings.rename_dims({'time':'date'})
+            xr_forcings = xr_forcings.rename_vars({'time':'date'})
+
+            # ds = xr.Dataset.from_dataframe(daily_forcings)
+            filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
+            xr_forcings.to_netcdf( filename )
+            print('Wrote: {} (basin {} of {})'.format(filename,ibasin+1,nbasins))
 
     print(f'\nNo forcings for basins:  ({len(no_forcing_basins)}) {no_forcing_basins}')
     # print(f'No discharge for basins: ({len(no_discharge_basins)}) {no_discharge_basins}')
@@ -320,7 +350,7 @@ static_attrs = clim_indices
 static_attrs = pd.DataFrame(clim_indices).T
 static_attrs.index.set_names('basin', inplace=True)
 static_attrs.columns = [col.split('_dyn')[0] for col in static_attrs.columns]
-filename_out = Path(project_root / 'attributes' / 'climate_indices_'+forcing+'.csv')
+filename_out = Path(project_root / 'attributes' / f'climate_indices_{forcing}.csv')
 static_attrs.to_csv(filename_out)
 
 print('\nSaved information to: {}'.format(filename_out))
