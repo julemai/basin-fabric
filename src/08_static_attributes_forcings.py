@@ -34,6 +34,7 @@ from __future__ import print_function
 # python 08_static_attributes_forcings.py -s 'conus-zhi'        -f 'rdrs-v2.1_north-america' -p 'all'
 # python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all'
 # python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2_grip-gl'         -p 'all'
 
 """
 
