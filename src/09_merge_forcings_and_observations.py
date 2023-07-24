@@ -63,7 +63,6 @@ Written,  JM, Jul 2023
 #
 
 import argparse
-import datetime
 from pathlib import Path
 
 case_study   = None
@@ -120,8 +119,6 @@ sys.path.append(dir_path+'/additional_processing')
 
 
 from pathlib import Path
-from datetime import datetime
-from get_time_zone import get_time_zone # in additional_processing
 
 import numpy as np
 import pandas as pd
