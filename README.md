@@ -76,6 +76,7 @@ pip install matplotlib
 pip install timezonefinder
 python -m pip install basemap
 pip install -U pytest
+pip install pathlib2
 
 pip install ravenpy[gis]
 pip install neuralhydrology
