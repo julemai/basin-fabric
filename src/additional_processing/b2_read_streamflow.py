@@ -274,69 +274,76 @@ def get_info_station(source=None,filename='/tmp/test',station=None,pairsfile=Non
                 usgs = json.loads(response1.content.decode('utf-8'))
                 json_dump = json.dumps(usgs)
 
-                # print("data = ",usgs)
+                # print("usgs = ",usgs)
                 # print("keys = ",usgs.keys())
                 # print("more = ",usgs['value']['timeSeries'][0]['variable']['unit'].keys())
 
-                tmp = {}
-                tmp['name']     = usgs['value']['timeSeries'][0]['sourceInfo']['siteName'].replace(',',';')
-                tmp['lat']      = usgs['value']['timeSeries'][0]['sourceInfo']['geoLocation']['geogLocation']['latitude']
-                tmp['lon']      = usgs['value']['timeSeries'][0]['sourceInfo']['geoLocation']['geogLocation']['longitude']
-                tmp['area_km2'] = None
-                tmp['unit']     = usgs['value']['timeSeries'][0]['variable']['unit']['unitCode']
-                if 'noDataValue' in usgs['value']['timeSeries'][0]['variable']['unit'].keys():
-                    tmp['nodata'] = usgs['value']['timeSeries'][0]['variable']['unit']['noDataValue']
-                else:
-                    tmp['nodata'] = None
+                if len(usgs['value']['timeSeries']) > 0:
 
-                # find date range
-                dates = usgs['value']['timeSeries'][0]['values'][0]['value']               # [ {'value': '787', 'qualifiers': ['A'], 'dateTime': '1956-02-24T00:00:00.000'},
-                #                                                                          #   {'value': '765', 'qualifiers': ['A'], 'dateTime': '1956-02-25T00:00:00.000'}, ...]
-                dates = np.array([ idate['dateTime'].split('T')[0] for idate in dates ])   # '1956-02-24T00:00:00.000' --> '1956-02-24
-                tt_min = min(dates)
-                tt_max = max(dates)
-                tmp['Q']        = {'start': tt_min , 'end': tt_max }
-
-                if check_status_usgs(response2.status_code):
-
-                    usgs = response2.content.decode('utf-8').split('\n')
-
-                    # remove commented and blank lines
-                    usgs_tmp = []
-                    for ll in usgs:
-                        if not( ll.strip().startswith('#') or len(ll.strip()) == 0):
-                            usgs_tmp.append(ll)
-                    usgs = usgs_tmp
-
-                    # split columns
-                    usgs = [ ll.split('\t') for ll in usgs ]
-
-                    # # FOR DEBUGGING
-                    # if not(silent):
-                    #     nattr = len(usgs[0])
-                    #     for iattr,attr in enumerate(usgs[0]):
-                    #         print('   >>> {} = {}'.format(attr,usgs[2][iattr]))
-
-                    # find index of contributing drainage area
-                    try:
-                        idx = usgs[0].index('drain_area_va')
-                    except:
-                        raise ValueError('   "drain_area_va" not found in list of attributes: {}'.format(usgs[0]))
-
-                    # set area (given in mi**2)
-                    if usgs[2][idx] != '':
-                        tmp['area_km2'] = float(usgs[2][idx]) * 1.609344**2
+                    tmp = {}
+                    tmp['name']     = usgs['value']['timeSeries'][0]['sourceInfo']['siteName'].replace(',',';')
+                    tmp['lat']      = usgs['value']['timeSeries'][0]['sourceInfo']['geoLocation']['geogLocation']['latitude']
+                    tmp['lon']      = usgs['value']['timeSeries'][0]['sourceInfo']['geoLocation']['geogLocation']['longitude']
+                    tmp['area_km2'] = None
+                    tmp['unit']     = usgs['value']['timeSeries'][0]['variable']['unit']['unitCode']
+                    if 'noDataValue' in usgs['value']['timeSeries'][0]['variable']['unit'].keys():
+                        tmp['nodata'] = usgs['value']['timeSeries'][0]['variable']['unit']['noDataValue']
                     else:
-                        print("   Area for station {} not found. Set to nan.".format(station))
-                        tmp['area_km2'] = np.nan
+                        tmp['nodata'] = None
 
-                # add station info to list
-                if station in data.keys():
-                    data[station].update( tmp )
+                    # find date range
+                    dates = usgs['value']['timeSeries'][0]['values'][0]['value']               # [ {'value': '787', 'qualifiers': ['A'], 'dateTime': '1956-02-24T00:00:00.000'},
+                    #                                                                          #   {'value': '765', 'qualifiers': ['A'], 'dateTime': '1956-02-25T00:00:00.000'}, ...]
+                    dates = np.array([ idate['dateTime'].split('T')[0] for idate in dates ])   # '1956-02-24T00:00:00.000' --> '1956-02-24
+                    tt_min = min(dates)
+                    tt_max = max(dates)
+                    tmp['Q']        = {'start': tt_min , 'end': tt_max }
+
+                    if check_status_usgs(response2.status_code):
+
+                        usgs = response2.content.decode('utf-8').split('\n')
+
+                        # remove commented and blank lines
+                        usgs_tmp = []
+                        for ll in usgs:
+                            if not( ll.strip().startswith('#') or len(ll.strip()) == 0):
+                                usgs_tmp.append(ll)
+                        usgs = usgs_tmp
+
+                        # split columns
+                        usgs = [ ll.split('\t') for ll in usgs ]
+
+                        # # FOR DEBUGGING
+                        # if not(silent):
+                        #     nattr = len(usgs[0])
+                        #     for iattr,attr in enumerate(usgs[0]):
+                        #         print('   >>> {} = {}'.format(attr,usgs[2][iattr]))
+
+                        # find index of contributing drainage area
+                        try:
+                            idx = usgs[0].index('drain_area_va')
+                        except:
+                            raise ValueError('   "drain_area_va" not found in list of attributes: {}'.format(usgs[0]))
+
+                        # set area (given in mi**2)
+                        if usgs[2][idx] != '':
+                            tmp['area_km2'] = float(usgs[2][idx]) * 1.609344**2
+                        else:
+                            print("   Area for station {} not found. Set to nan.".format(station))
+                            tmp['area_km2'] = np.nan
+
+                    # add station info to list
+                    if station in data.keys():
+                        data[station].update( tmp )
+                    else:
+                        data[station] = tmp
+
+                    if not(silent): print("info of station {}: {}".format(station,data[station]))
+
                 else:
-                    data[station] = tmp
-
-                if not(silent): print("info of station {}: {}".format(station,data[station]))
+                    print(">>>>>>>>>>>>>>>>>>>>>>>>")
+                    print("WARNING: No data found for station {}.".format(station))
+                    print(">>>>>>>>>>>>>>>>>>>>>>>>")
 
     else:
         raise ValueError('get_info_station: Source not implemented yet. Needs to be one of the following: {}'.format(sources))

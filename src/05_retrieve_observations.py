@@ -174,7 +174,7 @@ if len(obs_q_US) > 0:
     station   = ','.join(obs_q_US)
     pairsfile = None
 
-    info_streamflow_US = get_info_station(source=source,filename=filename,station=station,pairsfile=pairsfile,silent=True)
+    info_streamflow_US = get_info_station(source=source,filename=filename,station=station,pairsfile=pairsfile,silent=False)
     data_streamflow_US = read_streamflow( source=source,filename=filename,station=station,pairsfile=pairsfile,silent=True)
 
     info_streamflow.update( info_streamflow_US )
