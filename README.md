@@ -113,6 +113,8 @@ nh-run train --config-file final-training/seed2.yml
 nh-run train --config-file final-training/seed10.yml
 
 # Evaluate trained model (each about 2m30)
+# - creates: runs/grip-gl-mai-finalTraining-seedX_XXXX_XXXXXX/test/model_epoch030/test_metrics.csv
+# - creates: runs/grip-gl-mai-finalTraining-seedX_XXXX_XXXXXX/test/model_epoch030/test_results.p
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
 nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed1_XXXX_XXXXXX/
 nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed2_XXXX_XXXXXX/
