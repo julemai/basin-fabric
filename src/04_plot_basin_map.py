@@ -21,16 +21,13 @@ from __future__ import print_function
 #
 
 # pyenv activate env-3.8.5-nrcan
+# pyenv activate env-3.8.5-basin-fabric
 
-# python 04_plot_basin_map.py -s wisconsin-lewis -p map_wisconsin.pdf
-# python 04_plot_basin_map.py -s ontario-zhi -p map_great-lakes.pdf
-# python 04_plot_basin_map.py -s conus-zhi -p map_north-america.pdf
-# python 04_plot_basin_map.py -s grip-gl-mai -p map_grip-gl.pdf
-
-# python 04_plot_basin_map.py -s wisconsin-lewis -g map_wisconsin
-# python 04_plot_basin_map.py -s ontario-zhi -g map_great-lakes
-# python 04_plot_basin_map.py -s conus-zhi -g map_north-america
-# python 04_plot_basin_map.py -s grip-gl-mai -g map_grip-gl
+# python 04_plot_basin_map.py -s wisconsin-lewis
+# python 04_plot_basin_map.py -s ontario-zhi
+# python 04_plot_basin_map.py -s conus-zhi
+# python 04_plot_basin_map.py -s grip-gl-mai
+# python 04_plot_basin_map.py -s north-america-mai
 
 
 """
@@ -156,6 +153,16 @@ elif case_study == 'grip-gl-mai':
     urcrnrlon =  -72.0
     llcrnrlat =   39.0
     urcrnrlat =   51.0
+
+elif case_study == 'north-america-mai':
+    project_root = dir_path+'/../regions/north-america-mai/shapefiles/'
+    outfolder    = dir_path+'/../regions/north-america-mai/maps/'
+    shpfile = glob.glob( project_root+'/*/*_lp.shp') #[0:10]
+
+    llcrnrlon =  -116.   # lon: -131.36749999999995 to -60.98499999999996
+    urcrnrlon =   -46.
+    llcrnrlat =   18.    # lat: 26.920416654000064 to 59.33374999800003
+    urcrnrlat =   58.
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
@@ -374,6 +381,9 @@ elif case_study == 'conus-zhi':
 elif case_study == 'grip-gl-mai':
     m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
+elif case_study == 'north-america-mai':
+    m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
+    m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -452,7 +462,7 @@ if case_study == 'grip-gl-mai':
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)
 else:
-    sub.text(0.5,1.0,str2tex(case_study.replace('-',' ').title(),usetex=usetex),
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).title(),usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)

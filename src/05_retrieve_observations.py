@@ -21,10 +21,11 @@ from __future__ import print_function
 #
 
 # pyenv activate env-3.8.5-basin-fabric
-# python 05_retrieve_observations.py -s wisconsin-lewis -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s grip-gl-mai     -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s ontario-zhi     -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s conus-zhi       -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s wisconsin-lewis   -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s grip-gl-mai       -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s ontario-zhi       -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s conus-zhi         -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s north-america-mai -p 1980-01-01:2018-12-31
 
 """
 
@@ -114,23 +115,18 @@ from b3_write_streamflow import write_streamflow_nc
 
 if case_study == 'wisconsin-lewis':
     project_root = Path(dir_path+'/../regions/wisconsin-lewis')
-    types = ['shapefiles']
-    filepattern = '*/*_lp.shp'
 
 elif case_study == 'ontario-zhi':
     project_root = Path(dir_path+'/../regions/ontario-zhi')
-    types = ['shapefiles']
-    filepattern = '*/*_lp.shp'
 
 elif case_study == 'conus-zhi':
     project_root = Path(dir_path+'/../regions/conus-zhi')
-    types = ['shapefiles']
-    filepattern = '*/*_lp.shp'
 
 elif case_study == 'grip-gl-mai':
     project_root = Path(dir_path+'/../regions/grip-gl-mai')
-    types = ['shapefiles']
-    filepattern = '*/*.shp'
+
+elif case_study == 'north-america-mai':
+    project_root = Path(dir_path+'/../regions/north-america-mai')
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
@@ -193,7 +189,7 @@ if len(obs_q_CA) > 0:
     station   = ','.join(obs_q_CA)
     pairsfile = None
 
-    info_streamflow_CA = get_info_station(source=source,filename=filename,station=station,pairsfile=pairsfile,silent=True)
+    info_streamflow_CA = get_info_station(source=source,filename=filename,station=station,pairsfile=pairsfile,silent=False)
     data_streamflow_CA = read_streamflow( source=source,filename=filename,station=station,pairsfile=pairsfile,silent=True)
 
     info_streamflow.update( info_streamflow_CA )
