@@ -21,7 +21,13 @@ from __future__ import print_function
 #
 
 # pyenv activate env-3.8.5-ravenpy-new
+# pyenv activate env-3.8.5-basin-fabric
+
 # python 06_static_attributes_geophysical.py -s wisconsin-lewis
+# python 06_static_attributes_geophysical.py -s grip-gl-mai
+# python 06_static_attributes_geophysical.py -s ontario-zhi
+# python 06_static_attributes_geophysical.py -s conus-zhi
+# python 06_static_attributes_geophysical.py -s north-america-mai
 
 
 """
@@ -132,7 +138,12 @@ elif case_study == 'conus-zhi':
 elif case_study == 'grip-gl-mai':
     project_root = Path(dir_path+'/../regions/grip-gl-mai/')
     types = ['shapefiles']
-    filepattern = '*/*.shp'
+    filepattern = '*/*_lp.shp'
+
+elif case_study == 'north-america-mai':
+    project_root = Path(dir_path+'/../regions/north-america-mai/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))

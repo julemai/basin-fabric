@@ -7,6 +7,7 @@
 3646 ... 5 yrs data between 2001-2015
 3152 ... North American Routing product v2.1 exists
 2577 ... Basins smaller than 10,000 km2
+2575 ... Remove basins that do not have USGS data anymore (03306500, 05332500)
 
 
 ## Extract basins from routing product
