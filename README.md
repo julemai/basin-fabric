@@ -126,7 +126,6 @@ cd /scratch/julemai/basin-fabric/lstm/grip-gl/
 nh-results-ensemble --run-dirs runs/grip-gl-finalTraining-seed* --output-dir final-training
 
 # Get median KGE
-```
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
 ipy
 
