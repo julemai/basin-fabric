@@ -121,16 +121,21 @@ nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed2_XXXX_XXXXXX/
 ...
 nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed10_XXXX_XXXXXX/
 
-# Merge ensembles (average their predictions)
+# Merge ensembles (average their predictions; take about 1min total)
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
 nh-results-ensemble --run-dirs runs/grip-gl-finalTraining-seed* --output-dir final-training
 
+# Get median KGE
+```
+cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+ipy
+
+import pandas as pd
+data = pd.read_csv('final-training/test_ensemble_metrics.csv')
+data['KGE_1D'].median()
+```
+
 # Validation
 
-# Do some stuff
-cd /scratch/julemai/basin-fabric/lstm/grip-gl/
-nh-run evaluate --run-dir test
 
-### DOES NOT FIND
-scaler_file = run_dir / "train_data" / "train_data_scaler.yml"
 ```
