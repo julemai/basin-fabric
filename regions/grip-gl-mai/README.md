@@ -103,7 +103,7 @@ pyenv activate env-3.8.5-basin-fabric
 python src/08_static_attributes_forcings.py -s grip-gl-mai -f 'rdrs-v2_north-america' -p 'all'
 ```
 
-Creates: attributes/climate_indices.csv
+Creates: attributes/climate_indices_rdrs-v2_north-america.csv
 Creates: forcings/*_agg_rdrs-v2_north-america_lp_daily_local.nc
 
 
@@ -115,7 +115,7 @@ pyenv activate env-3.8.5-basin-fabric
 python src/08_static_attributes_forcings.py -s grip-gl-mai -f 'rdrs-v2.1_north-america' -p 'all'
 ```
 
-Creates: attributes/climate_indices.csv
+Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
 Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 
 Add produced files to Git:

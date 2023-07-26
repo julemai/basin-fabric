@@ -74,10 +74,16 @@ and landcover, and save them in a CSV file.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-ravenpy-new
-python 06_static_attributes_geophysical.py -s ontario-zhi
+python 06_static_attributes_geophysical.py -s north-america-mai
 ```
 
 Creates: attributes/static_attributes.csv
+
+
+
+
+
+
 
 
 ## Clip forcings
@@ -87,7 +93,7 @@ Extract forcings for each basin XXXX from RDRS-v2.1.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/07_create_lumped_forcings.py -s ontario-zhi -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+python src/07_create_lumped_forcings.py -s north-america-mai -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
 
 Creates: forcings/*_agg_*_*_lp.nc
@@ -100,13 +106,13 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s ontario-zhi -f 'rdrs-v2_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s north-america-mai -f 'rdrs-v2.1_north-america' -p 'all'
 ```
 
-Creates: attributes/climate_indices.csv
-Creates: forcings/*_agg_*_*_lp_daily_local.nc
+Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
+Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 
 Add produced files to Git:
 ```
-git add regions/ontario-zhi/forcings/*/*_agg_*_daily_local.nc
+git add regions/north-america-mai/forcings/*/*_agg_*_daily_local.nc
 ```

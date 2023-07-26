@@ -100,11 +100,11 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s ontario-zhi -f 'rdrs-v2_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s ontario-zhi -f 'rdrs-v2.1_north-america' -p 'all'
 ```
 
-Creates: attributes/climate_indices.csv
-Creates: forcings/*_agg_*_*_lp_daily_local.nc
+Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
+Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 
 Add produced files to Git:
 ```

@@ -57,7 +57,7 @@ will be available for (option -p).
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-ravenpy-new
-python 05_retrieve_observations.py -s conus-zhi -p 1980-01-01:2018-12-31
+python 05_retrieve_observations.py -s wisconsin-lewis -p 1980-01-01:2018-12-31
 ```
 
 Creates: observations/daily_streamflow.nc
@@ -97,11 +97,11 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s wisconsin-lewis -f 'rdrs-v2_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s wisconsin-lewis -f 'rdrs-v2.1_north-america' -p 'all'
 ```
 
-Creates: attributes/climate_indices.csv
-Creates: forcings/*_agg_*_*_lp_daily_local.nc
+Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
+Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 
 Add produced files to Git:
 ```
