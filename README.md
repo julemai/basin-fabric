@@ -133,22 +133,24 @@ ipy
 import pandas as pd
 data = pd.read_csv('final-training/test_ensemble_metrics.csv')
 data['KGE_1D'].median()
-```
 
-# Validation
-Save calibration configs
-```
+# save settings and results
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+files=$( \ls runs/grip-gl-finalTraining-seed*/config.yml )
+for ff in $files ; do cp $ff $ff.cal ; done
 files=$( \ls runs/grip-gl-finalTraining-seed*/test/model_epoch030/test_results.p )
 for ff in $files ; do cp $ff $ff.cal ; done
 files=$( \ls runs/grip-gl-finalTraining-seed*/test/model_epoch030/test_metrics.csv )
 for ff in $files ; do cp $ff $ff.cal ; done
 cp /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_results.p /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_results.p.cal
 cp /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_metrics.csv /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_metrics.csv.cal
+```
 
+# Validation
+Save calibration configs
+```
 # Temporal validation: change start-date and end-date
 files=$( \ls runs/grip-gl-finalTraining-seed*/config.yml )
-for ff in $files ; do cp $ff $ff.cal ; done
 for ff in $files ; do sed 's/test_end_date:\ 31\/12\/2018/test_end_date:\ 31\/12\/1999/g' ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
 for ff in $files ; do sed 's/test_start_date:\ 01\/01\/2000/test_start_date:\ 01\/01\/1980/g' ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
 
@@ -160,4 +162,20 @@ nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed1_XXXX_XXXXXX/
 nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed2_XXXX_XXXXXX/
 ...
 nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed10_XXXX_XXXXXX/
+
+# Merge ensembles (average their predictions; take about 1min total)
+# - creates: /scratch/julemai/basin-fabric/lstm/grip-gl-mai/final-training/test_ensemble_metrics.csv
+# - creates: /scratch/julemai/basin-fabric/lstm/grip-gl-mai/final-training/test_ensemble_results.p
+cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+nh-results-ensemble --run-dirs runs/grip-gl-finalTraining-seed* --output-dir final-training
+
+# save results
+files=$( \ls runs/grip-gl-finalTraining-seed*/config.yml )
+for ff in $files ; do cp $ff $ff.valtemp ; done
+files=$( \ls runs/grip-gl-finalTraining-seed*/test/model_epoch030/test_results.p )
+for ff in $files ; do cp $ff $ff.valtemp ; done
+files=$( \ls runs/grip-gl-finalTraining-seed*/test/model_epoch030/test_metrics.csv )
+for ff in $files ; do cp $ff $ff.valtemp ; done
+cp /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_results.p /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_results.p.valtemp
+cp /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_metrics.csv /scratch/julemai/basin-fabric/lstm/grip-gl/final-training/test_ensemble_metrics.csv.valtemp
 ```
