@@ -114,10 +114,10 @@ nh-run train --config-file final-training/seed10.yml
 
 # Evaluate trained model (each about 2m30)
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
-nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed1_*
-nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed2_*
+nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed1_XXXX_XXXXXX/
+nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed2_XXXX_XXXXXX/
 ...
-nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed10_*
+nh-run evaluate --run-dir runs/grip-gl-finalTraining-seed10_XXXX_XXXXXX/
 
 # Merge ensembles (average their predictions)
 cd /scratch/julemai/basin-fabric/lstm/grip-gl/
