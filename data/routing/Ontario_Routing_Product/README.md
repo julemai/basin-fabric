@@ -3,12 +3,12 @@
 Download data from:
 https://lake-river-routing-products-uwaterloo.hub.arcgis.com/maps/b24cd188287f4bb689b9bdc3a3e89e74/explore
 
-PLace them in this folder and unzip.
+Place them in this folder and unzip.
 
 # Expected files
 
 Expected subfolders and files:
-
+```
 drainage_region_FNE_v1-0.zip
 |- finalcat_info_v1-0.shp
 |- obs_gauges_v1-0.shp
@@ -40,3 +40,4 @@ drainage_region_SE_v1-0.zip
 drainage_region_SW_v1-0.zip
 |- finalcat_info_v1-0.shp
 |- obs_gauges_v1-0.shp
+```
