@@ -60,7 +60,7 @@ data/meteorology/rdrs-v2_grip-gl/*.nc
 
 ## ROUTING
 data/routing/*/*.zip
-data/routing/*/*
+data/routing/*/*/*.*
 
 
 
