@@ -1,0 +1,56 @@
+# LSTM experiments
+
+## grip-gl-mai-v1
+
+Attempt to recreate GRIP-GL results using RDRS-v2 and attributes derived by Martin Gauch. Does not work because some files are missing. Martin had done hyper-parameter tuning and the following settings were best and then used for final training:
+```
+batch = 64
+hidden = 256
+learning_rate = {0:0005, 20:0.0001, 30:0.00005}
+epochs = 30
+dropout = 0.4
+seq_length = 365
+```
+as found in Mai et al. (2022) Supplements and final-training/seedXXX.yml (https://github.com/julemai/GRIP-GL/blob/master/scripts/MachineLearning/final-training/seed1.yml).
+
+## grip-gl-mai-v2
+
+Using RDRS v2.1 and all 212 (instead of 141) basins and 2000-2018 for training. 
+Use setup of GRIP-GL to train 212 basins for 2000-2018 and then test for 1980-1999.
+```
+batch = 64
+hidden = 256
+learning_rate = {0:0005, 20:0.0001, 30:0.00005}
+epochs = 30
+dropout = 0.4
+seq_length = 365
+```
+as found in Mai et al. (2022) Supplements and final-training/seedXXX.yml (https://github.com/julemai/GRIP-GL/blob/master/scripts/MachineLearning/final-training/seed1.yml).
+
+## conus-zhi-v1
+
+Use setup of GRIP-GL to train 513 basins for 2000-2018 and then test for 1980-1999.
+```
+batch = 64
+hidden = 256
+learning_rate = {0:0005, 20:0.0001, 30:0.00005}
+epochs = 30
+dropout = 0.4
+seq_length = 365
+```
+as found in Mai et al. (2022) Supplements and final-training/seedXXX.yml (https://github.com/julemai/GRIP-GL/blob/master/scripts/MachineLearning/final-training/seed1.yml).
+
+## conus-zhi-v2
+
+Same as conus-zhi-v2 but using hyper-parameters from Gauch et al. (2021) for MTS-LSTM:
+```
+batch = 256
+hidden = 256
+learning_rate = {0:001, 10:0.0005, 25:0.0001}
+epochs = 30
+dropout = 0.4
+seq_length = 365
+```
+as found in Gauch et al. (2021) HESS in Tab. D1.
+
+
