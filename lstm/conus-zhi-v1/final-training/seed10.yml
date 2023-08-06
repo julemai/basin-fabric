@@ -1,0 +1,88 @@
+allow_subsequent_nan_losses: 10
+batch_size: 64
+clip_gradient_norm: 1
+clip_targets_to_zero:
+- qobs_mm_per_day
+data_dir: /scratch/julemai/basin-fabric/lstm/conus-zhi-v1
+dataset: generic
+device: cuda:0
+dynamic_inputs:
+- RDRS_v2.1_A_PR0_SFC
+- RDRS_v2.1_P_FB_SFC
+- RDRS_v2.1_P_HU_09944
+- RDRS_v2.1_P_TT_1.5m_min
+- RDRS_v2.1_P_TT_1.5m_max
+- RDRS_v2.1_P_UU_10m
+- RDRS_v2.1_P_VV_10m
+- RDRS_v2.1_P_P0_SFC
+- potential_evapotranspiration
+epochs: 30
+experiment_name: conus-zhi-v1-finalTraining-seed10
+head: regression
+hidden_size: 256
+initial_forget_bias: 3
+learning_rate:
+  0: 0.0005
+  20: 0.0001
+  30: 5e-05
+log_n_figures: 0
+log_tensorboard: true
+loss: NSE
+metrics:
+- NSE
+- KGE
+model: cudalstm
+num_workers: 4
+optimizer: Adam
+output_activation: linear
+output_dropout: 0.4
+predict_last_n: 1
+run_dir: None
+seed: 10
+seq_length: 365
+static_attributes:
+- p_mean
+- pet_mean
+- aridity
+- t_mean
+- frac_snow
+- high_prec_freq
+- high_prec_dur
+- low_prec_freq
+- low_prec_dur
+- Temperate-or-sub-polar-needleleaf-forest
+- Temperate-or-sub-polar-broadleaf-deciduous-forest
+- Mixed-Forest
+- Temperate-or-sub-polar-shrubland
+- Temperate-or-sub-polar-grassland
+- Wetland
+- Cropland
+- Barren-Lands
+- Urban-and-Built-up
+- Water
+- mean_elev
+- mean_slope
+- std_elev
+- std_slope
+- area_km2
+- BD
+- CLAY
+- GRAV
+- OC
+- SAND
+- SILT
+target_variables:
+- qobs_mm_per_day
+test_basin_file: basins/basins_with_obs.txt
+test_end_date: 31/12/2018
+test_start_date: 01/01/2000
+train_basin_file: basins/basins_with_obs.txt
+train_end_date: 31/12/2018
+train_start_date: 01/01/2000
+validate_every: 3
+validate_n_random_basins: 9999
+validation_basin_file: basins/basins_with_obs.txt
+validation_end_date: 31/12/2018
+validation_start_date: 01/01/2000
+log_interval: 20
+save_validation_results: False
