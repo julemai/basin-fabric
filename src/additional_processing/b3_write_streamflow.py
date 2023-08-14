@@ -472,6 +472,9 @@ def write_streamflow_nc(info_dict=None,data_dict=None,filename='streamflow.nc',w
     id_varid = ncid.createVariable('station_id','S1', ('nstations', 'string_length'),zlib=True)
     #id_varid = ncid.createVariable('station_id',str, ('nstations',),zlib=True)
 
+    # enable encoding
+    id_varid._Encoding = 'ascii'
+
     # Attributes: name
     id_varid.long_name      = 'Gauge station ID'
     id_varid.cf_role        = 'timeseries_id'
@@ -531,6 +534,9 @@ def write_streamflow_nc(info_dict=None,data_dict=None,filename='streamflow.nc',w
     # --------------------------
     # Variables: name
     name_varid = ncid.createVariable('station_info', 'S1', ('nstations', 'string_length'),zlib=True)
+
+    # enable encoding
+    name_varid._Encoding = 'ascii'
 
     # Attributes: name
     name_varid.long_name      = 'Name of gauge station'
