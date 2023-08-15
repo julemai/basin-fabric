@@ -28,6 +28,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s ontario-zhi
 # python 06_static_attributes_geophysical.py -s conus-zhi
 # python 06_static_attributes_geophysical.py -s north-america-mai
+# python 06_static_attributes_geophysical.py -s camels-us-newman
 
 
 """
@@ -89,13 +90,13 @@ case_study   = None
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Derive static geophysical attributes.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai'].")
+                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'].")
 
 args         = parser.parse_args()
 case_study   = args.case_study
 
 if (case_study is None):
-    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
+    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai', 'camels-us-newman']")
 
 del parser, args
 
@@ -142,6 +143,11 @@ elif case_study == 'grip-gl-mai':
 
 elif case_study == 'north-america-mai':
     project_root = Path(dir_path+'/../regions/north-america-mai/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
+
+elif case_study == 'camels-us-newman':
+    project_root = Path(dir_path+'/../regions/camels-us-newman/')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
@@ -192,6 +198,8 @@ if True: #do_area:
     # NORTH AMERICA (WEI's 513 basins)
     # -------------
     # GREAT LAKES (WEI+NANDITA 361 basins)
+    # -------------
+    # CAMELS-US (671 basins)
     for typ in types:
         gl_shapes = Path(project_root / typ ).glob(filepattern)
         for gl_shape in gl_shapes:
