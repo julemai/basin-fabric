@@ -26,6 +26,7 @@ from __future__ import print_function
 # python 05_retrieve_observations.py -s ontario-zhi       -p 1980-01-01:2018-12-31
 # python 05_retrieve_observations.py -s conus-zhi         -p 1980-01-01:2018-12-31
 # python 05_retrieve_observations.py -s north-america-mai -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s camels-us-newman  -p 1980-01-01:2018-12-31
 
 """
 
@@ -127,6 +128,9 @@ elif case_study == 'grip-gl-mai':
 
 elif case_study == 'north-america-mai':
     project_root = Path(dir_path+'/../regions/north-america-mai')
+
+elif case_study == 'camels-us-newman':
+    project_root = Path(dir_path+'/../regions/camels-us-newman')
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))

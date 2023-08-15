@@ -81,7 +81,7 @@ and landcover, and save them in a CSV file.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-ravenpy-new
-python 06_static_attributes_geophysical.py -s conus-zhi
+python 06_static_attributes_geophysical.py -s camels-us-newman
 ```
 
 Creates: attributes/static_attributes.csv
@@ -94,10 +94,14 @@ Extract forcings for each basin XXXX from RDRS-v2.1.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/07_create_lumped_forcings.py -s conus-zhi -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+python src/07_create_lumped_forcings.py -s camels-us-newman -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
 
 Creates: forcings/*_agg_*_*_lp.nc
+
+
+
+
 
 
 ## Derive meteorologic attributes
