@@ -134,9 +134,9 @@ else:
 settings = {
   'learning_rate': [
      {0: 0.0001, 20: 5e-05, 30: 1e-05},
-     {0: 0.0005, 20: 0.0001, 30: 5e-05},
-     {0: 0.001},
-     {0: 0.001, 20: 0.0005, 30: 0.0001},
+     {0: 0.0005, 20: 0.0001, 30: 5e-05},  # used for GRIP-GL (Mai 2022 (HESS))
+     {0: 0.001},                          # used for CONUS studies (Kratzert 2019 (WRR), Kratzert 2019 (HESS))
+     {0: 0.001, 20: 0.0005, 30: 0.0001},  # used for CONUS studies (Gauch 2021 (HESS) but with epochs 0:,10:,25:)
      {0: 0.005, 10: 0.001, 20: 0.0005},
    ],
    'hidden_size': [ 64, 128, 256 ],

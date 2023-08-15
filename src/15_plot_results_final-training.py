@@ -440,14 +440,21 @@ for result in list(dict_results.keys()):
     gauges_not_enough_obs = 0
     kges = []
 
-    station_list = np.array([ ii.encode('ascii') for ii in df['Q']['station_id'].data ])
+    try:
+        station_list = np.array([ ii.encode('ascii') for ii in df['Q']['station_id'].data ])
+    except:
+        station_list = np.array([ ii for ii in df['Q']['station_id'].data ])
     for gauge in list(gauge_dict.keys()):
 
         # number of available observations
-        nobs1 = int(df['Q'][np.where(station_list==gauge.encode('ascii'))[0][0]].sel(time=slice("1980-01-01", "1999-12-31")).count().data)
-        nobs2 = int(df['Q'][np.where(station_list==gauge.encode('ascii'))[0][0]].sel(time=slice("2000-01-01", "2018-12-31")).count().data)
+        if 'cal' in result.split('.')[-1]:
+            nobs = int(df['Q'][np.where(station_list==gauge.encode('ascii'))[0][0]].sel(time=slice("2000-01-01", "2018-12-31")).count().data)
+        elif 'valtemp' in result.split('.')[-1]:
+            nobs = int(df['Q'][np.where(station_list==gauge.encode('ascii'))[0][0]].sel(time=slice("1980-01-01", "1999-12-31")).count().data)
+        else:
+            raise ValueError('Dont know how to count number of observations available for this experiment')
 
-        if (nobs1 > 3*365) and (nobs2 > 3*365):
+        if (nobs > 3*365):
 
             # color based on KGE of that basin
             icolor = 'red'
@@ -480,7 +487,7 @@ for result in list(dict_results.keys()):
                          markersize=msize, markeredgewidth=0.0)
 
                 if ikge < 0.0:
-                    print("Gauge {} (lat={:8.4f},lon={:8.4f}) has very low KGE value: {:8.3f} (nobs_cal={}, nobs_val={})".format(gauge,gauge_dict[gauge]["lat"],gauge_dict[gauge]["lon"],ikge,nobs2,nobs1))
+                    print("Gauge {} (lat={:8.4f},lon={:8.4f}) has very low KGE value: {:8.3f} (nobs={})".format(gauge,gauge_dict[gauge]["lat"],gauge_dict[gauge]["lon"],ikge,nobs))
 
                 gauges_w_kge += 1
                 kges = np.append(kges, ikge)
@@ -500,7 +507,7 @@ for result in list(dict_results.keys()):
     print('median KGE = {} ({}, {}) based on {} basins'.format(np.median(kges),np.percentile(kges,5),np.percentile(kges,95),len(kges)))
 
     # add nbasins
-    sub.text(0.99,0.99,str2tex('$n_{basins} = '+str(gauges_w_kge)+'$',usetex=usetex),
+    sub.text(0.99,0.99,str2tex('$n_{basins} = '+str(len(kges))+'$',usetex=usetex),
                      verticalalignment='top',horizontalalignment='right',
                      fontsize=textsize,transform=sub.transAxes)
 
