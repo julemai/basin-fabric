@@ -45,7 +45,7 @@ import geopandas as gpd
 import json
 
 
-def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326):
+def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326,extract=None):
 
     """
     Converts given shapefile into shapefile with given ESPG of a CRS.
@@ -66,31 +66,62 @@ def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326):
     espg: integer
         ESPG of coordinate reference system (CRS).
 
+    extract: string in format "<shapefile_attribute_key>=<ID>"
+        will extract only shape where shapefile_attribute_key=ID specified
+
     Returns
     -------
     None
 
     """
 
+    attribute_key = extract.split('=')[0]
+    attribute_val = extract.split('=')[1]
+    attribute_type = 'int'
+
+
+    # open file
     with fiona.open(shapefile_in) as shp_in:
+
+        # get crs
         shapefile_in_crs = shp_in.crs
-        shapes = shp_in[0]['geometry']
 
-        # transform to requested CRS
-        shapes = transform.transform_geom(shapefile_in_crs, {'init': 'epsg:'+str(espg)}, shapes)
-
-        # pick longest shape
-        nshapes = len(shapes.coordinates)
-        if nshapes > 1:
-            lens = [ len(ii) for ii in shapes.coordinates ]
-            idx_longest = np.argmax(lens)
-            print('More than one shape found in file (nshapes={}, len={}). Saving only longest one (idx={},len={}).'.format(nshapes,lens,idx_longest,lens[idx_longest]))
+        # extract shape of interest
+        if not(extract is None):
+            if attribute_type == 'int':
+                shape_idx = int( np.where(np.array([ ii['properties'][attribute_key] for ii in shp_in ])==int(attribute_val))[0][0] )
+            else:
+                raise ValueError('Implement other attribute type.')
+            print('Shape to extract: {}'.format(shape_idx))
         else:
-            idx_longest = 0
+            shape_idx = 0
+        shapes = shp_in[shape_idx]['geometry']
+
+    # transform to requested CRS
+    shapes = transform.transform_geom(shapefile_in_crs, {'init': 'epsg:'+str(espg)}, shapes)
+
+    # pick longest shape
+    nshapes = len(shapes.coordinates)
+    if nshapes > 1:
+        lens = np.array([ len(ii) for ii in shapes.coordinates ])
+        if np.all( lens == 1):
+            one_more_dim = True
+            lens = np.array([ len(ii[0]) for ii in shapes.coordinates ])
+        else:
+            one_more_dim = False
+        idx_longest = np.argmax(lens)
+        print('More than one shape found in file (nshapes={}, len={}). Saving only longest one (idx={},len={}).'.format(nshapes,lens,idx_longest,lens[idx_longest]))
+    else:
+        one_more_dim = False
+        idx_longest = 0
+
+    if one_more_dim:
+        coords = shapes.coordinates[idx_longest][0]
+    else:
         coords = shapes.coordinates[idx_longest]
 
-        # make list; not tuple
-        coords = [ list(ii) for ii in coords ]
+    # make list; not tuple
+    coords = [ list(ii) for ii in coords ]
 
     if sys.version_info < (3,0,0):
         # ------------------------
@@ -154,6 +185,7 @@ if __name__ == '__main__':
     shapefile_in  = None # '../WQ_station_list/20230612_Wei_selected_US_sites_shapefile/b_01116500.shp'
     shapefile_out = None # 'polygon'   # don't use any file ending here
     espg          = 4326
+    extract       = None
 
     parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Convert shapefile into new CRS and save only longest shape.''')
@@ -166,15 +198,21 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--espg', action='store',
                             default=espg, dest='espg', metavar='espg',
                             help='ESPG of coordinate reference system to convert to. Default: 4326.')
+    parser.add_argument('-x', '--extract', action='store',
+                            default=extract, dest='extract', metavar='extract',
+                            help='Extract only shape where shapefile_attribute_key=ID specified. String needs to be in format: "<shapefile_attribute_key>=<ID>". Default: None.')
 
     args          = parser.parse_args()
     shapefile_in  = args.shapefile_in
     shapefile_out = args.shapefile_out
     espg          = args.espg
+    extract       = args.extract
 
     if shapefile_in is None:
         raise ValueError('convert_coords_to_espg: Input shapefile (-i) is mandatory.')
     if shapefile_out is None:
         raise ValueError('convert_coords_to_espg: Output shapefile (-o) is mandatory.')
 
-    convert_coords_to_espg(shapefile_in, shapefile_out, espg=espg)
+
+
+    convert_coords_to_espg(shapefile_in, shapefile_out, espg=espg, extract=extract)

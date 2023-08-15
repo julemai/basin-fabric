@@ -22,9 +22,10 @@
 # pyenv activate env-3.8.5-ravenpy-new
 # ./03_convert_shapefiles.sh -s conus-zhi
 # ./03_convert_shapefiles.sh -s grip-gl-mai
+# ./03_convert_shapefiles.sh -s camels-us-newman
 
 
-set -ex
+set -e
 
 prog=$0
 pprog=$(basename ${prog})
@@ -48,9 +49,10 @@ if [[ ${case_study} == 'None' ]] ; then
     exit 1
 fi
 case ${case_study} in
-    'conus-zhi') ok='True' ;;
-    'grip-gl-mai') ok='True' ;;
-    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai'.\n\n"; exit 1;;
+    'conus-zhi')        ok='True' ;;
+    'grip-gl-mai')      ok='True' ;;
+    'camels-us-newman') ok='True' ;;
+    *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'.\n\n"; exit 1;;
 esac
 
 
@@ -68,8 +70,17 @@ else
 	basins=$(  \ls ${dprog}/../regions/${region_tag}/shapefiles_raw/*/*.shp | rev | cut -d '/' -f 1 | rev | cut -d '.' -f 1 )
 	nbasins=$( \ls ${dprog}/../regions/${region_tag}/shapefiles_raw/*/*.shp | rev | cut -d '/' -f 1 | rev | cut -d '.' -f 1 | wc -l )
     else
-	echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai'.\n\n"
-	exit 1
+	if [[ ${case_study} == 'camels-us-newman' ]] ; then
+	    # camels-us-newman
+	    region_tag='camels-us-newman'
+
+	    basins=$(  cat ${dprog}/../regions/${region_tag}/basins.csv | cut -d ',' -f 1 | grep -v 'id' )
+	    nbasins=$( cat ${dprog}/../regions/${region_tag}/basins.csv | cut -d ',' -f 1 | grep -v 'id' | wc -l )
+	    nbasins=$( echo ${nbasins} )
+	else
+	    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'.\n\n"
+	    exit 1
+	fi
     fi
 fi
 
@@ -106,8 +117,24 @@ for bb in ${basins} ; do
 		   -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
 		   -e 4326
 	else
-	    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai'.\n\n"
-	    exit 1
+	    if [[ ${case_study} == 'camels-us-newman' ]] ; then
+		# camels-us-newman
+		# extract basins from shapefile containing all basins and convert into standard one (save only longest feature; add ESPG)
+		if [ ${bb::1} == '0' ] ; then
+		    # first character is '0' --> remove that '0'
+		    basin_id_in_shp=$( echo ${bb} | cut -c 2- )
+		else
+		    basin_id_in_shp=${bb}
+		fi
+		python additional_processing/convert_coords_to_espg.py \
+		       -i ${dprog}/../regions/${region_tag}/HCDN_nhru_final_671/HCDN_nhru_final_671.shp \
+		       -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
+		       -x "hru_id=${basin_id_in_shp}" \
+		       -e 4326
+	    else
+		echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'.\n\n"
+		exit 1
+	    fi
 	fi
     fi
 
