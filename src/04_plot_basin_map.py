@@ -28,6 +28,7 @@ from __future__ import print_function
 # python 04_plot_basin_map.py -s conus-zhi
 # python 04_plot_basin_map.py -s grip-gl-mai
 # python 04_plot_basin_map.py -s north-america-mai
+# python 04_plot_basin_map.py -s camels-us-newman
 
 
 """
@@ -139,10 +140,10 @@ elif case_study == 'conus-zhi':
     outfolder    = dir_path+'/../regions/conus-zhi/maps/'
     shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
-    llcrnrlon =  -125.0
-    urcrnrlon =  -70.0
-    llcrnrlat =   23.5
-    urcrnrlat =   49.5
+    llcrnrlon =  -120.0
+    urcrnrlon =  -60.0
+    llcrnrlat =   20.5
+    urcrnrlat =   51.5
 
 elif case_study == 'grip-gl-mai':
     project_root = dir_path+'/../regions/grip-gl-mai/shapefiles/'
@@ -163,6 +164,16 @@ elif case_study == 'north-america-mai':
     urcrnrlon =   -46.
     llcrnrlat =   18.    # lat: 26.920416654000064 to 59.33374999800003
     urcrnrlat =   58.
+
+elif case_study == 'camels-us-newman':
+    project_root = dir_path+'/../regions/camels-us-newman/shapefiles/'
+    outfolder    = dir_path+'/../regions/camels-us-newman/maps/'
+    shpfile = glob.glob( project_root+'/*/*_lp.shp')
+
+    llcrnrlon =  -120.0
+    urcrnrlon =  -60.0
+    llcrnrlat =   20.5
+    urcrnrlat =   51.5
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
@@ -384,6 +395,9 @@ elif case_study == 'grip-gl-mai':
 elif case_study == 'north-america-mai':
     m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
+elif case_study == 'camels-us-newman':
+    m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
+    m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -458,6 +472,11 @@ if doabc:
 # add title
 if case_study == 'grip-gl-mai':
     sub.text(0.5,1.0,str2tex(case_study,usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'camels-us-newman':
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).upper(),usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)

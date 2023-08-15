@@ -141,10 +141,10 @@ elif case_study == 'ontario-zhi':
 elif case_study == 'conus-zhi':
     project_root = Path(dir_path+'/../regions/conus-zhi')
 
-    llcrnrlon =  -125.0
-    urcrnrlon =  -70.0
-    llcrnrlat =   23.5
-    urcrnrlat =   49.5
+    llcrnrlon =  -120.0
+    urcrnrlon =  -60.0
+    llcrnrlat =   20.5
+    urcrnrlat =   51.5
 
 elif case_study == 'grip-gl-mai':
     project_root = Path(dir_path+'/../regions/grip-gl-mai')
