@@ -157,6 +157,26 @@ elif case_study == 'grip-gl-mai':
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
+elif case_study == 'north-america-mai':
+    column_id = "FIRST_FLD"
+    if system == 'mac':
+        raise ValueError('Do not know where to find data here.')
+        project_root = Path('/Users/j6mai/Documents/GitHub/')
+    elif system == 'graham':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/north-america-mai/')
+    else:
+        raise ValueError('System not known. Specify a valid one with (-y) option.')
+
+elif case_study == 'camels-us-newman':
+    column_id = "FIRST_FLD"
+    if system == 'mac':
+        raise ValueError('Do not know where to find data here.')
+        project_root = Path('/Users/j6mai/Documents/GitHub/')
+    elif system == 'graham':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/camels-us-newman/')
+    else:
+        raise ValueError('System not known. Specify a valid one with (-y) option.')
+
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
