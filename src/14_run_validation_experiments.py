@@ -35,9 +35,9 @@ from __future__ import print_function
 
 
 do_setup    = False
-do_evaluate = True
+do_evaluate = False
 do_merge    = False
-do_netcdf   = False
+do_netcdf   = True     # might require increase of requested memory because of pkl read :(
 
 
 

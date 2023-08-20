@@ -459,10 +459,19 @@ else:
     cc = cc[::-1] # reverse colors
     cmap = mpl.colors.ListedColormap(cc)
 
-    # green-pink colors
-    cc = color.get_brewer('piyg10', rgb=True)
-    cmap = mpl.colors.ListedColormap(cc)
-
+    if not( experiment is None):
+        # green-pink colors
+        cc = color.get_brewer('piyg10', rgb=True)
+        cmap = mpl.colors.ListedColormap(cc)
+    elif not(using_lstm is None):
+        # paired-colors
+        if len(using_lstms) <= 3:
+            cc = color.get_brewer('paired3', rgb=True)
+        elif len(using_lstms) <= 12:
+            cc = color.get_brewer('paired'+str(len(using_lstms)), rgb=True)
+        else:
+            raise ValueError('There are so many models that a new color palette is needed.')
+        cmap = mpl.colors.ListedColormap(cc)
 
 # -------------------------------------------------------------------------
 # Plot
@@ -750,11 +759,12 @@ elif not(using_lstm is None):
                 idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
                 ikge = kge(data_obs[idx_time], data_sim[idx_time])
                 kges[using_lstm][basin] = ikge
+            else:
+                print('No observation found for basin {} in LSTM model {}'.format(basin,using_lstm))
 
             # plot simulation
             if not( np.all(np.isnan(data_sim)) ):
-                icolor = int(iusing_lstm*len(cc)/len(using_lstms))
-                icolor = iusing_lstm * 2
+                icolor = iusing_lstm
                 if (kges[using_lstm][basin] != nodata ):
                     label = "{} (KGE={:.2f})".format(using_lstm,kges[using_lstm][basin])
                 else:
@@ -767,8 +777,8 @@ elif not(using_lstm is None):
                 print('No simulation data found for basin {} in LSTM model {}'.format(basin,using_lstm))
 
             # plot observation (one time only)
-            if not( np.all(np.isnan(data_obs)) ):
-                if iusing_lstm == 0:
+            if iusing_lstm == len(using_lstms)-1:
+                if not( np.all(np.isnan(data_obs)) ):
                     sub.plot(date, data_obs,
                          color='0.7',
                          linewidth=0.0,
@@ -776,9 +786,7 @@ elif not(using_lstm is None):
                          markersize=msize/1,
                          markeredgewidth=msize/4,
                          markerfacecolor='w',
-                         label=using_lstm, alpha=0.5)
-        else:
-            print('No observation found for basin {} in LSTM model {}'.format(basin,using_lstm))
+                         label='observation', alpha=0.5)
 
         # set axis labels
         sub.set_xlabel(str2tex('simulation time', usetex=usetex))
