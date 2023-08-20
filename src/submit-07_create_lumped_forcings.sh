@@ -30,25 +30,32 @@
 #SBATCH --mail-user=juliane.mai@uwaterloo.ca       # email address for notifications
 #SBATCH --mail-type=FAIL                           # email send only in case of failure
 
-##SBATCH --job-name=agg-na                         # name of job in queque
+##SBATCH --job-name=agg-conus                      # name of job in queque
 ##SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-257
 
-##SBATCH --job-name=agg-wi                          # name of job in queque
-##SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
-##SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
+##SBATCH --job-name=agg-wi                         # name of job in queque
+##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-47
 
-#SBATCH --job-name=agg-grip                       # name of job in queque
-#SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
-#SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-#SBATCH --array=142,146,147,150,154               # 1-212
+##SBATCH --job-name=agg-grip                       # name of job in queque
+##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+##SBATCH --array=1-212
 
-##SBATCH --job-name=agg-great                      # name of job in queque
+##SBATCH --job-name=agg-ontario                    # name of job in queque
 ##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-361
+
+#SBATCH --job-name=agg-camels                     # name of job in queque
+#SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
+#SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+#SBATCH --array=1-14
+
+
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
 # task-id :: ${SLURM_ARRAY_TASK_ID}
@@ -88,11 +95,11 @@ cd /scratch/julemai/basin-fabric/src/
 # region_tag_python="wisconsin-lewis"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
-# set number of tasks (make sure it is consistent with above)
-ntasks=212                            # <<<<<<<<<<<<<<<<
-region="grip-gl-mai"                  # <<<<<<<<<<<<<<<<
-region_tag_python="grip-gl-mai"
-forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=212                            # <<<<<<<<<<<<<<<<
+# region="grip-gl-mai"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="grip-gl-mai"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=361                            # <<<<<<<<<<<<<<<<
@@ -100,11 +107,20 @@ forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america
 # region_tag_python="ontario-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
+# set number of tasks (make sure it is consistent with above)
+ntasks=14 #224                                 # <<<<<<<<<<<<<<<<
+region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
+region_tag_python="camels-us-newman"
+forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
 basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
+
+basins=$( cat "/scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat" )
+nbasins=$( cat /scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat | wc -l )
 
 #ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
 ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
@@ -135,12 +151,13 @@ done
 
 # region='ontario-zhi'
 # region='grip-gl-mai'
+# region='camels-us-newman'
 
 # basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 
 # for bb in $basins ; do if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 ) ; echo $bb ${last} ; fi ; done
 
-# miss_file='/scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat'
+# miss_file="/scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat"
 # for bb in $basins ; do if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; echo ${bb} > ${miss_file} ; rm ${last} ; fi ; done
 
 
@@ -176,6 +193,14 @@ done
 # 9523633   --> all basins                        ;  1GB ; 24h   ; 361 tasks (each 1 basin)
 # 9555757   --> all basins (hiccup graham)        ;  1GB ; 24h   ; 361 tasks (each 1 basin)
 
+
+# ------------------
+# region_tag_python="camels-us-newman"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# ------------------
+# JOBID
+# 10190113   --> all basins                        ;  1GB ; 24h   ; 224 tasks (each 3 basin)
+# 10306759   --> all basins missing                ;  1GB ; 24h   ;  14 tasks (each 1 basin)
 
 
 
