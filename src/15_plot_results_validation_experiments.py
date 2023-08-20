@@ -742,24 +742,32 @@ elif not(using_lstm is None):
             # simulation
             data_sim = results[using_lstm]['qobs_m3_per_s_sim'][idx_basin].data
 
-            if not( np.all(np.isnan(data_sim)) ):
-                icolor = int(iusing_lstm*len(cc)/len(using_lstms))
-                icolor = iusing_lstm * 2
-                sub.plot(date, data_sim,
-                             color=cc[icolor],
-                             linewidth=lwidth,
-                             label=using_lstm, alpha=0.5)
-            else:
-                print('No simulation data found for basin {} in LSTM model {}'.format(basin,using_lstm))
-
             # observation
             data_obs = results[using_lstm]['qobs_m3_per_s_obs'][idx_basin].data
 
+            # derive KGE
             if not( np.all(np.isnan(data_obs)) ):
-
                 idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
                 ikge = kge(data_obs[idx_time], data_sim[idx_time])
+                kges[using_lstm][basin] = ikge
 
+            # plot simulation
+            if not( np.all(np.isnan(data_sim)) ):
+                icolor = int(iusing_lstm*len(cc)/len(using_lstms))
+                icolor = iusing_lstm * 2
+                if (kges[using_lstm][basin] != nodata ):
+                    label = "{} (KGE={:.2f})".format(using_lstm,kges[using_lstm][basin])
+                else:
+                    label = "{}".format(using_lstm)
+                sub.plot(date, data_sim,
+                             color=cc[icolor],
+                             linewidth=lwidth,
+                             label=label, alpha=0.5)
+            else:
+                print('No simulation data found for basin {} in LSTM model {}'.format(basin,using_lstm))
+
+            # plot observation (one time only)
+            if not( np.all(np.isnan(data_obs)) ):
                 if iusing_lstm == 0:
                     sub.plot(date, data_obs,
                          color='0.7',
@@ -820,6 +828,17 @@ elif not(using_lstm is None):
         print('Wrote: {}'.format(pdffile))
     elif (outtype == 'png'):
         print('Wrote: {}'.format(pngfiles))
+
+
+    print('')
+    print('summary statistics:')
+    for using_lstm in using_lstms:
+
+        kges_lstm = np.array([ kges[using_lstm][bb] for bb in basins if kges[using_lstm][bb] != nodata ])
+        if len(kges_lstm > 0):
+            print('   {:20s}: median KGE = {} ({}, {}) based on {} basins'.format(using_lstm, np.median(kges_lstm),np.percentile(kges_lstm,5),np.percentile(kges_lstm,95),len(kges_lstm)))
+        else:
+            print('   {:20s}: no KGE results since no basin had observations (?!)'.format(using_lstm))
 
 
 
