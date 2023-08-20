@@ -321,7 +321,7 @@ if do_evaluate:
             print(cmd)
             subprocess.run(cmd, shell=True)
         else:
-            print('Folder exited already: {}'.format(folder_lstm))
+            print('Folder exited already: {}'.format(file_to_create))
 
 
 folder_to_merge     = Path.joinpath(Path(project_root),Path('ensemble'))
