@@ -9,7 +9,7 @@
 
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=1
-#SBATCH --array=1,3,4,6,9
+#SBATCH --array=1  #1,3,4,5,7,9
 
 #SBATCH --job-name=lstm-conus-zhi-v2               # name of job in queque
 #SBATCH --time=0-23:00:00                          # time (DD-HH:MM:SS);                 # <<<<<<<<<<<<<<<<
@@ -53,3 +53,4 @@ nh-run evaluate --run-dir ${folder}/
 # JOBID
 # 8361305   --> all basins                        ;  9GB ; 23h   ; 10 tasks (each 1 seed)
 # 8395248   --> all basins                        ; 12GB ; 23h   ; 5 tasks that were out of memory
+# 10048709  --> all basins                        ; 12GB ; 23h   ; 1 task  that was cancelled

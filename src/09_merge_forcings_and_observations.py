@@ -238,7 +238,7 @@ for ibasin,basin in enumerate(sorted(static_attributes_basin.index)):
     if streamflow_basin is None:
         forcings['qobs_mm_per_day'] = np.nan
         no_streamflow_basins.append(basin)
-        continue # skipping writing of file
+        # continue # skipping writing of file
     else:
         forcings['qobs_mm_per_day'] = streamflow_basin
         streamflow_basins.append(basin)
