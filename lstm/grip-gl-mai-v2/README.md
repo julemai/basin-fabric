@@ -9,9 +9,9 @@ source env-3.10/bin/activate
 python 09_merge_forcings_and_observations.py -s 'grip-gl-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x grip-gl-mai
 ```
 
-Creates: lstm/<experiment>/basins/basins_with_obs.txt
-Creates: lstm/<experiment>/basins/basins_without_obs.txt
-Creates: lstm/<experiment>/time_series/<basins_with_obs>.nc
+Creates: lstm/<experiment>/basins/basins_with_obs.txt<br>
+Creates: lstm/<experiment>/basins/basins_without_obs.txt<br>
+Creates: lstm/<experiment>/time_series/<basins_with_obs>.nc<br>
 
 
 ## Create LSTM setups
