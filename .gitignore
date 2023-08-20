@@ -4,12 +4,6 @@
 # ADD AGAIN
 list_*.dat
 lstm/*
-src/10_*
-src/11_*
-src/12_*
-src/13_*
-src/14_*
-src/15_*
 regions/north-america-mai/observations/daily_streamflow.nc
 
 # Slurm outputs
