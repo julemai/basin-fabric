@@ -24,20 +24,30 @@ from __future__ import print_function
 
 # evaluate wisconsin-lewis using trained various LSTMs
 # python 14_run_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1    OK
-# python 14_run_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1    NO
+# python 14_run_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1    OK
 # python 14_run_validation_experiments.py -s wisconsin-lewis -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1    OK
 
 # evaluate ontario-zhi using trained various LSTMs
-# python 14_run_validation_experiments.py -s ontario-zhi     -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f ontario-zhi-v1
-# python 14_run_validation_experiments.py -s ontario-zhi     -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f ontario-zhi-v1
-# python 14_run_validation_experiments.py -s ontario-zhi     -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f ontario-zhi-v1
+# python 14_run_validation_experiments.py -s ontario-zhi     -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f ontario-zhi-v1  OK
+# python 14_run_validation_experiments.py -s ontario-zhi     -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f ontario-zhi-v1  OK
+# python 14_run_validation_experiments.py -s ontario-zhi     -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f ontario-zhi-v1  OK
+
+# evaluate LSTMs against themselves
+# python 14_run_validation_experiments.py -s conus-zhi     -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f conus-zhi-v1     OK
+# python 14_run_validation_experiments.py -s conus-zhi     -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f conus-zhi-v2     OK
+# python 14_run_validation_experiments.py -s grip-gl-mai   -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f grip-gl-mai-v2   OK
+
+# python 14_run_validation_experiments.py -s conus-zhi     -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f conus-zhi-v1
+# python 14_run_validation_experiments.py -s grip-gl-mai   -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f grip-gl-mai-v2
+# python 14_run_validation_experiments.py -s grip-gl-mai   -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f grip-gl-mai-v2
 
 
 
 do_setup    = False
 do_evaluate = False
-do_merge    = False
-do_netcdf   = True     # might require increase of requested memory because of pkl read :(
+do_merge    = True
+do_netcdf   = True    # might require increase of requested memory because of pkl read :(
+                       # 16GB conus-zhi - 513 basins - 39 years
 
 
 

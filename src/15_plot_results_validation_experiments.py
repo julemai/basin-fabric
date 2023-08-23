@@ -30,12 +30,16 @@ from __future__ import print_function
 
 
 # # TIMESERIES :: plot all available validation experiments (regions/<case_study>/predictions/using_*/ensemble/test_ensemble_results.nc)
-# python 15_plot_results_validation_experiments.py -s wisconsin-lewis                    -p 1980-01-01:2018-12-31
-# python 15_plot_results_validation_experiments.py -s ontario-zhi                        -p 1980-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s wisconsin-lewis                    -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s ontario-zhi                        -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s conus-zhi                          -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s grip-gl-mai                        -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
 
 # # TIMESERIES :: plot only one experiment (regions/<region>/predictions/using_<using_lstm>/ensemble/test_ensemble_results.nc)
 # python 15_plot_results_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v1    -p 1980-01-01:2018-12-31
 # python 15_plot_results_validation_experiments.py -s ontario-zhi     -u conus-zhi-v1    -p 1980-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s conus-zhi       -u conus-zhi-v1    -p 1980-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s grip-gl-mai     -u grip-gl-mai     -p 1980-01-01:2018-12-31
 
 
 """
@@ -136,11 +140,14 @@ if (case_study is None):
     raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
 
 if not(period is None):
-    start = period.split(':')[0]
-    start = datetime.datetime.strptime(start, '%Y-%m-%d').strftime("%d/%m/%Y")
-    end   = period.split(':')[1]
-    end   = datetime.datetime.strptime(end,   '%Y-%m-%d').strftime("%d/%m/%Y")
-    period = {'start':start, 'end':end}
+    periods = period.split(',')
+    for iperiod,period in enumerate(periods):
+        start = period.split(':')[0]
+        start = datetime.datetime.strptime(start, '%Y-%m-%d').strftime('%Y-%m-%d') #"%d/%m/%Y")
+        end   = period.split(':')[1]
+        end   = datetime.datetime.strptime(end,   '%Y-%m-%d').strftime('%Y-%m-%d') #"%d/%m/%Y")
+        periods[iperiod] = {'start':start, 'end':end, 'string':period}
+    print('Number of periods found:               {}'.format(len(periods)))
 
 if (experiment is None) and (using_lstm is None):
     # assuming that all validation experiments for case_study should be plotted
@@ -294,6 +301,7 @@ if not( experiment is None):
 elif not(using_lstm is None):
 
     using_lstms = [ vv.split('/')[-3].split('using_')[1] for vv in validation_results ]    # ['conus-zhi-v1']
+    print('Number of "using_lstms" results found: {}'.format(len(using_lstms)))
 
     results = {}
     for ivalidation_result, validation_result in enumerate(validation_results):
@@ -324,6 +332,8 @@ if not( experiment is None):
 elif not(using_lstm is None):
     nrow        = 5           # # of rows of subplots per figure
     ncol        = 1           # # of columns of subplots per figure
+    if len(periods) > nrow:
+        raise ValueError('Not enough rows in plot for number of periods specified (nperiods={})'.format(len(periods)))
 else:
     raise ValueError('Not sure how this ended up here.')
 hspace      = 0.02         # x-space between subplots
@@ -356,7 +366,7 @@ hatches     = [None, None, None, None, None, '//']
 
 # Legend
 llxbbox     = 0.5          # x-anchor legend bounding box
-llybbox     = -0.3         # y-anchor legend bounding box
+llybbox     = 0.95         # y-anchor legend bounding box
 llrspace    = 0.          # spacing between rows in legend
 llcspace    = 1.0         # spacing between columns in legend
 llhtextpad  = 0.4         # the pad between the legend handle and text
@@ -730,7 +740,8 @@ elif not(using_lstm is None):
     nodata = -9999.
 
     basins = results[using_lstms[0]]['basin'].data # assuming all have same basins
-    kges = { uu: { bb: nodata for bb in basins } for uu in using_lstms }
+    print('Number of basins found:                {}'.format(len(basins)))
+    kges = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
     for ibasin, basin in enumerate(basins):
 
         ifig += 1
@@ -738,72 +749,80 @@ elif not(using_lstm is None):
         print('Plot - Fig ', ifig)
         fig = plt.figure(ifig)
 
-        iplot += 1
-        pos_plot = position(nrow,ncol,iplot,hspace=hspace,vspace=vspace)
-        sub = fig.add_axes(pos_plot) #, facecolor='none')
+        for iperiod,period in enumerate(periods):
 
+            iplot += 1
+            #     [left, bottom, width, height]
+            pos_plot = position(nrow,ncol,iplot,hspace=hspace,vspace=vspace) + [0,-0.03*iperiod,0,0]
+            sub = fig.add_axes(pos_plot) #, facecolor='none')
 
-        for iusing_lstm,using_lstm in enumerate(using_lstms):
+            for iusing_lstm,using_lstm in enumerate(using_lstms):
 
-            idx_basin = np.where(results[using_lstm]['basin'].data == basin)[0][0]
-            date = results[using_lstm]['datetime']
+                # get data only for current period
+                data_for_period = results[using_lstm].sel(datetime=slice(period['start'], period['end']))
 
-            # simulation
-            data_sim = results[using_lstm]['qobs_m3_per_s_sim'][idx_basin].data
+                idx_basin = np.where(data_for_period['basin'].data == basin)[0][0]
+                date = data_for_period['datetime']
 
-            # observation
-            data_obs = results[using_lstm]['qobs_m3_per_s_obs'][idx_basin].data
+                # simulation
+                data_sim = data_for_period['qobs_m3_per_s_sim'][idx_basin].data
 
-            # derive KGE
-            if not( np.all(np.isnan(data_obs)) ):
-                idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
-                ikge = kge(data_obs[idx_time], data_sim[idx_time])
-                kges[using_lstm][basin] = ikge
-            else:
-                print('No observation found for basin {} in LSTM model {}'.format(basin,using_lstm))
+                # observation
+                data_obs = data_for_period['qobs_m3_per_s_obs'][idx_basin].data
 
-            # plot simulation
-            if not( np.all(np.isnan(data_sim)) ):
-                icolor = iusing_lstm
-                if (kges[using_lstm][basin] != nodata ):
-                    label = "{} (KGE={:.2f})".format(using_lstm,kges[using_lstm][basin])
-                else:
-                    label = "{}".format(using_lstm)
-                sub.plot(date, data_sim,
-                             color=cc[icolor],
-                             linewidth=lwidth,
-                             label=label, alpha=0.5)
-            else:
-                print('No simulation data found for basin {} in LSTM model {}'.format(basin,using_lstm))
-
-            # plot observation (one time only)
-            if iusing_lstm == len(using_lstms)-1:
+                # derive KGE
                 if not( np.all(np.isnan(data_obs)) ):
-                    sub.plot(date, data_obs,
-                         color='0.7',
-                         linewidth=0.0,
-                         marker='o',
-                         markersize=msize/1,
-                         markeredgewidth=msize/4,
-                         markerfacecolor='w',
-                         label='observation', alpha=0.5)
+                    idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
+                    if (len(idx_time) > 3*365):   # at least 3 years of observations
+                        ikge = kge(data_obs[idx_time], data_sim[idx_time])
+                        kges[using_lstm][basin][period['string']] = ikge
+                else:
+                    print('No observation found for basin {} in LSTM model {} in period {}'.format(basin,using_lstm,period['string']))
 
-        # set axis labels
-        sub.set_xlabel(str2tex('simulation time', usetex=usetex))
-        sub.set_ylabel(str2tex('Q [m$^3$ s$^{-1}$]', usetex=usetex))
+                # plot observation (one time only)
+                if iusing_lstm == 0:
+                    if not( np.all(np.isnan(data_obs)) ):
+                        sub.plot(date, data_obs,
+                             color='0.7',
+                             linewidth=0.0,
+                             marker='o',
+                             markersize=msize/1,
+                             markeredgewidth=msize/4,
+                             markerfacecolor='w',
+                             label='observation', alpha=0.5)
 
-        # add legend
-        ll = plt.legend(frameon=frameon, ncol=3, bbox_to_anchor=(llxbbox,llybbox), loc='upper center',
-                       scatterpoints=1, numpoints=1,
-                       fontsize=textsize-3,
-                       labelspacing=llrspace, columnspacing=llcspace, handletextpad=llhtextpad, handlelength=llhlength)
-        plt.setp(ll.get_texts(), fontsize='small')
+                # plot simulation
+                if not( np.all(np.isnan(data_sim)) ):
+                    icolor = iusing_lstm
+                    if (kges[using_lstm][basin][period['string']] != nodata ):
+                        label = "{} (KGE={:.2f})".format(using_lstm,kges[using_lstm][basin][period['string']])
+                    else:
+                        label = "{}".format(using_lstm)
+                    sub.plot(date, data_sim,
+                                 color=cc[icolor],
+                                 linewidth=lwidth,
+                                 label=label, alpha=0.5)
+                else:
+                    print('No simulation data found for basin {} in LSTM model {}'.format(basin,using_lstm))
 
-        # add title
-        sub.text(0.5,1.0,str2tex(basin,usetex=usetex),
+            # set axis labels
+            if iplot == len(periods):
+                sub.set_xlabel(str2tex('simulation time', usetex=usetex))
+            sub.set_ylabel(str2tex('Q [m$^3$ s$^{-1}$]', usetex=usetex))
+
+            # add title
+            if iplot == 1:
+                sub.text(0.5,1.0,str2tex(basin,usetex=usetex),
                          verticalalignment='bottom',horizontalalignment='center',
                          fontweight='bold',
                          fontsize=textsize,transform=sub.transAxes)
+
+            # add legend
+            ll = plt.legend(frameon=frameon, ncol=2, bbox_to_anchor=(llxbbox,llybbox), loc='upper center',
+                           scatterpoints=1, numpoints=1,
+                           fontsize=textsize-4,
+                           labelspacing=llrspace, columnspacing=llcspace, handletextpad=llhtextpad, handlelength=llhlength)
+            plt.setp(ll.get_texts(), fontsize='small')
 
 
 
@@ -838,15 +857,33 @@ elif not(using_lstm is None):
         print('Wrote: {}'.format(pngfiles))
 
 
+    filename = '.'.join(pdffile.split('.')[0:-1])+'.txt'
+    ff = open(filename, "w")
+
     print('')
     print('summary statistics:')
     for using_lstm in using_lstms:
 
-        kges_lstm = np.array([ kges[using_lstm][bb] for bb in basins if kges[using_lstm][bb] != nodata ])
-        if len(kges_lstm > 0):
-            print('   {:20s}: median KGE = {} ({}, {}) based on {} basins'.format(using_lstm, np.median(kges_lstm),np.percentile(kges_lstm,5),np.percentile(kges_lstm,95),len(kges_lstm)))
-        else:
-            print('   {:20s}: no KGE results since no basin had observations (?!)'.format(using_lstm))
+        for iperiod,period in enumerate(periods):
+
+            kges_lstm = np.array([ kges[using_lstm][bb][period['string']] for bb in basins if ((kges[using_lstm][bb][period['string']] != nodata) and (not(np.isnan(kges[using_lstm][bb][period['string']]))))])
+            if len(kges_lstm > 0):
+                summary_string = '   {:20s}: {}: median KGE = {} ({}, {}) based on {} basins'.format(
+                    using_lstm,
+                    period['string'],
+                    np.nanmedian(kges_lstm),
+                    np.nanpercentile(kges_lstm,5),
+                    np.nanpercentile(kges_lstm,95),
+                    len(kges_lstm))
+            else:
+                summary_string = '   {:20s}: {}: no KGE results since no basin had observations (?!)'.format(
+                    using_lstm,
+                    period['string'])
+            print(summary_string)
+            ff.write(summary_string+'\n')
+
+    ff.close()
+    print('Wrote: {}'.format(filename))
 
 
 
