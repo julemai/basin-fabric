@@ -1,12 +1,13 @@
 # LSTM experiment: GRIP-GL
 
 This experiment is using the 212 (rather than 141) GRIP-GL basins for training. The
-forcings are RDRS-v2.1 (rather than RDRS-v2 as used in GRIP-GL).
+forcings are RDRS-v2.1 (rather than RDRS-v2 as used in GRIP-GL). Only
+precipitation and temperature are used as forcings.
 
 ## Get forcings and observations
 ```
 source env-3.10/bin/activate
-python 09_merge_forcings_and_observations.py -s 'grip-gl-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x grip-gl-mai-v2
+python 09_merge_forcings_and_observations.py -s 'grip-gl-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x grip-gl-mai-v3
 ```
 
 Creates: lstm/<experiment>/basins/basins_with_obs.txt<br>
@@ -19,15 +20,15 @@ Creates: lstm/<experiment>/time_series/<basins_with_obs>.nc<br>
 cd lstm/<experiment>/
 mkdir runs
 mkdir final-training
-cp ../_new_template/final-training/seed*.yml final-training/.
+cp ../grip-gl-mai-v2/final-training/seed*.yml final-training/.
 ```
 
 ## Adjust setups
 Some settings might need to be adjusted; especially the name of the experiment "grip-gl-mai".
 ```
-cd lstm/grip-gl-mai-v2/final-training
+cd lstm/grip-gl-mai-v3/final-training
 files=$( \ls seed*.yml )
-for ff in $files ; do sed "s/<experiment>/grip-gl-mai-v2/g" ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
+for ff in $files ; do sed "s/grip-gl-mai-v2/grip-gl-mai-v3/g" ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
 ```
 
 Or end date of calibration period:
