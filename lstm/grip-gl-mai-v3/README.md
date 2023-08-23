@@ -50,7 +50,7 @@ ln -s ../../../regions/grip-gl-mai/attributes/climate_indices_rdrs-v2.1_north-am
 ### Request interactive node with GPU
 ```
 cd /scratch/julemai/basin-fabric/
-salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1
+salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1 --cpus-per-task=4
 ```
 
 ### Load some modules

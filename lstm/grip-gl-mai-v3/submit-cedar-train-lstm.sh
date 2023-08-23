@@ -9,9 +9,10 @@
 
 #SBATCH --ntasks=1
 #SBATCH --gpus-per-node=1
+#SBATCH --cpus-per-task=4
 #SBATCH --array=1-10
 
-#SBATCH --job-name=lstm-grip-gl-mai                # name of job in queque
+#SBATCH --job-name=lstm-grip-gl-mai-v3             # name of job in queque
 #SBATCH --time=0-10:00:00                          # time (DD-HH:MM:SS);                 # <<<<<<<<<<<<<<<<
 #SBATCH --mem=6G                                   # memory; default unit is megabytes   # <<<<<<<<<<<<<<<<
 
@@ -34,7 +35,7 @@ module load python/3.10.2
 source /scratch/julemai/basin-fabric/env-cuda/bin/activate
 
 # Do training
-cd /scratch/julemai/basin-fabric/lstm/grip-gl-mai/                                # <<<<<<<<<<<<<<<<
+cd /scratch/julemai/basin-fabric/lstm/grip-gl-mai-v3/                                # <<<<<<<<<<<<<<<<
 nh-run train --config-file final-training/seed${SLURM_ARRAY_TASK_ID}.yml
 
 
@@ -43,4 +44,4 @@ nh-run train --config-file final-training/seed${SLURM_ARRAY_TASK_ID}.yml
 # grip-gl-mai
 # ------------------
 # JOBID
-# 8132090   --> all basins                        ;  6GB ; 10h   ; 10 tasks (each 1 seed)
+#    --> all basins                        ;  6GB ; 10h   ; 10 tasks (each 1 seed)
