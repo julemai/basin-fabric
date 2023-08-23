@@ -3,7 +3,7 @@
 
 # ADD AGAIN
 list_*.dat
-lstm/*
+#lstm/*
 regions/north-america-mai/observations/daily_streamflow.nc
 
 # Slurm outputs
