@@ -6,7 +6,7 @@ forcings are RDRS-v2.1 (rather than RDRS-v2 as used in GRIP-GL).
 ## Get forcings and observations
 ```
 source env-3.10/bin/activate
-python 09_merge_forcings_and_observations.py -s 'grip-gl-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x grip-gl-mai
+python 09_merge_forcings_and_observations.py -s 'grip-gl-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x grip-gl-mai-v2
 ```
 
 Creates: lstm/<experiment>/basins/basins_with_obs.txt<br>
@@ -25,9 +25,9 @@ cp ../_new_template/final-training/seed*.yml final-training/.
 ## Adjust setups
 Some settings might need to be adjusted; especially the name of the experiment "grip-gl-mai".
 ```
-cd lstm/grip-gl-mai/final-training
+cd lstm/grip-gl-mai-v2/final-training
 files=$( \ls seed*.yml )
-for ff in $files ; do sed "s/<experiment>/grip-gl-mai/g" ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
+for ff in $files ; do sed "s/<experiment>/grip-gl-mai-v2/g" ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
 ```
 
 Or end date of calibration period:
@@ -49,7 +49,7 @@ ln -s ../../../regions/grip-gl-mai/attributes/climate_indices_rdrs-v2.1_north-am
 ### Request interactive node with GPU
 ```
 cd /scratch/julemai/basin-fabric/
-salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1
+salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1 --cpus-per-task=4
 ```
 
 ### Load some modules
