@@ -44,4 +44,4 @@ nh-run train --config-file final-training/seed${SLURM_ARRAY_TASK_ID}.yml
 # grip-gl-mai
 # ------------------
 # JOBID
-#    --> all basins                        ;  6GB ; 10h   ; 10 tasks (each 1 seed)
+# 10263529   --> all basins                        ;  6GB ; 10h   ; 10 tasks (each 1 seed)
