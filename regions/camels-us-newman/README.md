@@ -97,10 +97,7 @@ pyenv activate env-3.8.5-basin-fabric
 python src/07_create_lumped_forcings.py -s camels-us-newman -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
 
-Creates: forcings/*_agg_*_*_lp.nc
-
-
-
+Creates: forcings/*/*_agg_*_*_lp.nc
 
 
 
@@ -111,7 +108,7 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s conus-zhi -f 'rdrs-v2.1_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s camels-us-newman -f 'rdrs-v2.1_north-america' -p 'all'
 ```
 
 Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
@@ -119,5 +116,5 @@ Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 
 Add produced files to Git:
 ```
-git add regions/conus-zhi/forcings/*/*_agg_*_daily_local.nc
+git add regions/camels-us-newman/forcings/*/*_agg_*_daily_local.nc
 ```

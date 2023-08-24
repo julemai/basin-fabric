@@ -28,6 +28,7 @@ from __future__ import print_function
 # python 08_static_attributes_forcings.py -s 'conus-zhi'        -f 'rdrs-v2.1_north-america' -p 'all' -a
 # python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all' -a
 # python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'camels-us-newman' -f 'rdrs-v2.1_north-america' -p 'all' -a
 
 # NO AGGREGATION OF HOURLY->DAILY FORCINGS
 # python 08_static_attributes_forcings.py -s 'wisconsin-lewis'  -f 'rdrs-v2.1_north-america' -p 'all'
@@ -35,6 +36,7 @@ from __future__ import print_function
 # python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all'
 # python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all'
 # python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2_grip-gl'         -p 'all'
+# python 08_static_attributes_forcings.py -s 'camels-us-newman' -f 'rdrs-v2.1_north-america' -p 'all'
 
 """
 
@@ -155,6 +157,9 @@ elif case_study == 'conus-zhi':
 
 elif case_study == 'grip-gl-mai':
     project_root = Path(dir_path+'/../regions/grip-gl-mai')
+
+elif case_study == 'camels-us-newman':
+    project_root = Path(dir_path+'/../regions/camels-us-newman')
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))

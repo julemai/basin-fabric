@@ -116,10 +116,7 @@ forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
-basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
-
-basins=$( cat "/scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat" )
 nbasins=$( cat /scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat | wc -l )
 
 #ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
@@ -128,7 +125,7 @@ start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
 basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
-
+basins=$( cat "/scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
 
@@ -197,10 +194,15 @@ done
 # ------------------
 # region_tag_python="camels-us-newman"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+#
+# ------------------
+# check completeness CAMELS-US forcings  (should be 671)
+# ls /scratch/julemai/basin-fabric/regions/camels-us-newman/forcings/*/*.done | wc -l
 # ------------------
 # JOBID
 # 10190113   --> all basins                        ;  1GB ; 24h   ; 224 tasks (each 3 basin)
 # 10306759   --> all basins missing                ;  1GB ; 24h   ;  14 tasks (each 1 basin)
+# 10346548   --> all basins missing                ;  1GB ; 24h   ;  14 tasks (each 1 basin)
 
 
 
