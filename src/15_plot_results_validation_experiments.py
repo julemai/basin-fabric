@@ -28,18 +28,18 @@ from __future__ import print_function
 # python 15_plot_results_validation_experiments.py -s 'conus-zhi'   -x 'conus-zhi-v1'
 # python 15_plot_results_validation_experiments.py -s 'grip-gl-mai' -x 'grip-gl-mai-v2'
 
+# # TIMESERIES :: plot only one experiment (regions/<region>/predictions/using_<using_lstm>/ensemble/test_ensemble_results.nc)
+# python 15_plot_results_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v1    -p 1980-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s ontario-zhi     -u conus-zhi-v1    -p 1980-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s conus-zhi       -u conus-zhi-v1    -p 1980-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s grip-gl-mai     -u grip-gl-mai     -p 1980-01-01:2018-12-31
 
 # # TIMESERIES :: plot all available validation experiments (regions/<case_study>/predictions/using_*/ensemble/test_ensemble_results.nc)
 # python 15_plot_results_validation_experiments.py -s wisconsin-lewis                    -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
 # python 15_plot_results_validation_experiments.py -s ontario-zhi                        -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
 # python 15_plot_results_validation_experiments.py -s conus-zhi                          -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
 # python 15_plot_results_validation_experiments.py -s grip-gl-mai                        -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
-
-# # TIMESERIES :: plot only one experiment (regions/<region>/predictions/using_<using_lstm>/ensemble/test_ensemble_results.nc)
-# python 15_plot_results_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v1    -p 1980-01-01:2018-12-31
-# python 15_plot_results_validation_experiments.py -s ontario-zhi     -u conus-zhi-v1    -p 1980-01-01:2018-12-31
-# python 15_plot_results_validation_experiments.py -s conus-zhi       -u conus-zhi-v1    -p 1980-01-01:2018-12-31
-# python 15_plot_results_validation_experiments.py -s grip-gl-mai     -u grip-gl-mai     -p 1980-01-01:2018-12-31
+# python 15_plot_results_validation_experiments.py -s camels-us-newman                   -p 1980-01-01:1999-12-31,2000-01-01:2018-12-31
 
 
 """
