@@ -137,6 +137,9 @@ elif case_study == 'conus-zhi':
 elif case_study == 'grip-gl-mai':
     project_root = Path(dir_path+'/../regions/grip-gl-mai')
 
+elif case_study == 'camels-us-newman':
+    project_root = Path(dir_path+'/../regions/camels-us-newman')
+
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 

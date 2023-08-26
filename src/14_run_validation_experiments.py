@@ -48,16 +48,16 @@ from __future__ import print_function
 # python 14_run_validation_experiments.py -s grip-gl-mai     -u grip-gl-mai-v3  -p 1980-01-01:2018-12-31 -f grip-gl-mai-v3
 # python 14_run_validation_experiments.py -s conus-zhi       -u grip-gl-mai-v3  -p 1980-01-01:2018-12-31 -f conus-zhi-v1
 
-
-
-
 # evaluate all models on a new region (camels-us-newman)
+# module load mpi4py/3.1.3
+# source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+# source /scratch/julemai/basin-fabric/src
 # python 14_run_validation_experiments.py -s camels-us-newman -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 # python 14_run_validation_experiments.py -s camels-us-newman -u grip-gl-mai-v3  -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 # python 14_run_validation_experiments.py -s camels-us-newman -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 # python 14_run_validation_experiments.py -s camels-us-newman -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 
-# evaluate all regions with new model (camels-us-newman-v1)
+# evaluate all regions with new model (camels-us-newman-v1)  LATER
 # python 14_run_validation_experiments.py -s wisconsin-lewis  -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
 # python 14_run_validation_experiments.py -s ontario-zhi      -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f ontario-zhi-v1
 # python 14_run_validation_experiments.py -s grip-gl-mai      -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f grip-gl-mai-v3
@@ -69,7 +69,8 @@ do_setup    = False
 do_evaluate = False
 do_merge    = False
 do_netcdf   = True     # might require increase of requested memory because of pkl read :(
-                        # 16GB conus-zhi - 513 basins - 39 years
+                        # 16GB conus-zhi        - 513 basins - 39 years
+                        # 50GB camels-us-newman - 671 basins - 39 years
 
 
 

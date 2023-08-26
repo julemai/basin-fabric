@@ -122,7 +122,7 @@ period       = None
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Derive static geophysical attributes.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']. Default: None.")
+                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'camels-us-newman', 'grip-gl-mai']. Default: None.")
 parser.add_argument('-x', '--experiment', action='store', default=experiment, dest='experiment',
                     help="Name of LSTM experiment . Resulting files plotted are 'lstm/<experiment>/hyper-parameter-tuning/*.csv.*'. Default: 'test'.")
 parser.add_argument('-u', '--using_lstm', action='store', default=using_lstm, dest='using_lstm',
@@ -137,7 +137,7 @@ using_lstm   = args.using_lstm
 period       = args.period
 
 if (case_study is None):
-    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai']")
+    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'camels-us-newman', 'grip-gl-mai']")
 
 if not(period is None):
     periods = period.split(',')
@@ -201,6 +201,24 @@ elif case_study == 'ontario-zhi':
 elif case_study == 'conus-zhi':
     if not( experiment is None):
         project_root = Path(dir_path+'/../regions/conus-zhi')
+
+        llcrnrlon =  -120.0
+        urcrnrlon =  -60.0
+        llcrnrlat =   20.5
+        urcrnrlat =   51.5
+    elif not(using_lstm is None):
+        if using_lstm == 'all':
+            validation_results = glob.glob(dir_path+"/../regions/"+case_study+"/predictions/using_*/ensemble/test_ensemble_results.nc")
+        else:
+            validation_results = glob.glob(dir_path+"/../regions/"+case_study+"/predictions/using_"+using_lstm+"/ensemble/test_ensemble_results.nc")
+        if len(validation_results) == 0:
+            raise ValueError('No validation results found for region {}.'.format(case_study))
+    else:
+        raise ValueError('Not sure how this ended up here.')
+
+elif case_study == 'camels-us-newman':
+    if not( experiment is None):
+        project_root = Path(dir_path+'/../regions/camels-us-newman')
 
         llcrnrlon =  -120.0
         urcrnrlon =  -60.0
@@ -538,6 +556,9 @@ if not( experiment is None):
         elif case_study == 'conus-zhi':
             m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
             m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
+        elif case_study == 'camels-us-newman':
+            m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
+            m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
         elif case_study == 'grip-gl-mai':
             m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
             m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
@@ -655,6 +676,8 @@ if not( experiment is None):
         # pos cbar:  [0.125  0.436  0.5375 0.128 ]
 
         if case_study == 'conus-zhi':
+            extra_shift = -0.2
+        elif case_study == 'camels-us-newman':
             extra_shift = -0.2
         elif case_study == 'grip-gl-mai':
             extra_shift = -0.15

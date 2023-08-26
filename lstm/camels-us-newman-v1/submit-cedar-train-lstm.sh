@@ -13,8 +13,8 @@
 #SBATCH --array=1-10
 
 #SBATCH --job-name=lstm-camels-us-newman-v1        # name of job in queque
-#SBATCH --time=0-10:00:00                          # time (DD-HH:MM:SS);                 # <<<<<<<<<<<<<<<<
-#SBATCH --mem=6G                                   # memory; default unit is megabytes   # <<<<<<<<<<<<<<<<
+#SBATCH --time=0-16:00:00                          # time (DD-HH:MM:SS);                 # <<<<<<<<<<<<<<<<
+#SBATCH --mem=16G                                  # memory; default unit is megabytes   # <<<<<<<<<<<<<<<<
 
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
@@ -44,4 +44,4 @@ nh-run train --config-file final-training/seed${SLURM_ARRAY_TASK_ID}.yml
 # camels-us-newman
 # ------------------
 # JOBID
-#    --> all basins                        ;  6GB ; 10h   ; 10 tasks (each 1 seed)
+# 10441415   --> all basins                        ;  16GB ; 16h   ; 10 tasks (each 1 seed)
