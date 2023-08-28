@@ -35,39 +35,39 @@ from __future__ import print_function
 
 Derives static basin attributes from shapefiles (1), DEM (4), soil database (6), and landcover map (19).
 
-    Catchment area
+    area_km2 ... Catchment area
 
-    Catchment mean elevation
-    Standard deviation of catchment elevation
-    Catchment mean slope
-    Standard deviation of catchment slope
+    mean_elev  ... Catchment mean elevation
+    std_elev   ... Standard deviation of catchment elevation
+    mean_slope ... Catchment mean slope
+    std_slope  ... Standard deviation of catchment slope
 
-    Soil bulk density (g cm−3 )
-    Soil clay content (% of weight)
-    Soil gravel content (% of volume)
-    Soil organic carbon (% of weight)
-    Soil sand content (% of weight)
-    Soil silt content (% of weight)
+    BD   ... Soil bulk density (g cm−3 )
+    CLAY ... Soil clay content (% of weight)
+    GRAV ... Soil gravel content (% of volume)
+    OC   ... Soil organic carbon (% of weight)
+    SAND ... Soil sand content (% of weight)
+    SILT ... Soil silt content (% of weight)
 
-    Fraction of land covered by Temperate-or-sub-polar-needleleaf-forest
-    Fraction of land covered by Sub-polar-taiga-needleleaf-forest
-    Fraction of land covered by Tropical-or-sub-tropical-broadleaf-evergreen-forest
-    Fraction of land covered by Tropical-or-sub-tropical-broadleaf-deciduous-forest
-    Fraction of land covered by Temperate-or-sub-polar-broadleaf-deciduous-forest
-    Fraction of land covered by Mixed-Forest
-    Fraction of land covered by Tropical-or-sub-tropical-shrubland
-    Fraction of land covered by Temperate-or-sub-polar-shrubland
-    Fraction of land covered by Tropical-or-sub-tropical-grassland
-    Fraction of land covered by Temperate-or-sub-polar-grassland
-    Fraction of land covered by Sub-polar-or-polar-shrubland-lichen-moss
-    Fraction of land covered by Sub-polar-or-polar-grassland-lichen-moss
-    Fraction of land covered by Sub-polar-or-polar-barren-lichen-moss
-    Fraction of land covered by Wetland
-    Fraction of land covered by Cropland
-    Fraction of land covered by Barren-Lands
-    Fraction of land covered by Urban-and-Built-up
-    Fraction of land covered by Water
-    Fraction of land covered by Snow-and-Ice
+    Temperate-or-sub-polar-needleleaf-forest            ... Fraction of land covered by Temperate-or-sub-polar-needleleaf-forest
+    Sub-polar-taiga-needleleaf-forest                   ... Fraction of land covered by Sub-polar-taiga-needleleaf-forest
+    Tropical-or-sub-tropical-broadleaf-evergreen-forest ... Fraction of land covered by Tropical-or-sub-tropical-broadleaf-evergreen-forest
+    Tropical-or-sub-tropical-broadleaf-deciduous-forest ... Fraction of land covered by Tropical-or-sub-tropical-broadleaf-deciduous-forest
+    Temperate-or-sub-polar-broadleaf-deciduous-forest   ... Fraction of land covered by Temperate-or-sub-polar-broadleaf-deciduous-forest
+    Mixed-Forest                                        ... Fraction of land covered by Mixed-Forest
+    Tropical-or-sub-tropical-shrubland                  ... Fraction of land covered by Tropical-or-sub-tropical-shrubland
+    Temperate-or-sub-polar-shrubland                    ... Fraction of land covered by Temperate-or-sub-polar-shrubland
+    Tropical-or-sub-tropical-grassland                  ... Fraction of land covered by Tropical-or-sub-tropical-grassland
+    Temperate-or-sub-polar-grassland                    ... Fraction of land covered by Temperate-or-sub-polar-grassland
+    Sub-polar-or-polar-shrubland-lichen-moss            ... Fraction of land covered by Sub-polar-or-polar-shrubland-lichen-moss
+    Sub-polar-or-polar-grassland-lichen-moss            ... Fraction of land covered by Sub-polar-or-polar-grassland-lichen-moss
+    Sub-polar-or-polar-barren-lichen-moss               ... Fraction of land covered by Sub-polar-or-polar-barren-lichen-moss
+    Wetland                                             ... Fraction of land covered by Wetland
+    Cropland                                            ... Fraction of land covered by Cropland
+    Barren-Lands                                        ... Fraction of land covered by Barren-Lands
+    Urban-and-Built-up                                  ... Fraction of land covered by Urban-and-Built-up
+    Water                                               ... Fraction of land covered by Water
+    Snow-and-Ice                                        ... Fraction of land covered by Snow-and-Ice
 
 
 
