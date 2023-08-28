@@ -155,6 +155,16 @@ elif case_study == 'grip-gl-mai':
     llcrnrlat =   39.0
     urcrnrlat =   51.0
 
+elif case_study == 'exercise-water-quantity':
+    project_root = dir_path+'/../regions/exercise-water-quantity/shapefiles/'
+    outfolder    = dir_path+'/../regions/exercise-water-quantity/maps/'
+    shpfile = glob.glob( project_root+'/*/*_lp.shp')
+
+    llcrnrlon =  -93.0
+    urcrnrlon =  -72.0
+    llcrnrlat =   39.0
+    urcrnrlat =   51.0
+
 elif case_study == 'north-america-mai':
     project_root = dir_path+'/../regions/north-america-mai/shapefiles/'
     outfolder    = dir_path+'/../regions/north-america-mai/maps/'
@@ -392,6 +402,9 @@ elif case_study == 'conus-zhi':
 elif case_study == 'grip-gl-mai':
     m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
+elif case_study == 'exercise-water-quantity':
+    m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
+    m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 elif case_study == 'north-america-mai':
     m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
@@ -471,6 +484,11 @@ if doabc:
 
 # add title
 if case_study == 'grip-gl-mai':
+    sub.text(0.5,1.0,str2tex(case_study,usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'exercise-water-quantity':
     sub.text(0.5,1.0,str2tex(case_study,usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
