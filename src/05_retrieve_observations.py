@@ -114,26 +114,7 @@ from b2_read_streamflow import read_streamflow
 from b3_write_streamflow import write_streamflow_nc
 
 
-if case_study == 'wisconsin-lewis':
-    project_root = Path(dir_path+'/../regions/wisconsin-lewis')
-
-elif case_study == 'ontario-zhi':
-    project_root = Path(dir_path+'/../regions/ontario-zhi')
-
-elif case_study == 'conus-zhi':
-    project_root = Path(dir_path+'/../regions/conus-zhi')
-
-elif case_study == 'grip-gl-mai':
-    project_root = Path(dir_path+'/../regions/grip-gl-mai')
-
-elif case_study == 'north-america-mai':
-    project_root = Path(dir_path+'/../regions/north-america-mai')
-
-elif case_study == 'camels-us-newman':
-    project_root = Path(dir_path+'/../regions/camels-us-newman')
-
-else:
-    raise ValueError('Case study for {} not setup yet.'.format(case_study))
+project_root = Path(dir_path+'/../regions/'+case_study)
 
 if not(period is None):
     period = {'start':period.split(':')[0], 'end':period.split(':')[1]}
