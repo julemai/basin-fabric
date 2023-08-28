@@ -56,7 +56,7 @@ will be available for (option -p).
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-ravenpy-new
-python 05_retrieve_observations.py -s conus-zhi -p 1980-01-01:2018-12-31
+python 05_retrieve_observations.py -s grip-gl-mai -p 1980-01-01:2018-12-31
 ```
 
 Creates: observations/daily_streamflow.nc
