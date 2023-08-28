@@ -82,6 +82,9 @@ dolegend  = False # True: add legend to each subplot
 doabc     = False # True: add subpanel numbering
 dotitle   = True  # True: add catchment titles to subpanels
 
+dotimeseries = False
+domap = True
+
 
 # -------------------------------------------------------------------------
 # Command line arguments
@@ -669,493 +672,509 @@ if not( experiment is None):
 
 elif not(using_lstm is None):
 
-    # -------------------------------------------------------------------------
-    # TIMESERIES: Results of validation experiment(s)
-    #
-    outtype = 'pdf'
-
-    if (outtype == 'pdf'):
-        mpl.use('PDF') # set directly after import matplotlib
-        import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_pdf import PdfPages
-        # Customize: http://matplotlib.sourceforge.net/users/customizing.html
-        mpl.rc('ps', papersize='a4', usedistiller='xpdf') # ps2pdf
-        mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
-        if usetex:
-            mpl.rc('text', usetex=True)
-        else:
-            mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-            #mpl.rc('font',**{'family':'serif','serif':['times']})
-        mpl.rc('text.latex') #, unicode=True)
-    elif (outtype == 'png'):
-        mpl.use('Agg') # set directly after import matplotlib
-        import matplotlib.pyplot as plt
-        mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
-        if usetex:
-            mpl.rc('text', usetex=True)
-        else:
-            mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-            #mpl.rc('font',**{'family':'serif','serif':['times']})
-        mpl.rc('text.latex') #, unicode=True)
-        mpl.rc('savefig', dpi=dpi, format='png')
-    else:
-        import matplotlib.pyplot as plt
-        mpl.rc('figure', figsize=(4./5.*8.27,4./5.*11.69)) # a4 portrait
-    mpl.rc('font', size=textsize)
-    mpl.rc('lines', linewidth=lwidth, color='black')
-    mpl.rc('axes', linewidth=alwidth, labelcolor='black')
-    mpl.rc('path', simplify=False) # do not remove
-
-    ifig = 0
+    nodata = -9999.
 
     outfolder = Path(dir_path+"/../regions/"+case_study+"/predictions/plots/")
     if not os.path.exists(outfolder):
         os.makedirs(outfolder)
 
-    pdffile      = 'timeseries.pdf'
-    pdffile      = str(Path( outfolder / pdffile ))
-    usetex       = False
+    if dotimeseries:
 
-    if (outtype == 'pdf'):
-        print('Plot PDF ', pdffile)
-        pdf_pages = PdfPages(pdffile)
-    elif (outtype == 'png'):
-        print('Plot PNG ', pngbase)
-    else:
-        print('Plot X')
-    # figsize = mpl.rcParams['figure.figsize']
-
-    nodata = -9999.
-
-    basins = results[using_lstms[0]]['basin'].data # assuming all have same basins
-    print('Number of basins found:                {}'.format(len(basins)))
-    kges = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
-    for ibasin, basin in enumerate(basins[0:3]):
-
-        ifig += 1
-        iplot = 0
-        print('Plot - Fig ', ifig)
-        fig = plt.figure(ifig)
-
-        for iperiod,period in enumerate(periods):
-
-            iplot += 1
-            #     [left, bottom, width, height]
-            pos_plot = position(nrow,ncol,iplot,hspace=hspace,vspace=vspace) + [0,-0.03*iperiod,0,0]
-            sub = fig.add_axes(pos_plot) #, facecolor='none')
-
-            for iusing_lstm,using_lstm in enumerate(using_lstms):
-
-                # get data only for current period
-                data_for_period = results[using_lstm].sel(datetime=slice(period['start'], period['end']))
-
-                idx_basin = np.where(data_for_period['basin'].data == basin)[0][0]
-                date = data_for_period['datetime']
-
-                # simulation
-                data_sim = data_for_period['qobs_m3_per_s_sim'][idx_basin].data
-
-                # observation
-                data_obs = data_for_period['qobs_m3_per_s_obs'][idx_basin].data
-
-                # derive KGE
-                if not( np.all(np.isnan(data_obs)) ):
-                    idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
-                    if (len(idx_time) > 3*365):   # at least 3 years of observations
-                        ikge = kge(data_obs[idx_time], data_sim[idx_time])
-                        kges[using_lstm][basin][period['string']] = ikge
-                else:
-                    print('No observation found for basin {} in LSTM model {} in period {}'.format(basin,using_lstm,period['string']))
-
-                # plot observation (one time only)
-                if iusing_lstm == 0:
-                    if not( np.all(np.isnan(data_obs)) ):
-                        sub.plot(date, data_obs,
-                             color='0.7',
-                             linewidth=0.0,
-                             marker='o',
-                             markersize=msize/1,
-                             markeredgewidth=msize/4,
-                             markerfacecolor='w',
-                             label='observation', alpha=0.5)
-
-                # plot simulation
-                if not( np.all(np.isnan(data_sim)) ):
-                    icolor = iusing_lstm
-                    if (kges[using_lstm][basin][period['string']] != nodata ):
-                        label = "{} (KGE={:.2f})".format(using_lstm,kges[using_lstm][basin][period['string']])
-                    else:
-                        label = "{}".format(using_lstm)
-                    sub.plot(date, data_sim,
-                                 color=cc[icolor],
-                                 linewidth=lwidth,
-                                 label=label, alpha=0.5)
-                else:
-                    print('No simulation data found for basin {} in LSTM model {}'.format(basin,using_lstm))
-
-            # set axis labels
-            if iplot == len(periods):
-                sub.set_xlabel(str2tex('simulation time', usetex=usetex))
-            sub.set_ylabel(str2tex('Q [m$^3$ s$^{-1}$]', usetex=usetex))
-
-            # add title
-            if iplot == 1:
-                sub.text(0.5,1.0,str2tex(basin,usetex=usetex),
-                         verticalalignment='bottom',horizontalalignment='center',
-                         fontweight='bold',
-                         fontsize=textsize,transform=sub.transAxes)
-
-            # add legend
-            ll = plt.legend(frameon=frameon, ncol=2, bbox_to_anchor=(llxbbox,llybbox), loc='upper center',
-                           scatterpoints=1, numpoints=1,
-                           fontsize=textsize-4,
-                           labelspacing=llrspace, columnspacing=llcspace, handletextpad=llhtextpad, handlelength=llhlength)
-            plt.setp(ll.get_texts(), fontsize='small')
-
-
+        # -------------------------------------------------------------------------
+        # TIMESERIES: Results of validation experiment(s)
+        #
+        outtype = 'pdf'
 
         if (outtype == 'pdf'):
-            pdf_pages.savefig(fig)
-            plt.close(fig)
-        elif (outtype == 'png'):
-            pngfile = pngbase+"{}".format(using_lstm)+".png"
-            pngfiles.append( pngfile )
-            fig.savefig(pngfile, transparent=transparent, bbox_inches=bbox_inches, pad_inches=pad_inches)
-            plt.close(fig)
-
-
-    # -------------------------------------------------------------------------
-    # Finished
-    #
-
-    if (outtype == 'pdf'):
-        pdf_pages.close()
-    elif (outtype == 'png'):
-        pass
-    else:
-        plt.show()
-
-    t2    = time.time()
-    strin = '[m]: '+astr((t2-t1)/60.,1) if (t2-t1)>60. else '[s]: '+astr(t2-t1,0)
-    print('Time ', strin)
-
-    if (outtype == 'pdf'):
-        print('Wrote: {}'.format(pdffile))
-    elif (outtype == 'png'):
-        print('Wrote: {}'.format(pngfiles))
-
-
-    # write summary to .txt
-    filename = '.'.join(pdffile.split('.')[0:-1])+'.txt'
-    ff = open(filename, "w")
-
-    print('')
-    print('summary statistics:')
-    for using_lstm in using_lstms:
-
-        for iperiod,period in enumerate(periods):
-
-            kges_lstm = np.array([ kges[using_lstm][bb][period['string']] for bb in basins if ((kges[using_lstm][bb][period['string']] != nodata) and (not(np.isnan(kges[using_lstm][bb][period['string']]))))])
-            if len(kges_lstm > 0):
-                summary_string = '   {:20s}: {}: median KGE = {} ({}, {}) based on {} basins'.format(
-                    using_lstm,
-                    period['string'],
-                    np.nanmedian(kges_lstm),
-                    np.nanpercentile(kges_lstm,5),
-                    np.nanpercentile(kges_lstm,95),
-                    len(kges_lstm))
+            mpl.use('PDF') # set directly after import matplotlib
+            import matplotlib.pyplot as plt
+            from matplotlib.backends.backend_pdf import PdfPages
+            # Customize: http://matplotlib.sourceforge.net/users/customizing.html
+            mpl.rc('ps', papersize='a4', usedistiller='xpdf') # ps2pdf
+            mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
+            if usetex:
+                mpl.rc('text', usetex=True)
             else:
-                summary_string = '   {:20s}: {}: no KGE results since no basin had observations (?!)'.format(
-                    using_lstm,
-                    period['string'])
-            print(summary_string)
-            ff.write(summary_string+'\n')
+                mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+                #mpl.rc('font',**{'family':'serif','serif':['times']})
+            mpl.rc('text.latex') #, unicode=True)
+        elif (outtype == 'png'):
+            mpl.use('Agg') # set directly after import matplotlib
+            import matplotlib.pyplot as plt
+            mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
+            if usetex:
+                mpl.rc('text', usetex=True)
+            else:
+                mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+                #mpl.rc('font',**{'family':'serif','serif':['times']})
+            mpl.rc('text.latex') #, unicode=True)
+            mpl.rc('savefig', dpi=dpi, format='png')
+        else:
+            import matplotlib.pyplot as plt
+            mpl.rc('figure', figsize=(4./5.*8.27,4./5.*11.69)) # a4 portrait
+        mpl.rc('font', size=textsize)
+        mpl.rc('lines', linewidth=lwidth, color='black')
+        mpl.rc('axes', linewidth=alwidth, labelcolor='black')
+        mpl.rc('path', simplify=False) # do not remove
 
-    ff.close()
-    print('Wrote: {}'.format(filename))
+        ifig = 0
 
-    # write all KGE results to .json
-    filename = '.'.join(pdffile.split('.')[0:-1])+'.json'
-    with open(filename, "w") as outfile:
-        json.dump(kges, outfile)
+        pdffile      = 'timeseries.pdf'
+        pdffile      = str(Path( outfolder / pdffile ))
+        usetex       = False
 
-    print('Wrote: {}'.format(filename))
-    print('')
+        if (outtype == 'pdf'):
+            print('Plot PDF ', pdffile)
+            pdf_pages = PdfPages(pdffile)
+        elif (outtype == 'png'):
+            print('Plot PNG ', pngbase)
+        else:
+            print('Plot X')
+        # figsize = mpl.rcParams['figure.figsize']
+
+        basins = results[using_lstms[0]]['basin'].data # assuming all have same basins
+        print('Number of basins found:                {}'.format(len(basins)))
+        kges = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
+        for ibasin, basin in enumerate(basins):
+
+            ifig += 1
+            iplot = 0
+            print('Plot - Fig ', ifig)
+            fig = plt.figure(ifig)
+
+            for iperiod,period in enumerate(periods):
+
+                iplot += 1
+                #     [left, bottom, width, height]
+                pos_plot = position(nrow,ncol,iplot,hspace=hspace,vspace=vspace) + [0,-0.03*iperiod,0,0]
+                sub = fig.add_axes(pos_plot) #, facecolor='none')
+
+                for iusing_lstm,using_lstm in enumerate(using_lstms):
+
+                    # get data only for current period
+                    data_for_period = results[using_lstm].sel(datetime=slice(period['start'], period['end']))
+
+                    idx_basin = np.where(data_for_period['basin'].data == basin)[0][0]
+                    date = data_for_period['datetime']
+
+                    # simulation
+                    data_sim = data_for_period['qobs_m3_per_s_sim'][idx_basin].data
+
+                    # observation
+                    data_obs = data_for_period['qobs_m3_per_s_obs'][idx_basin].data
+
+                    # derive KGE
+                    if not( np.all(np.isnan(data_obs)) ):
+                        idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
+                        if (len(idx_time) > 3*365):   # at least 3 years of observations
+                            ikge = kge(data_obs[idx_time], data_sim[idx_time])
+                            kges[using_lstm][basin][period['string']] = ikge
+                    else:
+                        print('No observation found for basin {} in LSTM model {} in period {}'.format(basin,using_lstm,period['string']))
+
+                    # plot observation (one time only)
+                    if iusing_lstm == 0:
+                        if not( np.all(np.isnan(data_obs)) ):
+                            sub.plot(date, data_obs,
+                                 color='0.7',
+                                 linewidth=0.0,
+                                 marker='o',
+                                 markersize=msize/1,
+                                 markeredgewidth=msize/4,
+                                 markerfacecolor='w',
+                                 label='observation', alpha=0.5)
+
+                    # plot simulation
+                    if not( np.all(np.isnan(data_sim)) ):
+                        icolor = iusing_lstm
+                        if (kges[using_lstm][basin][period['string']] != nodata ):
+                            label = "{} (KGE={:.2f})".format(using_lstm,kges[using_lstm][basin][period['string']])
+                        else:
+                            label = "{}".format(using_lstm)
+                        sub.plot(date, data_sim,
+                                     color=cc[icolor],
+                                     linewidth=lwidth,
+                                     label=label, alpha=0.5)
+                    else:
+                        print('No simulation data found for basin {} in LSTM model {}'.format(basin,using_lstm))
+
+                # set axis labels
+                if iplot == len(periods):
+                    sub.set_xlabel(str2tex('simulation time', usetex=usetex))
+                sub.set_ylabel(str2tex('Q [m$^3$ s$^{-1}$]', usetex=usetex))
+
+                # add title
+                if iplot == 1:
+                    sub.text(0.5,1.0,str2tex(basin,usetex=usetex),
+                             verticalalignment='bottom',horizontalalignment='center',
+                             fontweight='bold',
+                             fontsize=textsize,transform=sub.transAxes)
+
+                # add legend
+                ll = plt.legend(frameon=frameon, ncol=2, bbox_to_anchor=(llxbbox,llybbox), loc='upper center',
+                               scatterpoints=1, numpoints=1,
+                               fontsize=textsize-4,
+                               labelspacing=llrspace, columnspacing=llcspace, handletextpad=llhtextpad, handlelength=llhlength)
+                plt.setp(ll.get_texts(), fontsize='small')
+
+
+
+            if (outtype == 'pdf'):
+                pdf_pages.savefig(fig)
+                plt.close(fig)
+            elif (outtype == 'png'):
+                pngfile = pngbase+"{}".format(using_lstm)+".png"
+                pngfiles.append( pngfile )
+                fig.savefig(pngfile, transparent=transparent, bbox_inches=bbox_inches, pad_inches=pad_inches)
+                plt.close(fig)
+
+
+        # -------------------------------------------------------------------------
+        # Finished
+        #
+
+        if (outtype == 'pdf'):
+            pdf_pages.close()
+        elif (outtype == 'png'):
+            pass
+        else:
+            plt.show()
+
+        t2    = time.time()
+        strin = '[m]: '+astr((t2-t1)/60.,1) if (t2-t1)>60. else '[s]: '+astr(t2-t1,0)
+        print('Time ', strin)
+
+        if (outtype == 'pdf'):
+            print('Wrote: {}'.format(pdffile))
+        elif (outtype == 'png'):
+            print('Wrote: {}'.format(pngfiles))
+
+
+        # write summary to .txt
+        filename = '.'.join(pdffile.split('.')[0:-1])+'.txt'
+        ff = open(filename, "w")
+
+        print('')
+        print('summary statistics:')
+        for using_lstm in using_lstms:
+
+            for iperiod,period in enumerate(periods):
+
+                kges_lstm = np.array([ kges[using_lstm][bb][period['string']] for bb in basins if ((kges[using_lstm][bb][period['string']] != nodata) and (not(np.isnan(kges[using_lstm][bb][period['string']]))))])
+                if len(kges_lstm > 0):
+                    summary_string = '   {:20s}: {}: median KGE = {} ({}, {}) based on {} basins'.format(
+                        using_lstm,
+                        period['string'],
+                        np.nanmedian(kges_lstm),
+                        np.nanpercentile(kges_lstm,5),
+                        np.nanpercentile(kges_lstm,95),
+                        len(kges_lstm))
+                else:
+                    summary_string = '   {:20s}: {}: no KGE results since no basin had observations (?!)'.format(
+                        using_lstm,
+                        period['string'])
+                print(summary_string)
+                ff.write(summary_string+'\n')
+
+        ff.close()
+        print('Wrote: {}'.format(filename))
+
+        # write all KGE results to .json
+        filename = '.'.join(pdffile.split('.')[0:-1])+'.json'
+        with open(filename, "w") as outfile:
+            json.dump(kges, outfile)
+
+        print('Wrote: {}'.format(filename))
+        print('')
 
 
     # ----------------------------------------------------
     # plot map of results
     # ----------------------------------------------------
 
-    pdffile      = 'map.pdf'
-    pdffile      = str(Path( outfolder / pdffile ))
-    pngbase      = '.'.join(pdffile.split('.')[0:-1])+'_'
-    usetex       = False
-    outtype      = 'png'
+    if domap:
+        # -------------------------------------------------------------------------
+        # MAP: Results of validation experiment(s)
+        #
+
+        pdffile      = 'timeseries.pdf'
+        pdffile      = str(Path( outfolder / pdffile ))
+        filename = '.'.join(pdffile.split('.')[0:-1])+'.json'
+        with open(filename, "r") as outfile:
+            kges = json.load(outfile)
+
+        pdffile      = 'map.pdf'
+        pdffile      = str(Path( outfolder / pdffile ))
+        pngbase      = '.'.join(pdffile.split('.')[0:-1])+'_'
+        usetex       = False
+        outtype      = 'png'
 
 
-    if (outtype == 'pdf'):
-        mpl.use('PDF') # set directly after import matplotlib
-        import matplotlib.pyplot as plt
-        from matplotlib.backends.backend_pdf import PdfPages
-        # Customize: http://matplotlib.sourceforge.net/users/customizing.html
-        mpl.rc('ps', papersize='a4', usedistiller='xpdf') # ps2pdf
-        mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
-        if usetex:
-            mpl.rc('text', usetex=True)
+        if (outtype == 'pdf'):
+            mpl.use('PDF') # set directly after import matplotlib
+            import matplotlib.pyplot as plt
+            from matplotlib.backends.backend_pdf import PdfPages
+            # Customize: http://matplotlib.sourceforge.net/users/customizing.html
+            mpl.rc('ps', papersize='a4', usedistiller='xpdf') # ps2pdf
+            mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
+            if usetex:
+                mpl.rc('text', usetex=True)
+            else:
+                mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+                #mpl.rc('font',**{'family':'serif','serif':['times']})
+            mpl.rc('text.latex') #, unicode=True)
+        elif (outtype == 'png'):
+            mpl.use('Agg') # set directly after import matplotlib
+            import matplotlib.pyplot as plt
+            mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
+            if usetex:
+                mpl.rc('text', usetex=True)
+            else:
+                mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
+                #mpl.rc('font',**{'family':'serif','serif':['times']})
+            mpl.rc('text.latex') #, unicode=True)
+            mpl.rc('savefig', dpi=dpi, format='png')
         else:
-            mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-            #mpl.rc('font',**{'family':'serif','serif':['times']})
-        mpl.rc('text.latex') #, unicode=True)
-    elif (outtype == 'png'):
-        mpl.use('Agg') # set directly after import matplotlib
-        import matplotlib.pyplot as plt
-        mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
-        if usetex:
-            mpl.rc('text', usetex=True)
+            import matplotlib.pyplot as plt
+            mpl.rc('figure', figsize=(4./5.*8.27,4./5.*11.69)) # a4 portrait
+        mpl.rc('font', size=textsize)
+        mpl.rc('lines', linewidth=lwidth, color='black')
+        mpl.rc('axes', linewidth=alwidth, labelcolor='black')
+        mpl.rc('path', simplify=False) # do not remove
+
+
+        pngfiles = []
+
+        ncol  = len(periods)           # # of columns of subplots per figure
+        nrow  = 1
+
+        # green-pink colors
+        cc = color.get_brewer('piyg10', rgb=True)
+        cmap = mpl.colors.ListedColormap(cc)
+
+        if (outtype == 'pdf'):
+            print('Plot PDF ', pdffile)
+            pdf_pages = PdfPages(pdffile)
+        elif (outtype == 'png'):
+            print('Plot PNG ', pngbase)
         else:
-            mpl.rc('font',**{'family':'sans-serif','sans-serif':['Helvetica']})
-            #mpl.rc('font',**{'family':'serif','serif':['times']})
-        mpl.rc('text.latex') #, unicode=True)
-        mpl.rc('savefig', dpi=dpi, format='png')
-    else:
-        import matplotlib.pyplot as plt
-        mpl.rc('figure', figsize=(4./5.*8.27,4./5.*11.69)) # a4 portrait
-    mpl.rc('font', size=textsize)
-    mpl.rc('lines', linewidth=lwidth, color='black')
-    mpl.rc('axes', linewidth=alwidth, labelcolor='black')
-    mpl.rc('path', simplify=False) # do not remove
+            print('Plot X')
+        # figsize = mpl.rcParams['figure.figsize']
+
+        ifig = 0
+
+        for using_lstm in list(kges.keys()):
+
+            ifig += 1
+            iplot = 0
+            print('Plot - Fig {} - using_lstm = {}'.format(ifig,using_lstm))
+            fig = plt.figure(ifig)
+
+            for iperiod,period in enumerate(periods):
+
+                iplot += 1
+                pos_plot = position(nrow,ncol,iplot,hspace=hspace,vspace=vspace)
+                sub = fig.add_axes(pos_plot) #, facecolor='none')
+
+                lat_1     =   (llcrnrlat+urcrnrlat)/2  # first  "equator"
+                lat_2     =   (llcrnrlat+urcrnrlat)/2  # second "equator"
+                lat_0     =   (llcrnrlat+urcrnrlat)/2  # center of the map
+                lon_0     =   (llcrnrlon+urcrnrlon)/2  # center of the map
+
+                m = Basemap(projection='lcc', area_thresh=2000.,
+                            llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon, llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
+                            lat_1=lat_1, lat_2=lat_2, lat_0=lat_0, lon_0=lon_0,
+                            resolution='i') # Lambert conformal
 
 
-    pngfiles = []
+                # draw parallels and meridians.
+                # labels: [left, right, top, bottom]
+                if type(parallels) == tuple:
+                    parallels = parallels[0]
+                if iplot == 1:
+                    m.drawparallels(parallels,labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
+                elif iplot == len(periods):
+                    m.drawparallels(parallels,labels=[0,1,0,0], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
+                else:
+                     m.drawparallels(parallels,labels=[0,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
+                m.drawmeridians(meridians,labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
 
-    ncol  = len(periods)           # # of columns of subplots per figure
-    nrow  = 1
+                # draw cooastlines and countries
+                m.drawcoastlines(linewidth=0.3)
+                m.drawmapboundary(fill_color='white', linewidth=0.3) # ocean_color
+                m.drawcountries(color='black', linewidth=0.3)
+                m.drawstates(color='gray', linewidth=0.3)
+                m.fillcontinents(color='0.95', lake_color='white')  # ocean_color
 
-    # green-pink colors
-    cc = color.get_brewer('piyg10', rgb=True)
-    cmap = mpl.colors.ListedColormap(cc)
+                # Gauges
+                station_w_kge = 0
+                station_wo_kge = 0
+                ikges = []
 
-    if (outtype == 'pdf'):
-        print('Plot PDF ', pdffile)
-        pdf_pages = PdfPages(pdffile)
-    elif (outtype == 'png'):
-        print('Plot PNG ', pngbase)
-    else:
-        print('Plot X')
-    # figsize = mpl.rcParams['figure.figsize']
+                # read basins.csv for (lat,lon,obs_q)
+                static_attributes_basin   = pd.read_csv(project_root / '_'.join(using_lstm.split('_')[0:-1]) / 'basins.csv', index_col=[0],
+                                                        dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float', 'obs_q': 'str'})
+                qobs_location = { bb:
+                                      { 'lat': static_attributes_basin.loc[bb]['lat'],
+                                        'lon': static_attributes_basin.loc[bb]['lon'] }
+                                      for bb in list(static_attributes_basin.index) }
+                station_list = list(kges[using_lstm].keys())
 
-    ifig = 0
+                # check that all basins are found
+                for bb in list(qobs_location.keys()):
+                    if not( bb in station_list):
+                        raise ValueError('ID {} not found in station_list results of LSTM {}'.format(bb,using_lstm))
 
-    for using_lstm in list(kges.keys()):
+                for station in list(station_list):
+
+                    # color based on KGE of that basin
+                    icolor = 'red'
+                    ikge = kges[using_lstm][station][period['string']]
+
+                    min_kge = 0.0
+                    max_kge = 1.0
+                    scale   = 'linear'
+
+                    if not( np.isnan(ikge) ) and not(ikge == nodata):
+                        if ikge <= min_kge:
+                            icolor = cc[0]
+                        elif ikge > max_kge:
+                            icolor = cc[-1]
+                        else:
+                            if scale == 'linear':
+                                # linear scale
+                                icolor = cc[int((ikge-min_kge)/(max_kge-min_kge)*(len(cc)-1))+1]
+                            elif scale == 'log':
+                                # logarithmic scale
+                                icolor = cc[np.where(ikge > cticks_log)[0][-1]]
+                            else:
+                                raise ValueError('Scale "{}" method not implemented!'.format(scale))
+
+                        xpt = m(qobs_location[station]["lon"],qobs_location[station]["lat"])[0]
+                        ypt = m(qobs_location[station]["lon"],qobs_location[station]["lat"])[1]
+                        sub.plot(xpt, ypt,
+                                 linestyle='None', marker='o', markeredgecolor=icolor, markerfacecolor=icolor,
+                                 markersize=msize, markeredgewidth=0.0)
+
+                        if ikge < 0.0:
+                            print("   >>> Gauge {} (lat={:8.4f},lon={:8.4f}) has very low KGE value: {:8.3f}".format(
+                                station,qobs_location[station]["lat"],qobs_location[station]["lon"],ikge))
+
+                        station_w_kge += 1
+                        ikges = np.append(ikges, ikge)
+                    else:
+                        station_wo_kge += 1
+
+
+                if dosig:
+                    from signature2plot import signature2plot
+                    signature2plot(sub, dxsig, dysig, sig, transform=sub.transAxes,
+                               horizontalalignment='left',
+                               color='gray',
+                               italic=True, small=True, mathrm=True, usetex=usetex)
+
+                # median
+                if len(ikges) > 0:
+                    print('   {:20s}: {}: median KGE = {} ({}, {}) based on {} basins'.format(
+                        using_lstm, period['string'],
+                        np.median(ikges),np.percentile(ikges,5),np.percentile(ikges,95),len(ikges)))
+                else:
+                    print('   {:20s}: {}: median KGE = n/a based on {} basins'.format(
+                        using_lstm, period['string'],
+                        len(ikges)))
+
+                # add nbasins
+                sub.text(0.99,0.99,str2tex('$n_{basins} = '+str(len(ikges))+'$',usetex=usetex),
+                                 verticalalignment='top',horizontalalignment='right',
+                                 fontsize=textsize-2,transform=sub.transAxes)
+
+                # add case_study / model
+                if iplot == len(periods):
+                    sub.text(1.0,1.1,str2tex('region: '+case_study+'\n'+'model: '+using_lstm+'\n',usetex=usetex),
+                                 verticalalignment='bottom',horizontalalignment='right',
+                                 fontsize=textsize-2, color='0.5',transform=sub.transAxes)
+
+                # add ABC
+                if doabc:
+                    sub.text(0.0,1.0,str2tex(chr(64+iplot),usetex=usetex),
+                                 verticalalignment='bottom',horizontalalignment='left',
+                                 fontweight='bold',
+                                 fontsize=textsize+4,transform=sub.transAxes)
+
+                # add title
+                sub.text(0.5,1.0,str2tex(period['string'].replace(':',' to '),usetex=usetex),
+                                 verticalalignment='bottom',horizontalalignment='center',
+                                 fontweight='bold',
+                                 fontsize=textsize,transform=sub.transAxes)
+
+            if (outtype == 'pdf'):
+                pdf_pages.savefig(fig)
+                plt.close(fig)
+            elif (outtype == 'png'):
+                pngfile = pngbase+"{}".format(using_lstm)+".png"
+                pngfiles.append( pngfile )
+                fig.savefig(pngfile, transparent=transparent, bbox_inches=bbox_inches, pad_inches=pad_inches)
+                plt.close(fig)
+
+        # -------------------------------------------------------------------------
+        # Colorbar - vertical
+        # -------------------------------------------------------------------------
+        #     [left, bottom, width, height]
+        # pos cbar:  [0.125  0.772  0.5375 0.128 ]
+        # pos cbar:  [0.3625 0.772  0.5375 0.128 ]
+        # pos cbar:  [0.125  0.604  0.5375 0.128 ]
+        # pos cbar:  [0.3625 0.604  0.5375 0.128 ]
+        # pos cbar:  [0.125  0.436  0.5375 0.128 ]
 
         ifig += 1
         iplot = 0
-        print('Plot - Fig {} - using_lstm = {}'.format(ifig,using_lstm))
+        print('Plot - Fig {} - legend'.format(ifig))
         fig = plt.figure(ifig)
 
-        for iperiod,period in enumerate(periods):
+        #print("pos plot: ",position(nrow,ncol,iplot,hspace=hspace,vspace=vspace))
+        pos_cbar = [pos_plot[0],pos_plot[0],pos_plot[0],0.01]
+        #print("pos cbar: ",pos_cbar)
 
-            iplot += 1
-            pos_plot = position(nrow,ncol,iplot,hspace=hspace,vspace=vspace)
-            sub = fig.add_axes(pos_plot) #, facecolor='none')
+        csub_cal    = fig.add_axes( pos_cbar )
 
-            lat_1     =   (llcrnrlat+urcrnrlat)/2  # first  "equator"
-            lat_2     =   (llcrnrlat+urcrnrlat)/2  # second "equator"
-            lat_0     =   (llcrnrlat+urcrnrlat)/2  # center of the map
-            lon_0     =   (llcrnrlon+urcrnrlon)/2  # center of the map
+        if scale == 'linear':
+            # linear scale
+            cbar = mpl.colorbar.ColorbarBase(csub_cal, norm=mpl.colors.Normalize(vmin=min_kge, vmax=max_kge), cmap=cmap, orientation='horizontal', extend='min')
+        elif scale == 'log':
+            # logarithmic scale
+            cbar = mpl.colorbar.ColorbarBase(csub_cal, norm=mpl.colors.LogNorm(vmin=min_kge, vmax=max_kge), cmap=cmap, orientation='horizontal', extend='min')
+        else:
+            raise ValueError('Scale "{}" method not implemented!'.format(scale))
 
-            m = Basemap(projection='lcc', area_thresh=2000.,
-                        llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon, llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
-                        lat_1=lat_1, lat_2=lat_2, lat_0=lat_0, lon_0=lon_0,
-                        resolution='i') # Lambert conformal
+        cbar.set_label(str2tex('Kling-Gupta Efficiency [-]',usetex=usetex))
 
-
-            # draw parallels and meridians.
-            # labels: [left, right, top, bottom]
-            if iplot == 1:
-                m.drawparallels(parallels,labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
-            elif iplot == len(periods):
-                m.drawparallels(parallels,labels=[0,1,0,0], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
-            else:
-                 m.drawparallels(parallels,labels=[0,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
-            m.drawmeridians(meridians,labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5', fontsize=textsize-2)
-
-            # draw cooastlines and countries
-            m.drawcoastlines(linewidth=0.3)
-            m.drawmapboundary(fill_color='white', linewidth=0.3) # ocean_color
-            m.drawcountries(color='black', linewidth=0.3)
-            m.drawstates(color='gray', linewidth=0.3)
-            m.fillcontinents(color='0.95', lake_color='white')  # ocean_color
-
-            # Gauges
-            station_w_kge = 0
-            station_wo_kge = 0
-            ikges = []
-
-            # read basins.csv for (lat,lon,obs_q)
-            static_attributes_basin   = pd.read_csv(project_root / '_'.join(using_lstm.split('_')[0:-1]) / 'basins.csv', index_col=[0],
-                                                    dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float', 'obs_q': 'str'})
-            qobs_location = { static_attributes_basin.loc[bb]['obs_q']:
-                                  { 'lat': static_attributes_basin.loc[bb]['lat'],
-                                    'lon': static_attributes_basin.loc[bb]['lon'] }
-                                  for bb in list(static_attributes_basin.index) }
-            station_list = list(kges[using_lstm].keys())
-
-            # check that all basins are found
-            for bb in list(qobs_location.keys()):
-                if not( bb in station_list):
-                    raise ValueError('Basin {} not found in station_list results of LSTM {}'.format(bb,using_lstm))
-
-            for station in list(station_list):
-
-                # color based on KGE of that basin
-                icolor = 'red'
-                ikge = kges[using_lstm][station][period['string']]
-
-                min_kge = 0.0
-                max_kge = 1.0
-                scale   = 'linear'
-
-                if not( np.isnan(ikge) ) and not(ikge == nodata):
-                    if ikge <= min_kge:
-                        icolor = cc[0]
-                    elif ikge > max_kge:
-                        icolor = cc[-1]
-                    else:
-                        if scale == 'linear':
-                            # linear scale
-                            icolor = cc[int((ikge-min_kge)/(max_kge-min_kge)*(len(cc)-1))+1]
-                        elif scale == 'log':
-                            # logarithmic scale
-                            icolor = cc[np.where(ikge > cticks_log)[0][-1]]
-                        else:
-                            raise ValueError('Scale "{}" method not implemented!'.format(scale))
-
-                    xpt = m(qobs_location[station]["lon"],qobs_location[station]["lat"])[0]
-                    ypt = m(qobs_location[station]["lon"],qobs_location[station]["lat"])[1]
-                    sub.plot(xpt, ypt,
-                             linestyle='None', marker='o', markeredgecolor=icolor, markerfacecolor=icolor,
-                             markersize=msize, markeredgewidth=0.0)
-
-                    if ikge < 0.0:
-                        print("   >>> Gauge {} (lat={:8.4f},lon={:8.4f}) has very low KGE value: {:8.3f}".format(
-                            station,qobs_location[station]["lat"],qobs_location[station]["lon"],ikge))
-
-                    station_w_kge += 1
-                    ikges = np.append(ikges, ikge)
-                else:
-                    station_wo_kge += 1
-
-
-            if dosig:
-                from signature2plot import signature2plot
-                signature2plot(sub, dxsig, dysig, sig, transform=sub.transAxes,
-                           horizontalalignment='left',
-                           color='gray',
-                           italic=True, small=True, mathrm=True, usetex=usetex)
-
-            # median
-            print('   {:20s}: {}: median KGE = {} ({}, {}) based on {} basins'.format(
-                using_lstm, period['string'],
-                np.median(ikges),np.percentile(ikges,5),np.percentile(ikges,95),len(ikges)))
-
-            # add nbasins
-            sub.text(0.99,0.99,str2tex('$n_{basins} = '+str(len(ikges))+'$',usetex=usetex),
-                             verticalalignment='top',horizontalalignment='right',
-                             fontsize=textsize-2,transform=sub.transAxes)
-
-            # add case_study / model
-            if iplot == len(periods):
-                sub.text(1.0,1.1,str2tex('region: '+case_study+'\n'+'model: '+using_lstm+'\n',usetex=usetex),
-                             verticalalignment='bottom',horizontalalignment='right',
-                             fontsize=textsize-2, color='0.5',transform=sub.transAxes)
-
-            # add ABC
-            if doabc:
-                sub.text(0.0,1.0,str2tex(chr(64+iplot),usetex=usetex),
-                             verticalalignment='bottom',horizontalalignment='left',
-                             fontweight='bold',
-                             fontsize=textsize+4,transform=sub.transAxes)
-
-            # add title
-            sub.text(0.5,1.0,str2tex(period['string'].replace(':',' to '),usetex=usetex),
-                             verticalalignment='bottom',horizontalalignment='center',
-                             fontweight='bold',
-                             fontsize=textsize,transform=sub.transAxes)
 
         if (outtype == 'pdf'):
             pdf_pages.savefig(fig)
             plt.close(fig)
         elif (outtype == 'png'):
-            pngfile = pngbase+"{}".format(using_lstm)+".png"
+            pngfile = pngbase+"legend.png"
             pngfiles.append( pngfile )
             fig.savefig(pngfile, transparent=transparent, bbox_inches=bbox_inches, pad_inches=pad_inches)
             plt.close(fig)
 
-    # -------------------------------------------------------------------------
-    # Colorbar - vertical
-    # -------------------------------------------------------------------------
-    #     [left, bottom, width, height]
-    # pos cbar:  [0.125  0.772  0.5375 0.128 ]
-    # pos cbar:  [0.3625 0.772  0.5375 0.128 ]
-    # pos cbar:  [0.125  0.604  0.5375 0.128 ]
-    # pos cbar:  [0.3625 0.604  0.5375 0.128 ]
-    # pos cbar:  [0.125  0.436  0.5375 0.128 ]
 
-    ifig += 1
-    iplot = 0
-    print('Plot - Fig {} - legend'.format(ifig))
-    fig = plt.figure(ifig)
+        # -------------------------------------------------------------------------
+        # Finished
+        #
 
-    #print("pos plot: ",position(nrow,ncol,iplot,hspace=hspace,vspace=vspace))
-    pos_cbar = [pos_plot[0],pos_plot[0],pos_plot[0],0.01]
-    #print("pos cbar: ",pos_cbar)
+        if (outtype == 'pdf'):
+            pdf_pages.close()
+        elif (outtype == 'png'):
+            pass
+        else:
+            plt.show()
 
-    csub_cal    = fig.add_axes( pos_cbar )
+        t2    = time.time()
+        strin = '[m]: '+astr((t2-t1)/60.,1) if (t2-t1)>60. else '[s]: '+astr(t2-t1,0)
+        print('Time ', strin)
 
-    if scale == 'linear':
-        # linear scale
-        cbar = mpl.colorbar.ColorbarBase(csub_cal, norm=mpl.colors.Normalize(vmin=min_kge, vmax=max_kge), cmap=cmap, orientation='horizontal', extend='min')
-    elif scale == 'log':
-        # logarithmic scale
-        cbar = mpl.colorbar.ColorbarBase(csub_cal, norm=mpl.colors.LogNorm(vmin=min_kge, vmax=max_kge), cmap=cmap, orientation='horizontal', extend='min')
-    else:
-        raise ValueError('Scale "{}" method not implemented!'.format(scale))
-
-    cbar.set_label(str2tex('Kling-Gupta Efficiency [-]',usetex=usetex))
-
-
-    if (outtype == 'pdf'):
-        pdf_pages.savefig(fig)
-        plt.close(fig)
-    elif (outtype == 'png'):
-        pngfile = pngbase+"legend.png"
-        pngfiles.append( pngfile )
-        fig.savefig(pngfile, transparent=transparent, bbox_inches=bbox_inches, pad_inches=pad_inches)
-        plt.close(fig)
-
-
-    # -------------------------------------------------------------------------
-    # Finished
-    #
-
-    if (outtype == 'pdf'):
-        pdf_pages.close()
-    elif (outtype == 'png'):
-        pass
-    else:
-        plt.show()
-
-    t2    = time.time()
-    strin = '[m]: '+astr((t2-t1)/60.,1) if (t2-t1)>60. else '[s]: '+astr(t2-t1,0)
-    print('Time ', strin)
-
-    if (outtype == 'pdf'):
-        print('Wrote: {}'.format(pdffile))
-    elif (outtype == 'png'):
-        print('Wrote: {}'.format(pngfiles))
-
-
-else:
-    raise ValueError('Not sure how this ended up here.')
+        if (outtype == 'pdf'):
+            print('Wrote: {}'.format(pdffile))
+        elif (outtype == 'png'):
+            print('Wrote: {}'.format(pngfiles))
