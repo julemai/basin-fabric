@@ -227,7 +227,7 @@ done
 # ls /scratch/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*.done | wc -l
 # ------------------
 # JOBID
-#    --> all basins                        ;  1GB ; 24h   ; 78 tasks (each 1 basin)
+# 10574850   --> all basins                        ;  1GB ; 24h   ; 78 tasks (each 1 basin)
 
 
 

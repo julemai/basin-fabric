@@ -103,7 +103,8 @@ Extract forcings for each basin XXXX from RDRS-v2.1.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/07_create_lumped_forcings.py -s lake-erie-us-gaffney -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+cd src
+python 07_create_lumped_forcings.py -s lake-erie-us-gaffney -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
 
 Creates: forcings/*_agg_*_*_lp.nc
