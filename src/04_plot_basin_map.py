@@ -29,6 +29,7 @@ from __future__ import print_function
 # python 04_plot_basin_map.py -s grip-gl-mai
 # python 04_plot_basin_map.py -s north-america-mai
 # python 04_plot_basin_map.py -s camels-us-newman
+# python 04_plot_basin_map.py -s lake-erie-us-gaffney
 
 
 """
@@ -184,6 +185,16 @@ elif case_study == 'camels-us-newman':
     urcrnrlon =  -60.0
     llcrnrlat =   20.5
     urcrnrlat =   51.5
+
+elif case_study == 'lake-erie-us-gaffney':
+    project_root = dir_path+'/../regions/lake-erie-us-gaffney/shapefiles/'
+    outfolder    = dir_path+'/../regions/lake-erie-us-gaffney/maps/'
+    shpfile = glob.glob( project_root+'/*/*_lp.shp')
+
+    llcrnrlon =  -87.0
+    urcrnrlon =  -76.0
+    llcrnrlat =   39.0
+    urcrnrlat =   44.0
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
@@ -411,6 +422,9 @@ elif case_study == 'north-america-mai':
 elif case_study == 'camels-us-newman':
     m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
     m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
+elif case_study == 'lake-erie-us-gaffney':
+    m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
+    m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -452,7 +466,7 @@ for ishape in range(nshapes):
     if (np.max(xy[:,1]) > max_lat):
         max_lat = np.max(xy[:,1])
     # add catchment shape to plot
-    sub.add_patch(Polygon([ m(ii[0],ii[1]) for ii in xy ], facecolor=c[20], edgecolor='none', alpha=0.5))
+    sub.add_patch(Polygon([ m(ii[0],ii[1]) for ii in xy ], facecolor=c[20], edgecolor='k', linewidth=0.25, alpha=0.5))
 
 print('lon: {} to {}'.format(min_lon,max_lon))
 print('lat: {} to {}'.format(min_lat,max_lat))
@@ -495,6 +509,11 @@ elif case_study == 'exercise-water-quantity':
                  fontsize=textsize,transform=sub.transAxes)
 elif case_study == 'camels-us-newman':
     sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).upper(),usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'lake-erie-us-gaffney':
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[0:2]).title()+' '+case_study.replace('-',' ').split(' ')[2].upper(),usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)

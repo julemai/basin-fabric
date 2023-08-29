@@ -50,10 +50,15 @@
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-361
 
-#SBATCH --job-name=agg-camels                     # name of job in queque
-#SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --job-name=agg-camels                     # name of job in queque
+##SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+##SBATCH --array=1-224
+
+#SBATCH --job-name=agg-erie-us                    # name of job in queque
+#SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-#SBATCH --array=1-14
+#SBATCH --array=1-78
 
 
 
@@ -107,17 +112,23 @@ cd /scratch/julemai/basin-fabric/src/
 # region_tag_python="ontario-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=224                                 # <<<<<<<<<<<<<<<<
+# region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="camels-us-newman"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
 # set number of tasks (make sure it is consistent with above)
-ntasks=14 #224                                 # <<<<<<<<<<<<<<<<
-region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
-region_tag_python="camels-us-newman"
+ntasks=78                                 # <<<<<<<<<<<<<<<<
+region="lake-erie-us-gaffney"                  # <<<<<<<<<<<<<<<<
+region_tag_python="lake-erie-us-gaffney"
 forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
 nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
-nbasins=$( cat /scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat | wc -l )
+# nbasins=$( cat /scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat | wc -l )
 
 #ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
 ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
@@ -125,7 +136,7 @@ start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
 basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
-basins=$( cat "/scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
+#basins=$( cat "/scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
 
@@ -149,6 +160,7 @@ done
 # region='ontario-zhi'
 # region='grip-gl-mai'
 # region='camels-us-newman'
+# region='lake-erie-us-gaffney'
 
 # basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 
@@ -205,6 +217,17 @@ done
 # 10346548   --> all basins missing                ;  1GB ; 24h   ;  14 tasks (each 1 basin)
 
 
+
+# ------------------
+# region_tag_python="lake-erie-us-gaffney"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+#
+# ------------------
+# check completeness Lake Erie US forcings  (should be 78)
+# ls /scratch/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*.done | wc -l
+# ------------------
+# JOBID
+#    --> all basins                        ;  1GB ; 24h   ; 78 tasks (each 1 basin)
 
 
 

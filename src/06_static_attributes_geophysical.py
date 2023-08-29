@@ -29,6 +29,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s conus-zhi
 # python 06_static_attributes_geophysical.py -s north-america-mai
 # python 06_static_attributes_geophysical.py -s camels-us-newman
+# python 06_static_attributes_geophysical.py -s lake-erie-us-gaffney
 
 
 """
@@ -90,13 +91,13 @@ case_study   = None
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                   description='''Derive static geophysical attributes.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
-                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'].")
+                    help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney'].")
 
 args         = parser.parse_args()
 case_study   = args.case_study
 
 if (case_study is None):
-    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai', 'camels-us-newman']")
+    raise ValueError("Case study (-s) must be specified and need to be one of the following: ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney']")
 
 del parser, args
 
@@ -151,6 +152,11 @@ elif case_study == 'camels-us-newman':
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
+elif case_study == 'lake-erie-us-gaffney':
+    project_root = Path(dir_path+'/../regions/lake-erie-us-gaffney/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
+
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -200,6 +206,8 @@ if True: #do_area:
     # GREAT LAKES (WEI+NANDITA 361 basins)
     # -------------
     # CAMELS-US (671 basins)
+    # -------------
+    # Lake Erie US (78 basins)
     for typ in types:
         gl_shapes = Path(project_root / typ ).glob(filepattern)
         for gl_shape in gl_shapes:
