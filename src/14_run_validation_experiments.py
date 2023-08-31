@@ -325,7 +325,7 @@ if do_setup:
             if line.startswith('test_start_date:'):
                 lines[iline] = 'test_start_date: '+period['start']+' \n'
 
-        #d- change name of file containing basin names
+        # d- change name of file containing basin names
         for iline,line in enumerate(lines):
             if line.startswith('test_basin_file:'):
                 lines[iline] = 'test_basin_file: '+basin_file+' \n'
@@ -333,6 +333,11 @@ if do_setup:
                 lines[iline] = 'train_basin_file: '+basin_file+' \n'
             if line.startswith('validation_basin_file:'):
                 lines[iline] = 'validation_basin_file: '+basin_file+' \n'
+
+        # e- change number of basins
+        for iline,line in enumerate(lines):
+            if line.startswith('number_of_basins:'):
+                lines[iline] = 'number_of_basins: '+len(basins)+' \n'
 
 
         # d- write to file
