@@ -109,3 +109,43 @@ Add produced files to Git:
 ```
 git add regions/conus-zhi/forcings/*/*_agg_*_daily_local.nc
 ```
+
+
+## Merge observations and forcings
+
+No LSTM will be trained here since there are no observations for these
+basins available. But to evaluate other trained LSTMs of other regions
+over this region, the forcings in neural-hydrology format will be
+needed.
+
+```
+source env-3.10/bin/activate
+python src/09_merge_forcings_and_observations.py -s 'conus-zhi'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x conus-zhi-v1
+```
+
+
+## Run validation experiment
+
+Just run the basins of this region using another pre-trained
+LSTM. This consists of several steps. It might be better to run them
+one after each other by setting `do_XXX` to `True` one after each other.
+
+```
+source env-cuda/bin/activate
+python 14_run_validation_experiments.py -s conus-zhi -u conus-zhi-v1    	-p 1980-01-01:2018-12-31 -f conus-zhi-v1
+python 14_run_validation_experiments.py -s conus-zhi -u conus-zhi-v2    	-p 1980-01-01:2018-12-31 -f conus-zhi-v1
+python 14_run_validation_experiments.py -s conus-zhi -u grip-gl-mai-v2  	-p 1980-01-01:2018-12-31 -f conus-zhi-v1
+python 14_run_validation_experiments.py -s conus-zhi -u grip-gl-mai-v3  	-p 1980-01-01:2018-12-31 -f conus-zhi-v1
+python 14_run_validation_experiments.py -s conus-zhi -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f conus-zhi-v1
+```
+
+## Plot results of validation experiment
+
+Plots results of validation experiment as time series per basin. All
+validation experiments available will be plotted in the same plot (per
+basin):
+
+```
+source env-3.10/bin/activate
+python 15_plot_results_validation_experiments.py -s conus-zhi -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+```

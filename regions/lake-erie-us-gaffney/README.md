@@ -110,10 +110,6 @@ python 07_create_lumped_forcings.py -s lake-erie-us-gaffney -b XXXX -f /scratch/
 Creates: forcings/*_agg_*_*_lp.nc
 
 
-
-
-
-
 ## Derive meteorologic attributes
 
 Derive attributes based on meteorology.
@@ -121,7 +117,7 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s wisconsin-lewis -f 'rdrs-v2.1_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s lake-erie-us-gaffney -f 'rdrs-v2.1_north-america' -p 'all'
 ```
 
 Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
@@ -129,7 +125,7 @@ Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 
 Add produced files to Git:
 ```
-git add regions/wisconsin-lewis/forcings/*/*_agg_*_daily_local.nc
+git add regions/lake-erie-us-gaffney/forcings/*/*_agg_*_daily_local.nc
 ```
 
 
@@ -142,7 +138,7 @@ needed.
 
 ```
 source env-3.10/bin/activate
-python src/09_merge_forcings_and_observations.py -s 'wisconsin-lewis'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x wisconsin-lewis-v1
+python src/09_merge_forcings_and_observations.py -s 'lake-erie-us-gaffney'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x lake-erie-us-gaffney-v1
 ```
 
 
@@ -154,8 +150,11 @@ one after each other by setting `do_XXX` to `True` one after each other.
 
 ```
 source env-cuda/bin/activate
-python 14_run_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
-python 14_run_validation_experiments.py -s wisconsin-lewis -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u conus-zhi-v1    	   -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u conus-zhi-v2    	   -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u grip-gl-mai-v2  	   -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u grip-gl-mai-v3  	   -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
 ```
 
 ## Plot results of validation experiment
@@ -166,5 +165,5 @@ basin):
 
 ```
 source env-3.10/bin/activate
-python 15_plot_results_validation_experiments.py -s wisconsin-lewis -p 1980-01-01:2018-12-31
+python 15_plot_results_validation_experiments.py -s lake-erie-us-gaffney -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 ```

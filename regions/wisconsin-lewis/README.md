@@ -130,8 +130,11 @@ one after each other by setting `do_XXX` to `True` one after each other.
 
 ```
 source env-cuda/bin/activate
-python 14_run_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
-python 14_run_validation_experiments.py -s wisconsin-lewis -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v1    	  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s wisconsin-lewis -u conus-zhi-v2    	  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s wisconsin-lewis -u grip-gl-mai-v2  	  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s wisconsin-lewis -u grip-gl-mai-v3  	  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s wisconsin-lewis -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
 ```
 
 ## Plot results of validation experiment
@@ -142,5 +145,5 @@ basin):
 
 ```
 source env-3.10/bin/activate
-python 15_plot_results_validation_experiments.py -s wisconsin-lewis -p 1980-01-01:2018-12-31
+python 15_plot_results_validation_experiments.py -s wisconsin-lewis -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 ```
