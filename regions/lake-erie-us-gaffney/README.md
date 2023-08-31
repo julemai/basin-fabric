@@ -167,3 +167,14 @@ basin):
 source env-3.10/bin/activate
 python 15_plot_results_validation_experiments.py -s lake-erie-us-gaffney -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 ```
+
+
+## Dump streamflow time series into CSV files
+
+Some people prefer CSV files (one per basin) instead of the NetCDF
+file. So, we are dumping the results into that filetype as well.
+
+```
+source env-3.10/bin/activate
+python 16_dump_to_csv.py -i ../regions/lake-erie-us-gaffney/predictions/using_grip-gl-mai-v2/ensemble/test_ensemble_results.nc -o ../regions/lake-erie-us-gaffney/predictions/using_grip-gl-mai-v2/ensemble/csv/
+```

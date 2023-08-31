@@ -85,7 +85,7 @@ dolegend  = False # True: add legend to each subplot
 doabc     = False # True: add subpanel numbering
 dotitle   = True  # True: add catchment titles to subpanels
 
-dotimeseries = False
+dotimeseries = True
 domap = True
 
 
@@ -268,6 +268,7 @@ if not( experiment is None):
             gauge_dict[static_attributes_basin.loc[basin]['obs_q']] = {
                 'lat': static_attributes_basin.loc[basin]['lat'],
                 'lon': static_attributes_basin.loc[basin]['lon'],
+                'name': static_attributes_basin.loc[basin]['name'],
                 'metrics': results,
                 }
         else:
@@ -743,6 +744,14 @@ elif not(using_lstm is None):
             print('Plot X')
         # figsize = mpl.rcParams['figure.figsize']
 
+        # read basins.csv for (lat,lon,obs_q)
+        static_attributes_basin   = pd.read_csv(project_root / '_'.join(using_lstm.split('_')[0:-1]) / 'basins.csv', index_col=[0],
+                                                        dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float', 'obs_q': 'str'})
+        qobs_location = { bb: { 'lat': static_attributes_basin.loc[bb]['lat'],
+                                'lon': static_attributes_basin.loc[bb]['lon'],
+                                'name': static_attributes_basin.loc[bb]['name'] }
+                          for bb in list(static_attributes_basin.index) }
+
         basins = results[using_lstms[0]]['basin'].data # assuming all have same basins
         print('Number of basins found:                {}'.format(len(basins)))
         kges = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
@@ -816,7 +825,7 @@ elif not(using_lstm is None):
 
                 # add title
                 if iplot == 1:
-                    sub.text(0.5,1.0,str2tex(basin,usetex=usetex),
+                    sub.text(0.5,1.0,str2tex(basin+' - '+qobs_location[basin]['name'],usetex=usetex),
                              verticalalignment='bottom',horizontalalignment='center',
                              fontweight='bold',
                              fontsize=textsize,transform=sub.transAxes)
@@ -1027,7 +1036,8 @@ elif not(using_lstm is None):
                                                         dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float', 'obs_q': 'str'})
                 qobs_location = { bb:
                                       { 'lat': static_attributes_basin.loc[bb]['lat'],
-                                        'lon': static_attributes_basin.loc[bb]['lon'] }
+                                        'lon': static_attributes_basin.loc[bb]['lon'],
+                                        'name': static_attributes_basin.loc[bb]['name'] }
                                       for bb in list(static_attributes_basin.index) }
                 station_list = list(kges[using_lstm].keys())
 

@@ -38,6 +38,7 @@ regions/*/predictions/using_*/time_series
 regions/*/predictions/using_*/attributes
 regions/*/predictions/using_*/basins
 regions/*/predictions/using_*/ensemble/test_ensemble_results.p
+regions/*/predictions/using_*/ensemble/csv
 regions/*/predictions/plots
 
 # Gridded data (too large to get on GitHub)

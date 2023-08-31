@@ -26,8 +26,8 @@ from __future__ import print_function
 
 # dump netcdf file to CSV files (per basin)
 
-# python 16_dump_to_csv.py -i ../regions/wisconsin-lewis/predictions/using_grip-gl-mai-v2/ensemble/test_ensemble_results.nc      -o regions/wisconsin-lewis/predictions/using_grip-gl-mai-v2/csv/
-# python 16_dump_to_csv.py -i ../regions/lake-erie-us-gaffney/predictions/using_grip-gl-mai-v2/ensemble/test_ensemble_results.nc -o regions/lake-erie-us-gaffney/predictions/using_grip-gl-mai-v2/csv/
+# python 16_dump_to_csv.py -i ../regions/wisconsin-lewis/predictions/using_grip-gl-mai-v2/ensemble/test_ensemble_results.nc      -o ../regions/wisconsin-lewis/predictions/using_grip-gl-mai-v2/ensemble/csv/
+# python 16_dump_to_csv.py -i ../regions/lake-erie-us-gaffney/predictions/using_grip-gl-mai-v2/ensemble/test_ensemble_results.nc -o ../regions/lake-erie-us-gaffney/predictions/using_grip-gl-mai-v2/ensemble/csv/
 
 """
 
