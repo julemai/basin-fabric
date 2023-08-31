@@ -56,7 +56,7 @@
 ##SBATCH --array=1-224
 
 #SBATCH --job-name=agg-erie-us                    # name of job in queque
-#SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
+#SBATCH --time=2-00:00:00                         # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 #SBATCH --array=1-78
 
@@ -228,7 +228,7 @@ done
 # ------------------
 # JOBID
 # 10574850   --> all basins                        ;  1GB ; 24h   ; 78 tasks (each 1 basin)
-
+# 10609072   --> all basins missing                ;  1GB ; 48h   ; 78 tasks (each 1 basin)
 
 
 

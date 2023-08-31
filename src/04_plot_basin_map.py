@@ -116,88 +116,72 @@ from   mpl_toolkits.basemap import Basemap
 t1 = time.time()
 
 
-if case_study == 'wisconsin-lewis':
-    project_root = dir_path+'/../regions/wisconsin-lewis/shapefiles/'
-    outfolder    = dir_path+'/../regions/wisconsin-lewis/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp')
 
+project_root = dir_path+'/../regions/'+case_study+'/shapefiles/'
+outfolder    = dir_path+'/../regions/'+case_study+'/maps/'
+shpfile = glob.glob( project_root+'/*/*_lp.shp')
+
+if case_study == 'wisconsin-lewis':
     llcrnrlon =  -93.0
     urcrnrlon =  -86.1
     llcrnrlat =   42.0
     urcrnrlat =   47.2
+    parallels = np.arange( -80., 81., 2.)
+    meridians = np.arange(-180.,181., 2.)
 
 elif case_study == 'ontario-zhi':
-    project_root = dir_path+'/../regions/ontario-zhi/shapefiles/'
-    outfolder    = dir_path+'/../regions/ontario-zhi/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp')
-
     llcrnrlon =  -91.0
     urcrnrlon =  -73.0
     llcrnrlat =   40.5
     urcrnrlat =   49.8
+    parallels = np.arange( -80., 81., 3.)
+    meridians = np.arange(-180.,181., 5.)
 
 elif case_study == 'conus-zhi':
-    project_root = dir_path+'/../regions/conus-zhi/shapefiles/'
-    outfolder    = dir_path+'/../regions/conus-zhi/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp')
-
     llcrnrlon =  -120.0
     urcrnrlon =  -60.0
     llcrnrlat =   20.5
     urcrnrlat =   51.5
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
 
 elif case_study == 'grip-gl-mai':
-    project_root = dir_path+'/../regions/grip-gl-mai/shapefiles/'
-    outfolder    = dir_path+'/../regions/grip-gl-mai/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp')
-
     llcrnrlon =  -93.0
     urcrnrlon =  -72.0
     llcrnrlat =   39.0
     urcrnrlat =   51.0
-
-elif case_study == 'exercise-water-quantity':
-    project_root = dir_path+'/../regions/exercise-water-quantity/shapefiles/'
-    outfolder    = dir_path+'/../regions/exercise-water-quantity/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp')
-
-    llcrnrlon =  -93.0
-    urcrnrlon =  -72.0
-    llcrnrlat =   39.0
-    urcrnrlat =   51.0
+    parallels = np.arange( -80., 81., 3.),
+    meridians = np.arange(-180.,181., 5.)
 
 elif case_study == 'north-america-mai':
-    project_root = dir_path+'/../regions/north-america-mai/shapefiles/'
-    outfolder    = dir_path+'/../regions/north-america-mai/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp') #[0:10]
-
     llcrnrlon =  -116.   # lon: -131.36749999999995 to -60.98499999999996
     urcrnrlon =   -46.
     llcrnrlat =   18.    # lat: 26.920416654000064 to 59.33374999800003
     urcrnrlat =   58.
+    parallels = np.arange( -80., 81., 10.),
+    meridians = np.arange(-180.,181., 15.)
 
 elif case_study == 'camels-us-newman':
-    project_root = dir_path+'/../regions/camels-us-newman/shapefiles/'
-    outfolder    = dir_path+'/../regions/camels-us-newman/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp')
-
     llcrnrlon =  -120.0
     urcrnrlon =  -60.0
     llcrnrlat =   20.5
     urcrnrlat =   51.5
+    parallels = np.arange( -80., 81., 10.),
+    meridians = np.arange(-180.,181., 15.)
 
 elif case_study == 'lake-erie-us-gaffney':
-    project_root = dir_path+'/../regions/lake-erie-us-gaffney/shapefiles/'
-    outfolder    = dir_path+'/../regions/lake-erie-us-gaffney/maps/'
-    shpfile = glob.glob( project_root+'/*/*_lp.shp')
-
     llcrnrlon =  -87.0
     urcrnrlon =  -76.0
     llcrnrlat =   39.0
     urcrnrlat =   44.0
+    parallels = np.arange( -80., 81., 3.)
+    meridians = np.arange(-180.,181., 5.)
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
+
+
+
 
 # Make sure output directory exists
 os.makedirs( Path(outfolder), exist_ok=True )
@@ -401,32 +385,8 @@ for ishape in range(len(catchfile_shp)):
 
 # draw parallels and meridians.
 # labels: [left, right, top, bottom]
-if case_study == 'wisconsin-lewis':
-    m.drawparallels(np.arange( -80., 81., 2.),labels=[1,0,1,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181., 2.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'ontario-zhi':
-    m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'conus-zhi':
-    m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'grip-gl-mai':
-    m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'exercise-water-quantity':
-    m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'north-america-mai':
-    m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'camels-us-newman':
-    m.drawparallels(np.arange( -80., 81., 5.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181.,10.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-elif case_study == 'lake-erie-us-gaffney':
-    m.drawparallels(np.arange( -80., 81., 3.),labels=[1,0,0,0], dashes=[1,1], linewidth=0.25, color='0.5')
-    m.drawmeridians(np.arange(-180.,181., 5.),labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
-else:
-    raise ValueError('Case study for {} not setup yet.'.format(case_study))
+m.drawparallels(parallels,labels=[1,0,1,0], dashes=[1,1], linewidth=0.25, color='0.5')
+m.drawmeridians(meridians,labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 
 # draw cooastlines and countries
 m.drawcoastlines(linewidth=0.3)

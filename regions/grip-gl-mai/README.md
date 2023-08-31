@@ -112,7 +112,7 @@ Derive attributes based on RDRS-v2.1 meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s grip-gl-mai -f 'rdrs-v2.1_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s grip-gl-mai -f 'rdrs-v2.1_north-america' -p 'all' -a
 ```
 
 Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv

@@ -51,18 +51,31 @@ from __future__ import print_function
 # evaluate all models on a new region (camels-us-newman)
 # module load mpi4py/3.1.3
 # source /scratch/julemai/basin-fabric/env-cuda/bin/activate
-# source /scratch/julemai/basin-fabric/src
+# cd /scratch/julemai/basin-fabric/src
 # python 14_run_validation_experiments.py -s camels-us-newman -u grip-gl-mai-v2  -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 # python 14_run_validation_experiments.py -s camels-us-newman -u grip-gl-mai-v3  -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 # python 14_run_validation_experiments.py -s camels-us-newman -u conus-zhi-v1    -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 # python 14_run_validation_experiments.py -s camels-us-newman -u conus-zhi-v2    -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 
 # evaluate all regions with new model (camels-us-newman-v1)  LATER
+# module load mpi4py/3.1.3
+# source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+# cd /scratch/julemai/basin-fabric/src
 # python 14_run_validation_experiments.py -s wisconsin-lewis  -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
 # python 14_run_validation_experiments.py -s ontario-zhi      -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f ontario-zhi-v1
 # python 14_run_validation_experiments.py -s grip-gl-mai      -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f grip-gl-mai-v3
 # python 14_run_validation_experiments.py -s conus-zhi        -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f conus-zhi-v1
 # python 14_run_validation_experiments.py -s camels-us-newman -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
+
+# evaluate all models on a new region (lake-erie-us-gaffney)
+# module load mpi4py/3.1.3
+# source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+# cd /scratch/julemai/basin-fabric/src
+# python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u grip-gl-mai-v2      -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+# python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u grip-gl-mai-v3      -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+# python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u conus-zhi-v1        -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+# python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u conus-zhi-v2        -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+# python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
 
 
 do_setup    = False

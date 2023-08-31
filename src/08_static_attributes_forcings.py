@@ -24,19 +24,21 @@ from __future__ import print_function
 # pyenv activate env-3.8.5-basin-fabric
 
 # INCLUDING AGGREGATION OF HOURLY->DAILY FORCINGS
-# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'  -f 'rdrs-v2.1_north-america' -p 'all' -a
-# python 08_static_attributes_forcings.py -s 'conus-zhi'        -f 'rdrs-v2.1_north-america' -p 'all' -a
-# python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all' -a
-# python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all' -a
-# python 08_static_attributes_forcings.py -s 'camels-us-newman' -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'      -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'conus-zhi'            -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'ontario-zhi'          -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'grip-gl-mai'          -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'camels-us-newman'     -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'lake-erie-us-gaffney' -f 'rdrs-v2.1_north-america' -p 'all' -a
 
 # NO AGGREGATION OF HOURLY->DAILY FORCINGS
-# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'  -f 'rdrs-v2.1_north-america' -p 'all'
-# python 08_static_attributes_forcings.py -s 'conus-zhi'        -f 'rdrs-v2.1_north-america' -p 'all'
-# python 08_static_attributes_forcings.py -s 'ontario-zhi'      -f 'rdrs-v2.1_north-america' -p 'all'
-# python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2.1_north-america' -p 'all'
-# python 08_static_attributes_forcings.py -s 'grip-gl-mai'      -f 'rdrs-v2_grip-gl'         -p 'all'
-# python 08_static_attributes_forcings.py -s 'camels-us-newman' -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'wisconsin-lewis'      -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'conus-zhi'            -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'ontario-zhi'          -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'grip-gl-mai'          -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'grip-gl-mai'          -f 'rdrs-v2_grip-gl'         -p 'all'
+# python 08_static_attributes_forcings.py -s 'camels-us-newman'     -f 'rdrs-v2.1_north-america' -p 'all'
+# python 08_static_attributes_forcings.py -s 'lake-erie-us-gaffney' -f 'rdrs-v2.1_north-america' -p 'all'
 
 """
 
@@ -146,23 +148,7 @@ from neuralhydrology.datautils.climateindices import calculate_dyn_climate_indic
 from neuralhydrology.datautils.pet import get_priestley_taylor_pet
 
 
-if case_study == 'wisconsin-lewis':
-    project_root = Path(dir_path+'/../regions/wisconsin-lewis')
-
-elif case_study == 'ontario-zhi':
-    project_root = Path(dir_path+'/../regions/ontario-zhi')
-
-elif case_study == 'conus-zhi':
-    project_root = Path(dir_path+'/../regions/conus-zhi')
-
-elif case_study == 'grip-gl-mai':
-    project_root = Path(dir_path+'/../regions/grip-gl-mai')
-
-elif case_study == 'camels-us-newman':
-    project_root = Path(dir_path+'/../regions/camels-us-newman')
-
-else:
-    raise ValueError('Case study for {} not setup yet.'.format(case_study))
+project_root = Path(dir_path+'/../regions/'+case_study)
 
 
 
