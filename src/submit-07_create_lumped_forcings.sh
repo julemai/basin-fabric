@@ -50,15 +50,15 @@
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-361
 
-##SBATCH --job-name=agg-camels                     # name of job in queque
-##SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
-##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-##SBATCH --array=1-224
-
-#SBATCH --job-name=agg-erie-us                    # name of job in queque
-#SBATCH --time=2-00:00:00                         # time (DD-HH:MM:SS);
+#SBATCH --job-name=agg-camels                     # name of job in queque
+#SBATCH --time=0-01:00:00    # 3-00:00:00                         # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-#SBATCH --array=1-78
+#SBATCH --array=1-224
+
+##SBATCH --job-name=agg-erie-us                    # name of job in queque
+##SBATCH --time=0-01:00:00   # 3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+##SBATCH --array=1-78
 
 
 
@@ -112,17 +112,17 @@ cd /scratch/julemai/basin-fabric/src/
 # region_tag_python="ontario-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
-# # set number of tasks (make sure it is consistent with above)
-# ntasks=224                                 # <<<<<<<<<<<<<<<<
-# region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
-# region_tag_python="camels-us-newman"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
-
 # set number of tasks (make sure it is consistent with above)
-ntasks=78                                 # <<<<<<<<<<<<<<<<
-region="lake-erie-us-gaffney"                  # <<<<<<<<<<<<<<<<
-region_tag_python="lake-erie-us-gaffney"
+ntasks=224                                 # <<<<<<<<<<<<<<<<
+region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
+region_tag_python="camels-us-newman"
 forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=78                                 # <<<<<<<<<<<<<<<<
+# region="lake-erie-us-gaffney"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="lake-erie-us-gaffney"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # ----------------------------------------------------------------------------------------
 
@@ -130,8 +130,8 @@ forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america
 nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
 # nbasins=$( cat /scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat | wc -l )
 
-#ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
-ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
+ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
+#ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
@@ -210,11 +210,13 @@ done
 # ------------------
 # check completeness CAMELS-US forcings  (should be 671)
 # ls /scratch/julemai/basin-fabric/regions/camels-us-newman/forcings/*/*.done | wc -l
+# ls /scratch/julemai/basin-fabric/regions/camels-us-newman/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
 # ------------------
 # JOBID
 # 10190113   --> all basins                        ;  1GB ; 24h   ; 224 tasks (each 3 basin)
 # 10306759   --> all basins missing                ;  1GB ; 24h   ;  14 tasks (each 1 basin)
 # 10346548   --> all basins missing                ;  1GB ; 24h   ;  14 tasks (each 1 basin)
+# 10644434   --> one file (UU 2017) was missing    ;  1GB ;  1h   ; 78 tasks (each 1 basin)
 
 
 
@@ -225,10 +227,12 @@ done
 # ------------------
 # check completeness Lake Erie US forcings  (should be 78)
 # ls /scratch/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*.done | wc -l
+# ls /scratch/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
 # ------------------
 # JOBID
 # 10574850   --> all basins                        ;  1GB ; 24h   ; 78 tasks (each 1 basin)
 # 10609072   --> all basins missing                ;  1GB ; 48h   ; 78 tasks (each 1 basin)
+# 10644275   --> one file (UU 2017) was missing    ;  1GB ;  1h   ; 78 tasks (each 1 basin)
 
 
 
