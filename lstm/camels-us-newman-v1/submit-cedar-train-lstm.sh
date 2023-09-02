@@ -44,4 +44,5 @@ nh-run train --config-file final-training/seed${SLURM_ARRAY_TASK_ID}.yml
 # camels-us-newman
 # ------------------
 # JOBID
-# 10441415   --> all basins                        ;  16GB ; 16h   ; 10 tasks (each 1 seed)
+# 10441415   --> all basins                            ;  16GB ; 16h   ; 10 tasks (each 1 seed)
+# 11049271   --> all basins (after fixing 2017_UU bug) ;  16GB ; 16h   ; 10 tasks (each 1 seed)

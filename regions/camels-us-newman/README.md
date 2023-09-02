@@ -94,7 +94,7 @@ Extract forcings for each basin XXXX from RDRS-v2.1.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/07_create_lumped_forcings.py -s camels-us-newman -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+python 07_create_lumped_forcings.py -s camels-us-newman -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
 
 Creates: forcings/*/*_agg_*_*_lp.nc
@@ -107,7 +107,7 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s camels-us-newman -f 'rdrs-v2.1_north-america' -p 'all' -a
+python 08_static_attributes_forcings.py -s camels-us-newman -f 'rdrs-v2.1_north-america' -p 'all' -a
 ```
 
 Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
@@ -128,7 +128,7 @@ needed.
 
 ```
 source env-3.10/bin/activate
-python src/09_merge_forcings_and_observations.py -s 'camels-us-newman'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x camels-us-newman-v1
+python 09_merge_forcings_and_observations.py -s 'camels-us-newman'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x camels-us-newman-v1
 ```
 
 

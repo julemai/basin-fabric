@@ -337,7 +337,7 @@ if do_setup:
         # e- change number of basins
         for iline,line in enumerate(lines):
             if line.startswith('number_of_basins:'):
-                lines[iline] = 'number_of_basins: '+len(basins)+' \n'
+                lines[iline] = 'number_of_basins: '+str(len(basins))+' \n'
 
 
         # d- write to file
