@@ -12,7 +12,45 @@ with proper attribution of the author.
 
 ## Setup Python Environment
 
-### On Graham
+### On Graham (env-3.11)
+
+```
+module purge
+module load StdEnv/2023 gcc/12.3 netcdf/4.9.2 gdal/3.7.2 mpi4py/3.1.4 proj/9.2.0 geos/3.12.0 nco/5.1.7 python/3.11.5
+
+mkdir env-3.11
+virtualenv --no-download env-3.11
+source env-3.11/bin/activate
+
+pip install --no-index --upgrade pip
+
+pip install netCDF4 --no-index # no need, it is for raven-hydro
+pip install GDAL --no-index
+pip install numpy --no-index
+pip install argparse --no-index
+pip install geopandas --no-index
+pip install geojson --no-index
+pip install fiona --no-index
+pip install scipy --no-index
+pip install xarray --no-index
+pip install dask --no-index
+pip install rasterio --no-index
+pip install timezonefinder 
+pip install ipython --no-index
+pip install -U pytest --no-index
+
+pip install statsmodels --no-index  # for ravenpy
+pip install haversine               # for ravenpy
+pip install --no-index pydantic     # for ravenpy
+pip install --no-index pymbolic     # for ravenpy
+pip install --no-index cf_xarray    # for ravenpy
+
+pip install ravenpy[gis] --no-dependencies
+pip install neuralhydrology
+```
+
+
+### On Graham (env-3.10)
 
 ```
 module purge
