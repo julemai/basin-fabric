@@ -19,7 +19,7 @@
 # Basin Fabric code. If not, see
 # <https://github.com/julemai/basin-fabric/blob/main/LICENSE>.
 
-# Copyright 2023 Juliane Mai - juliane.mai@uwaterloo.ca
+# Copyright 2023-2024 Juliane Mai - juliane.mai@uwaterloo.ca
 
 
 
@@ -50,15 +50,21 @@
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-361
 
-#SBATCH --job-name=agg-camels                     # name of job in queque
-#SBATCH --time=0-01:00:00    # 3-00:00:00                         # time (DD-HH:MM:SS);
-#SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
-#SBATCH --array=1-224
+##SBATCH --job-name=agg-camels                     # name of job in queque
+##SBATCH --time=0-01:00:00    # 3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
+##SBATCH --array=1-224
 
 ##SBATCH --job-name=agg-erie-us                    # name of job in queque
 ##SBATCH --time=0-01:00:00   # 3-00:00:00                         # time (DD-HH:MM:SS);
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-78
+
+#SBATCH --job-name=agg-na                          # name of job in queque
+#SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
+#SBATCH --array=1-515
+
 
 
 
@@ -69,18 +75,22 @@
 # 1 basin  --> runtime: 16h for RDRS-v2.1 over North America   -->  --time=1-00:00:00  (1 basin/task)
 
 # load modules
-module load StdEnv/2020
-module load netcdf/4.7.4
-module load gcc/9.3.0
-module load gdal/3.5.1
-module load mpi4py/3.1.3
-module load proj/9.0.1
-module load geos/3.10.2
-module load nco/5.0.6
-module load python/3.10.2
+# module load StdEnv/2020
+# module load netcdf/4.7.4
+# module load gcc/9.3.0
+# module load gdal/3.5.1
+# module load mpi4py/3.1.3
+# module load proj/9.0.1
+# module load geos/3.10.2
+# module load nco/5.0.6
+# module load python/3.10.2
+
+# load modules
+module load StdEnv/2023 gcc/12.3 netcdf/4.9.2 gdal/3.7.2 mpi4py/3.1.4 proj/9.2.0 geos/3.12.0 nco/5.1.7 python/3.11.5
 
 # load pyenv
-source /home/julemai/env-3.10/bin/activate
+# source /home/julemai/env-3.10/bin/activate
+source /scratch/julemai/basin-fabric/env-3.11/bin/activate
 
 # change to right dir
 cd /scratch/julemai/basin-fabric/src/
@@ -112,11 +122,11 @@ cd /scratch/julemai/basin-fabric/src/
 # region_tag_python="ontario-zhi"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
-# set number of tasks (make sure it is consistent with above)
-ntasks=224                                 # <<<<<<<<<<<<<<<<
-region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
-region_tag_python="camels-us-newman"
-forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=224                                 # <<<<<<<<<<<<<<<<
+# region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="camels-us-newman"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=78                                 # <<<<<<<<<<<<<<<<
@@ -124,14 +134,22 @@ forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america
 # region_tag_python="lake-erie-us-gaffney"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
+# set number of tasks (make sure it is consistent with above)
+ntasks=515                                  # <<<<<<<<<<<<<<<<
+region="north-america-mai"                  # <<<<<<<<<<<<<<<<
+region_tag_python="north-america-mai"
+forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
+
+
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
 nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
 # nbasins=$( cat /scratch/julemai/basin-fabric/regions/camels-us-newman/basins_missing.dat | wc -l )
 
-ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
-#ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
+#ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
+ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 

@@ -246,6 +246,7 @@ if do_forcings:
             pyenv = "/Users/j6mai/.pyenv/versions/env-3.8.5-ravenpy-new/bin/python"
         elif system == 'graham':
             pyenv = "/home/julemai/env-3.10/bin/python"
+            pyenv = "/scratch/julemai/basin-fabric/env-3.11/bin/python"
         else:
             raise ValueError('System not known. Specify a valid one with (-y) option.')
 

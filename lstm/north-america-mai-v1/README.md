@@ -7,7 +7,7 @@ query-replace:
 
 ## Get forcings and observations
 ```
-source env-3.10/bin/activate
+source env-3.11/bin/activate
 python 09_merge_forcings_and_observations.py -s 'north-america-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x 'north-america-mai-v1'
 ```
 
