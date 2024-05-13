@@ -1,4 +1,4 @@
-# LSTM experiment: XXXX
+# LSTM experiment: north-america-mai
 
 query-replace:
 - XXXX with "region" to use,     e.g., 'grip-gl-mai'
@@ -8,17 +8,17 @@ query-replace:
 ## Get forcings and observations
 ```
 source env-3.10/bin/activate
-python 09_merge_forcings_and_observations.py -s 'XXXX'  -f 'YYYY' -o 'daily_streamflow.nc' -p 'forcing' -x 'ZZZZ'
+python 09_merge_forcings_and_observations.py -s 'north-america-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x 'north-america-mai-v1'
 ```
 
-Creates: lstm/ZZZZ/basins/basins_with_obs.txt
-Creates: lstm/ZZZZ/basins/basins_without_obs.txt
-Creates: lstm/ZZZZ/time_series/<basins_with_obs>.nc
+Creates: lstm/north-america-mai-v1/basins/basins_with_obs.txt
+Creates: lstm/north-america-mai-v1/basins/basins_without_obs.txt
+Creates: lstm/north-america-mai-v1/time_series/<basins_with_obs>.nc
 
 
 ## Create LSTM setups
 ```
-cd lstm/ZZZZ/
+cd lstm/north-america-mai-v1/
 cp ../_new_template/README.md .
 mkdir runs
 mkdir final-training
@@ -26,11 +26,11 @@ cp ../_new_template/final-training/seed*.yml final-training/.
 ```
 
 ## Adjust setups
-Some settings might need to be adjusted; especially the name of the experiment <experiment> --> 'ZZZZ':
+Some settings might need to be adjusted; especially the name of the experiment <experiment> --> 'north-america-mai-v1':
 ```
-cd lstm/ZZZZ/final-training
+cd lstm/north-america-mai-v1/final-training
 files=$( \ls seed*.yml )
-for ff in $files ; do sed "s/<experiment>/ZZZZ/g" ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
+for ff in $files ; do sed "s/<experiment>/north-america-mai-v1/g" ${ff} > tmp.tmp ; mv tmp.tmp ${ff} ; done
 ```
 
 Or, for example, the end date of the calibration period:
@@ -40,11 +40,11 @@ for ff in $files ; do sed "s/\/2010/\/2018/g" ${ff} > tmp.tmp ; mv tmp.tmp ${ff}
 
 ## Link attributes
 ```
-cd lstm/ZZZZ/
+cd lstm/north-america-mai-v1/
 mkdir attributes
 cd attributes
-ln -s ../../../regions/XXXX/attributes/static_attributes.csv .
-ln -s ../../../regions/XXXX/attributes/climate_indices_rdrs-v2.1_north-america.csv climate_indices.csv
+ln -s ../../../regions/north-america-mai/attributes/static_attributes.csv .
+ln -s ../../../regions/north-america-mai/attributes/climate_indices_rdrs-v2.1_north-america.csv climate_indices.csv
 ```
 
 
@@ -70,7 +70,7 @@ source /scratch/julemai/basin-fabric/env-cuda/bin/activate
 ### Do training
 Each of these take about 3h20.
 ```
-cd /scratch/julemai/basin-fabric/lstm/ZZZZ/
+cd /scratch/julemai/basin-fabric/lstm/north-america-mai-v1/
 nh-run train --config-file final-training/seed1.yml
 nh-run train --config-file final-training/seed2.yml
 ...
@@ -80,6 +80,6 @@ nh-run train --config-file final-training/seed10.yml
 ### Submit job for training
 Or submit a job (revise submit-script first):
 ```
-cd /scratch/julemai/basin-fabric/lstm/ZZZZ/
+cd /scratch/julemai/basin-fabric/lstm/north-america-mai-v1/
 sbatch submit-cedar-train-lstm.sh
 ```
