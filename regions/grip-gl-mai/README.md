@@ -161,5 +161,6 @@ basin):
 
 ```
 source env-3.10/bin/activate
+pyenv activate env-3.8.5-basin-fabric
 python 15_plot_results_validation_experiments.py -s grip-gl-mai -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 ```

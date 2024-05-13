@@ -85,7 +85,7 @@ dolegend  = False # True: add legend to each subplot
 doabc     = False # True: add subpanel numbering
 dotitle   = True  # True: add catchment titles to subpanels
 
-dotimeseries = True
+dotimeseries = False
 domap = True
 
 
