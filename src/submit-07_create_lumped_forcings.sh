@@ -26,7 +26,7 @@
 # submit with:
 #       sbatch submit-07_create_lumped_forcings.sh
 
-#SBATCH --account=rpp-julemai                      # rpp-julemai    # your group
+#SBATCH --account=rpp-caspar                      # rpp-julemai    # your group
 #SBATCH --mail-user=juliane.mai@uwaterloo.ca       # email address for notifications
 #SBATCH --mail-type=FAIL                           # email send only in case of failure
 
