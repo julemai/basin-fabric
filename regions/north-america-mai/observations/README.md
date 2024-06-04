@@ -1,0 +1,1 @@
+The "daily_streamflow.nc" is 118 MB in size and therefore too large to be stored on GitHub. Please either generate it locally here using "src/05_retrieve_observations.py" or copy the file over from somewhere else.
