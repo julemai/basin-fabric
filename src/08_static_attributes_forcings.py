@@ -30,6 +30,7 @@ from __future__ import print_function
 # python 08_static_attributes_forcings.py -s 'grip-gl-mai'          -f 'rdrs-v2.1_north-america' -p 'all' -a
 # python 08_static_attributes_forcings.py -s 'camels-us-newman'     -f 'rdrs-v2.1_north-america' -p 'all' -a
 # python 08_static_attributes_forcings.py -s 'lake-erie-us-gaffney' -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america' -p 'all' -a
 
 # NO AGGREGATION OF HOURLY->DAILY FORCINGS
 # python 08_static_attributes_forcings.py -s 'wisconsin-lewis'      -f 'rdrs-v2.1_north-america' -p 'all'
@@ -223,7 +224,7 @@ if do_forcings:
         if aggregate:
             # shift time
             # print("forcings before: ",forcings)
-            forcings = forcings.shift(timezone_offset_hrs, freq='H')
+            forcings = forcings.shift(timezone_offset_hrs, freq='h')
             # print("forcings after: ",forcings)
 
         climidx_forcings = forcings
