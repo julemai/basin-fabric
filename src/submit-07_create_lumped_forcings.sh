@@ -63,7 +63,7 @@
 #SBATCH --job-name=agg-na                          # name of job in queque
 #SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
-#SBATCH --array=1-483
+#SBATCH --array=1-100
 
 
 
@@ -135,7 +135,7 @@ cd /scratch/julemai/basin-fabric/src/
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
 # set number of tasks (make sure it is consistent with above)
-ntasks=483                                  # <<<<<<<<<<<<<<<<
+ntasks=100                                  # <<<<<<<<<<<<<<<<
 region="north-america-mai"                  # <<<<<<<<<<<<<<<<
 region_tag_python="north-america-mai"
 forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
