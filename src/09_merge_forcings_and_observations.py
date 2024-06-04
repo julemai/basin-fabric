@@ -185,82 +185,84 @@ streamflow_basins = []
 nbasins = len(static_attributes_basin.index)
 for ibasin,basin in enumerate(sorted(static_attributes_basin.index)):
 
-    basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
-    if not basin_forcing_file.exists():
-        no_forcing_basins.append(basin)
-        print("File not found for basin {}: {}".format(basin,basin_forcing_file))
-        continue
-
-    lat      = static_attributes_basin.loc[basin, 'lat']
-    lon      = static_attributes_basin.loc[basin, 'lon']
-    obs_q_id = static_attributes_basin.loc[basin, 'obs_q']
-    area     = static_attributes_geophys.loc[basin, 'area_km2']
-
-
-    # read forcing data
-    xr_forcings = xr.open_dataset(basin_forcing_file)
-
-    # save all attributes for later
-    vars_in_ori = list(xr_forcings.variables)
-    attributes_ori = {}
-    for vv in vars_in_ori:
-        attributes_ori[vv] = xr_forcings[vv].attrs
-
-    forcings = xr_forcings.to_dataframe()
-    forcings.index.name = 'date'
-
-    # clip to requested period
-    if period != 'forcing':
-        forcings = forcings.loc[period_start:period_end]
-        assert np.all(forcings.index[[0,-1]] == pd.DatetimeIndex([str(period_start), str(period_end)]))
-
-    if forcings.isna().all(axis=None):
-        no_forcing_basins.append(basin)
-        continue
-
-
-    # read streamflow
-    streamflow_basin = load_streamflow(basin=basin, station=obs_q_id)
-
-    # add streamflow
-    if streamflow_basin is None:
-        forcings['qobs_mm_per_day'] = np.nan
-        no_streamflow_basins.append(basin)
-        # continue # skipping writing of file
-    else:
-        forcings['qobs_mm_per_day'] = streamflow_basin
-        streamflow_basins.append(basin)
-
-    # write file (if streamflow was found)
-    variables = list(forcings.columns)
-    for vv in variables:
-
-        # set values
-        if vv != 'date':
-            xr_forcings[vv] = forcings[vv]
-
-        # set attributes
-        if vv in vars_in_ori:
-            xr_forcings[vv].attrs = attributes_ori[vv]
-        elif vv == 'qobs_mm_per_day':
-            attrs = {
-                'long_name': 'Observed streamflow',
-                'coordinates': 'lon lat',
-                'grid_mapping': 'rotated_pole',
-                'cell_methods': 'time: mean',
-                'units': 'mm/day',
-                }
-            xr_forcings[vv].attrs = attrs
-
-    # rename time --> date
-    #xr_forcings = xr_forcings.rename_dims({'time':'date'})
-    #xr_forcings = xr_forcings.rename_vars({'time':'date'})
-
-    # ds = xr.Dataset.from_dataframe(daily_forcings)
     filename = project_root / '../..' / 'lstm' / f'{experiment}' / 'time_series' / f'{basin}.nc'
-    os.makedirs( Path(filename).parent, exist_ok=True )
-    xr_forcings.to_netcdf( filename )
-    print('Wrote: {} (basin {} of {})'.format(filename,ibasin+1,nbasins))
+    if not filename.exists():
+
+        basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
+        if not basin_forcing_file.exists():
+            no_forcing_basins.append(basin)
+            print("File not found for basin {}: {}".format(basin,basin_forcing_file))
+            continue
+
+        lat      = static_attributes_basin.loc[basin, 'lat']
+        lon      = static_attributes_basin.loc[basin, 'lon']
+        obs_q_id = static_attributes_basin.loc[basin, 'obs_q']
+        area     = static_attributes_geophys.loc[basin, 'area_km2']
+
+
+        # read forcing data
+        xr_forcings = xr.open_dataset(basin_forcing_file)
+
+        # save all attributes for later
+        vars_in_ori = list(xr_forcings.variables)
+        attributes_ori = {}
+        for vv in vars_in_ori:
+            attributes_ori[vv] = xr_forcings[vv].attrs
+
+        forcings = xr_forcings.to_dataframe()
+        forcings.index.name = 'date'
+
+        # clip to requested period
+        if period != 'forcing':
+            forcings = forcings.loc[period_start:period_end]
+            assert np.all(forcings.index[[0,-1]] == pd.DatetimeIndex([str(period_start), str(period_end)]))
+
+        if forcings.isna().all(axis=None):
+            no_forcing_basins.append(basin)
+            continue
+
+
+        # read streamflow
+        streamflow_basin = load_streamflow(basin=basin, station=obs_q_id)
+
+        # add streamflow
+        if streamflow_basin is None:
+            forcings['qobs_mm_per_day'] = np.nan
+            no_streamflow_basins.append(basin)
+            # continue # skipping writing of file
+        else:
+            forcings['qobs_mm_per_day'] = streamflow_basin
+            streamflow_basins.append(basin)
+
+        # write file (if streamflow was found)
+        variables = list(forcings.columns)
+        for vv in variables:
+
+            # set values
+            if vv != 'date':
+                xr_forcings[vv] = forcings[vv]
+
+            # set attributes
+            if vv in vars_in_ori:
+                xr_forcings[vv].attrs = attributes_ori[vv]
+            elif vv == 'qobs_mm_per_day':
+                attrs = {
+                    'long_name': 'Observed streamflow',
+                    'coordinates': 'lon lat',
+                    'grid_mapping': 'rotated_pole',
+                    'cell_methods': 'time: mean',
+                    'units': 'mm/day',
+                    }
+                xr_forcings[vv].attrs = attrs
+
+        # rename time --> date
+        #xr_forcings = xr_forcings.rename_dims({'time':'date'})
+        #xr_forcings = xr_forcings.rename_vars({'time':'date'})
+
+        # ds = xr.Dataset.from_dataframe(daily_forcings)
+        os.makedirs( Path(filename).parent, exist_ok=True )
+        xr_forcings.to_netcdf( filename )
+        print('Wrote: {} (basin {} of {})'.format(filename,ibasin+1,nbasins))
 
 
 print(f'\nNo forcings for basins:  ({len(no_forcing_basins)}) {no_forcing_basins}')
