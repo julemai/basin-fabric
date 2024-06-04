@@ -29,6 +29,7 @@ from __future__ import print_function
 # python 09_merge_forcings_and_observations.py -s 'grip-gl-mai'          -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x grip-gl-mai-v1
 # python 09_merge_forcings_and_observations.py -s 'camels-us-newman'     -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x camels-us-newman-v1
 # python 09_merge_forcings_and_observations.py -s 'lake-erie-us-gaffney' -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x lake-erie-us-gaffney-v1
+# python 09_merge_forcings_and_observations.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x north-america-mai-v1
 
 """
 
