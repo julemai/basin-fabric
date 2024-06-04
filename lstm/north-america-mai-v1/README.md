@@ -1,9 +1,9 @@
 # LSTM experiment: north-america-mai
 
 query-replace:
-- XXXX with "region" to use,     e.g., 'grip-gl-mai'
+- XXXX with "region" to use,     e.g., 'north-america-mai'
 - YYYY with "forcing" to use,    e.g., 'rdrs-v2.1_north-america'
-- ZZZZ with "experiment" to use, e.g., 'grip-gl-mai-a-test'
+- ZZZZ with "experiment" to use, e.g., 'north-america-mai-a-test'
 
 ## Get forcings and observations
 ```
