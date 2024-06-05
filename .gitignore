@@ -32,6 +32,10 @@ regions/*/forcings/*/*.done
 #regions/*/maps
 regions/*.zip
 
+# attribute plots
+regions/*/attributes/*.pdf
+regions/*/attributes/*.png
+
 # Predictions
 regions/*/predictions/using_*/runs
 regions/*/predictions/using_*/time_series
