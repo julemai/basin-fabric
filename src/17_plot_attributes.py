@@ -411,3 +411,32 @@ for filename in filenames:
     elif (outtype == 'png'):
         print('Wrote: {}'.format(pngfiles))
     
+
+
+
+
+# when things go wrog and look weird:
+
+# get index for outlier
+# # np.where(val_attributes['pet_mean'] > 80000)
+# # --> (array([240]),)
+
+# get basin ID
+# # val_attributes.iloc[240]
+# # --> Name: 02106500, dtype: float64
+
+# load data
+# # data=xr.open_dataset("../regions/north-america-mai/forcings/02106500/02106500_agg_rdrs-v2.1_north-america_lp_daily_local.nc")
+
+# find indexes with large data
+# # idx=np.where(data['RDRS_v2.1_P_TT_1.5m']>80000)[0]
+
+# find date range of those data
+# # np.array(data['date'][idx[0]])
+# # np.array(data['date'][idx[-1]])
+# # --> 1997-01-01 to 1998-01-01
+
+# delete files and reprocess
+# # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/02106500/02106500_agg_rdrs-v2.1_north-america_lp.nc
+# # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/02106500/02106500_agg_rdrs-v2.1_north-america_1997_RDRS_v2.1_P_TT_1.5m.nc_lp.nc 
+# # python 07_create_lumped_forcings.py -s north-america-mai -b 02106500 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
