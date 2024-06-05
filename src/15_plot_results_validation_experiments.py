@@ -85,7 +85,7 @@ dolegend  = False # True: add legend to each subplot
 doabc     = False # True: add subpanel numbering
 dotitle   = True  # True: add catchment titles to subpanels
 
-dotimeseries = False
+dotimeseries = True
 domap = True
 
 
@@ -127,7 +127,7 @@ using_lstm   = None
 period       = None
 
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                  description='''Derive static geophysical attributes.''')
+                                  description='''Plot validation results.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
                     help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'camels-us-newman', 'grip-gl-mai']. Default: None.")
 parser.add_argument('-x', '--experiment', action='store', default=experiment, dest='experiment',
@@ -528,6 +528,7 @@ if not( experiment is None):
         gauges_wo_kge = 0
         gauges_not_enough_obs = 0
         kges = []
+        nses = []
 
         try:
             station_list = np.array([ ii.encode('ascii') for ii in df['Q']['station_id'].data ])
@@ -580,6 +581,7 @@ if not( experiment is None):
 
                     gauges_w_kge += 1
                     kges = np.append(kges, ikge)
+                    nses = np.append(nses, inse)
                 else:
                     gauges_not_enough_obs += 1
             else:
@@ -593,7 +595,8 @@ if not( experiment is None):
                        italic=True, small=True, mathrm=True, usetex=usetex)
 
         # median
-        print('median KGE = {} ({}, {}) based on {} basins'.format(np.median(kges),np.percentile(kges,5),np.percentile(kges,95),len(kges)))
+        print('median KGE = {} (p5={}, p95={}) based on {} basins'.format(np.median(kges),np.percentile(kges,5),np.percentile(kges,95),len(kges)))
+        print('median NSE = {} (p5={}, p95={}) based on {} basins'.format(np.median(nses),np.percentile(nses,5),np.percentile(nses,95),len(nses)))
 
         # add nbasins
         sub.text(0.99,0.99,str2tex('$n_{basins} = '+str(len(kges))+'$',usetex=usetex),
@@ -698,9 +701,14 @@ elif not(using_lstm is None):
         outtype = 'pdf'
 
         if (outtype == 'pdf'):
-            mpl.use('PDF') # set directly after import matplotlib
+
             import matplotlib.pyplot as plt
             from matplotlib.backends.backend_pdf import PdfPages
+
+            plt.close('all')
+            
+            mpl.use('PDF') # set directly after import matplotlib
+            
             # Customize: http://matplotlib.sourceforge.net/users/customizing.html
             mpl.rc('ps', papersize='a4', usedistiller='xpdf') # ps2pdf
             mpl.rc('figure', figsize=(8.27,11.69)) # a4 portrait
@@ -755,6 +763,7 @@ elif not(using_lstm is None):
         basins = results[using_lstms[0]]['basin'].data # assuming all have same basins
         print('Number of basins found:                {}'.format(len(basins)))
         kges = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
+        nses = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
         for ibasin, basin in enumerate(basins):
 
             ifig += 1
@@ -788,7 +797,9 @@ elif not(using_lstm is None):
                         idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
                         if (len(idx_time) > 3*365):   # at least 3 years of observations
                             ikge = kge(data_obs[idx_time], data_sim[idx_time])
+                            inse = nse(data_obs[idx_time], data_sim[idx_time])
                             kges[using_lstm][basin][period['string']] = ikge
+                            nses[using_lstm][basin][period['string']] = inse
                     else:
                         print('No observation found for basin {} in LSTM model {} in period {}'.format(basin,using_lstm,period['string']))
 
@@ -882,7 +893,7 @@ elif not(using_lstm is None):
 
                 kges_lstm = np.array([ kges[using_lstm][bb][period['string']] for bb in basins if ((kges[using_lstm][bb][period['string']] != nodata) and (not(np.isnan(kges[using_lstm][bb][period['string']]))))])
                 if len(kges_lstm > 0):
-                    summary_string = '   {:20s}: {}: median KGE = {} ({}, {}) based on {} basins'.format(
+                    summary_string = '   {:20s}: {}: median KGE = {} (p5={}, p95={}) based on {} basins'.format(
                         using_lstm,
                         period['string'],
                         np.nanmedian(kges_lstm),
@@ -896,14 +907,35 @@ elif not(using_lstm is None):
                 print(summary_string)
                 ff.write(summary_string+'\n')
 
+                nses_lstm = np.array([ nses[using_lstm][bb][period['string']] for bb in basins if ((nses[using_lstm][bb][period['string']] != nodata) and (not(np.isnan(nses[using_lstm][bb][period['string']]))))])
+                if len(kges_lstm > 0):
+                    summary_string = '   {:20s}: {}: median NSE = {} (p5={}, p95={}) based on {} basins'.format(
+                        using_lstm,
+                        period['string'],
+                        np.nanmedian(nses_lstm),
+                        np.nanpercentile(nses_lstm,5),
+                        np.nanpercentile(nses_lstm,95),
+                        len(nses_lstm))
+                else:
+                    summary_string = '   {:20s}: {}: no NSE results since no basin had observations (?!)'.format(
+                        using_lstm,
+                        period['string'])
+                print(summary_string)
+                ff.write(summary_string+'\n')
+
         ff.close()
         print('Wrote: {}'.format(filename))
 
         # write all KGE results to .json
-        filename = '.'.join(pdffile.split('.')[0:-1])+'.json'
+        filename = '.'.join(pdffile.split('.')[0:-1])+'_KGE.json'
         with open(filename, "w") as outfile:
             json.dump(kges, outfile)
+        print('Wrote: {}'.format(filename))
 
+        # write all NSE results to .json
+        filename = '.'.join(pdffile.split('.')[0:-1])+'_NSE.json'
+        with open(filename, "w") as outfile:
+            json.dump(nses, outfile)
         print('Wrote: {}'.format(filename))
         print('')
 
@@ -919,9 +951,15 @@ elif not(using_lstm is None):
 
         pdffile      = 'timeseries.pdf'
         pdffile      = str(Path( outfolder / pdffile ))
-        filename = '.'.join(pdffile.split('.')[0:-1])+'.json'
+        filename = '.'.join(pdffile.split('.')[0:-1])+'_KGE.json'
         with open(filename, "r") as outfile:
             kges = json.load(outfile)
+
+        pdffile      = 'timeseries.pdf'
+        pdffile      = str(Path( outfolder / pdffile ))
+        filename = '.'.join(pdffile.split('.')[0:-1])+'_NSE.json'
+        with open(filename, "r") as outfile:
+            nses = json.load(outfile)
 
         pdffile      = 'map.pdf'
         pdffile      = str(Path( outfolder / pdffile ))
@@ -983,7 +1021,7 @@ elif not(using_lstm is None):
 
         ifig = 0
 
-        for using_lstm in list(kges.keys()):
+        for using_lstm in using_lstms: #list(kges.keys()):
 
             ifig += 1
             iplot = 0
@@ -1030,6 +1068,7 @@ elif not(using_lstm is None):
                 station_w_kge = 0
                 station_wo_kge = 0
                 ikges = []
+                inses = []
 
                 # read basins.csv for (lat,lon,obs_q)
                 static_attributes_basin   = pd.read_csv(project_root / '_'.join(using_lstm.split('_')[0:-1]) / 'basins.csv', index_col=[0],
@@ -1051,6 +1090,7 @@ elif not(using_lstm is None):
                     # color based on KGE of that basin
                     icolor = 'red'
                     ikge = kges[using_lstm][station][period['string']]
+                    inse = nses[using_lstm][station][period['string']]
 
                     min_kge = 0.0
                     max_kge = 1.0
@@ -1083,6 +1123,7 @@ elif not(using_lstm is None):
 
                         station_w_kge += 1
                         ikges = np.append(ikges, ikge)
+                        inses = np.append(inses, inse)
                     else:
                         station_wo_kge += 1
 
@@ -1096,13 +1137,19 @@ elif not(using_lstm is None):
 
                 # median
                 if len(ikges) > 0:
-                    print('   {:20s}: {}: median KGE = {} ({}, {}) based on {} basins'.format(
+                    print('   {:20s}: {}: median KGE = {} (p5={}, p95={}) based on {} basins'.format(
                         using_lstm, period['string'],
                         np.median(ikges),np.percentile(ikges,5),np.percentile(ikges,95),len(ikges)))
+                    print('   {:20s}: {}: median NSE = {} (p5={}, p95={}) based on {} basins'.format(
+                        using_lstm, period['string'],
+                        np.median(inses),np.percentile(inses,5),np.percentile(inses,95),len(inses)))
                 else:
                     print('   {:20s}: {}: median KGE = n/a based on {} basins'.format(
                         using_lstm, period['string'],
                         len(ikges)))
+                    print('   {:20s}: {}: median NSE = n/a based on {} basins'.format(
+                        using_lstm, period['string'],
+                        len(inses)))
 
                 # add nbasins
                 sub.text(0.99,0.99,str2tex('$n_{basins} = '+str(len(ikges))+'$',usetex=usetex),
