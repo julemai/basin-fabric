@@ -3,7 +3,7 @@ batch_size: 64
 clip_gradient_norm: 1
 clip_targets_to_zero:
 - qobs_mm_per_day
-data_dir: /scratch/julemai/basin-fabric/lstm/<experiment>
+data_dir: /scratch/julemai/basin-fabric/lstm/north-america-mai-v1
 dataset: generic
 device: cuda:0
 dynamic_inputs:
@@ -17,7 +17,7 @@ dynamic_inputs:
 - RDRS_v2.1_P_P0_SFC
 - potential_evapotranspiration
 epochs: 30
-experiment_name: <experiment>-finalTraining-seed6
+experiment_name: north-america-mai-v1-finalTraining-seed6
 head: regression
 hidden_size: 256
 initial_forget_bias: 3
