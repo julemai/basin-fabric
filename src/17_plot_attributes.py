@@ -30,7 +30,7 @@ from __future__ import print_function
 
 """
 
-Plots results found in experiment onto a map or from validation experiments as timeseries.
+Plots plot attributes (static and climate) of a region.
 
 License
 -------
@@ -103,7 +103,7 @@ case_study   = None
 forcing      = None
 
 parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
-                                  description='''Plot validation results.''')
+                                  description='''Plot attributes (static and climate) of a region.''')
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
                     help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'camels-us-newman', 'grip-gl-mai']. Default: None.")
 parser.add_argument('-f', '--forcing', action='store', default=forcing, dest='forcing',
@@ -437,6 +437,7 @@ for filename in filenames:
 # # --> 1997-01-01 to 1998-01-01
 
 # delete files and reprocess
-# # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/02106500/02106500_agg_rdrs-v2.1_north-america_lp.nc
-# # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/02106500/02106500_agg_rdrs-v2.1_north-america_1997_RDRS_v2.1_P_TT_1.5m.nc_lp.nc 
-# # python 07_create_lumped_forcings.py -s north-america-mai -b 02106500 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+# # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/${basin}/${basin}_agg_rdrs-v2.1_north-america_lp_daily_local.nc
+# # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/${basin}/${basin}_agg_rdrs-v2.1_north-america_lp.nc
+# # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/${basin}/${basin}_agg_rdrs-v2.1_north-america_1997_RDRS_v2.1_P_TT_1.5m.nc_lp.nc 
+# # python 07_create_lumped_forcings.py -s north-america-mai -b ${basin} -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
