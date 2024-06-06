@@ -189,7 +189,17 @@ if do_forcings:
     nbasins = len(static_attributes_basin.index)
     for ibasin,basin in enumerate(sorted(static_attributes_basin.index)):
 
+        filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
         if aggregate:
+            if not( filename.exists() ):
+                iaggregate = True
+            else:
+                # skip doing aggregation if file already exists
+                iaggregate = False
+        else:
+            iaggregate = False
+
+        if iaggregate:
             basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp.nc'
         else:
             basin_forcing_file = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
@@ -201,7 +211,7 @@ if do_forcings:
         lat = static_attributes_basin.loc[basin, 'lat']
         lon = static_attributes_basin.loc[basin, 'lon']
 
-        if aggregate:
+        if iaggregate:
             # get time shift
             timezone_offset_hrs = get_time_zone(lat,lon)
             # print("Shift time: UTC{}h".format(timezone_offset_hrs))
@@ -217,11 +227,11 @@ if do_forcings:
 
         forcings = xr_forcings.to_dataframe()
         forcings.index.name = 'time'
-        if aggregate:
+        if iaggregate:
             forcings = forcings.reset_index(level='nHRU')   # nHRU is an index column --> make regular column
             forcings = forcings.drop(['nHRU'], axis=1)      # remove nHRU column entirely (is 0 everywhere anyway in lumped forcings)
 
-        if aggregate:
+        if iaggregate:
             # shift time
             # print("forcings before: ",forcings)
             forcings = forcings.shift(timezone_offset_hrs, freq='h')
@@ -240,7 +250,7 @@ if do_forcings:
         # run once with calibration data (for climate index calculation), once with full data (for actual forcings)
         for ii, forcing_set in enumerate([climidx_forcings, forcings]):
 
-            if aggregate:
+            if iaggregate:
 
                 daily_resampled = forcing_set.resample('1D')
                 daily_forcings = daily_resampled.mean()
@@ -299,7 +309,7 @@ if do_forcings:
         #     no_discharge_basins.append(basin)
 
 
-        if aggregate:
+        if iaggregate:
 
             # replace original data (hourly) with resampled (daily) and save as NetCDF
             xr_forcings['time'] = forcings.index  # shift time
@@ -336,7 +346,6 @@ if do_forcings:
             xr_forcings = xr_forcings.rename_vars({'time':'date'})
 
             # ds = xr.Dataset.from_dataframe(daily_forcings)
-            filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
             xr_forcings.to_netcdf( filename )
             print('Wrote: {} (basin {} of {})'.format(filename,ibasin+1,nbasins))
 
