@@ -442,11 +442,12 @@ for filename in filenames:
 # # rm /scratch/julemai/basin-fabric/src/../regions/north-america-mai/forcings/${basin}/${basin}_agg_rdrs-v2.1_north-america_1997_RDRS_v2.1_P_TT_1.5m.nc_lp.nc 
 # # python 07_create_lumped_forcings.py -s north-america-mai -b ${basin} -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 
-# redo daily-local files (can be aborted once the files are updated)
+# redo daily-local files (skips creating already existing ones)
 # # python 08_static_attributes_forcings.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america' -p 'all' -a
-
-# redo climate index file
-# # python 08_static_attributes_forcings.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america' -p 'all'
 
 # redo LSTM input files
 # # python 09_merge_forcings_and_observations.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x north-america-mai-v1
+
+# check if all is good now
+# # python 18_check_all_forcing_files.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america'
+# # python 17_plot_attributes.py -s 'north-america-mai' -f 'rdrs-v2.1_north-america'
