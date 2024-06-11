@@ -53,24 +53,24 @@ ln -s ../../../regions/north-america-mai/attributes/climate_indices_rdrs-v2.1_no
 ### Request interactive node with GPU
 ```
 cd /scratch/julemai/basin-fabric/
-salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1
+salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1
 ```
 
 ### Load some modules
 ```
-module load mpi4py/3.1.3
+module load mpi4py/3.1.4
 ```
 
 ### Load Python environment
 Load an environment that has NeuralHydrology and cuda etc.
 ```
-source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+source /home/julemai/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
 ```
 
 ### Do training
 Each of these take about 3h20.
 ```
-cd /scratch/julemai/basin-fabric/lstm/north-america-mai-v1/
+cd /home/julemai/projects/def-julemai/julemai/lstm/north-america-mai-v1/
 nh-run train --config-file final-training/seed1.yml
 nh-run train --config-file final-training/seed2.yml
 ...
@@ -80,6 +80,6 @@ nh-run train --config-file final-training/seed10.yml
 ### Submit job for training
 Or submit a job (revise submit-script first):
 ```
-cd /scratch/julemai/basin-fabric/lstm/north-america-mai-v1/
+cd /home/julemai/projects/def-julemai/julemai/lstm/north-america-mai-v1/
 sbatch submit-cedar-train-lstm.sh
 ```

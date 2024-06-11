@@ -12,6 +12,45 @@ with proper attribution of the author.
 
 ## Setup Python Environment
 
+### On Cedar (env-3.11-cuda)
+
+```
+module purge
+module load StdEnv/2023 gcc/12.3 netcdf/4.9.2 gdal/3.7.2 mpi4py/3.1.4 proj/9.2.0 geos/3.12.0 nco/5.1.7 python/3.11.5
+
+mkdir env-3.11-cuda
+virtualenv --no-download env-3.11-cuda
+source env-3.11-cuda/bin/activate
+
+pip install --no-index --upgrade pip
+
+pip install cuda-python
+pip install bokeh
+pip install h5py
+pip install jupyter
+
+pip install matplotlib
+pip install netcdf4
+pip install numba
+pip install pandas
+
+pip install pytest
+pip install pytest-cov
+pip install torch
+pip install scipy
+pip install sphinx
+pip install tqdm
+pip install xarray
+pip install yapf
+
+pip install tensorboard
+pip install sphinx-rtd-theme
+pip install nbsphinx
+pip install nbsphinx-link
+
+pip install neuralhydrology
+```
+
 ### On Graham (env-3.11)
 
 ```
@@ -125,7 +164,7 @@ pip install ipython
 pip install jupyter
 ```
 
-### Run CUDA on Graham
+### Run CUDA on Cedar
 
 ```
 # Login to Cedar
@@ -133,18 +172,22 @@ ssh -Y julemai@cedar.computecanada.ca
 
 # Request interactive node with GPU
 cd /scratch/julemai/basin-fabric/
+cd /home/julemai/projects/def-julemai/julemai/
 salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1 --cpus-per-task=4
 
 # Load some modules
 module load mpi4py/3.1.3
+module load mpi4py/3.1.4
 
 # Load Python env
 source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+source /home/julemai/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
 
 # Do training (each about 3h20)
 # - first numbers: [number of basins]
 # - second numbers (epoch): [number of timesteps * number of basins / batch_size]
-cd /scratch/julemai/basin-fabric/lstm/grip-gl/
+cd /scratch/julemai/basin-fabric/lstm/north-america-mai-v1/
+cd /home/julemai/projects/def-julemai/julemai/lstm/north-america-mai-v1/
 nh-run train --config-file final-training/seed1.yml
 nh-run train --config-file final-training/seed2.yml
 ...
