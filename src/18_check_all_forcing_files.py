@@ -29,7 +29,8 @@ from __future__ import print_function
 
 # python 18_check_all_forcing_files.py -s 'lake-erie-us-gaffney' -f 'rdrs-v2.1_north-america'
 # python 18_check_all_forcing_files.py -s 'conus-zhi'            -f 'rdrs-v2.1_north-america'
-# python 18_check_all_forcing_files.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america'
+# python 18_check_all_forcing_files.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america'     # does forcing file
+# python 18_check_all_forcing_files.py -s 'north-america-mai-v1' -f 'rdrs-v2.1_north-america'     # does LSTM time_series file
 
 
 """
@@ -119,15 +120,23 @@ sys.path.append(dir_path+'/additional_processing')
 
 t1 = time.time()
 
+do_forcing = True
 project_root = Path(dir_path,'..','regions',case_study,'forcings')
-
 filenames = np.sort(glob.glob(str(Path(project_root,'*','*_agg_'+forcing+'_lp_daily_local.nc'))))
+
+if len(filenames) == 0:
+    do_forcing = False
+    project_root = Path(dir_path,'..','lstm',case_study,'time_series')
+    filenames = np.sort(glob.glob(str(Path(project_root,'*.nc'))))
 
 found_outlier = False
 for filename in filenames:
 
-    basin = filename.split('/')[-2]
-    # print("Checking basin: {}".format(basin))
+    if do_forcing:
+        basin = filename.split('/')[-2]
+    else:
+        basin = filename.split('/')[-1].split('.')[0]
+    print("Checking basin: {}  --> {}".format(basin,filename))
 
     data = xr.open_dataset(filename)
     variables = list(data.keys())
