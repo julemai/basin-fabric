@@ -19,12 +19,12 @@ dynamic_inputs:
 epochs: 30
 experiment_name: north-america-mai-v1-finalTraining-seed5
 head: regression
-hidden_size: 256
+hidden_size: 512
 initial_forget_bias: 3
 learning_rate:
-  0: 0.0005
-  20: 0.0001
-  30: 5e-05
+  0: 0.0001
+  20: 5e-05
+  30: 1e-05
 log_n_figures: 0
 log_tensorboard: true
 loss: NSE
