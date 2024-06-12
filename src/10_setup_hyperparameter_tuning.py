@@ -112,38 +112,27 @@ del parser, args
 
 
 
-
-
-if case_study == 'wisconsin-lewis':
-    project_root = Path(dir_path+'/../regions/wisconsin-lewis')
-
-elif case_study == 'ontario-zhi':
-    project_root = Path(dir_path+'/../regions/ontario-zhi')
-
-elif case_study == 'conus-zhi':
-    project_root = Path(dir_path+'/../regions/conus-zhi')
-
-elif case_study == 'grip-gl-mai':
-    project_root = Path(dir_path+'/../regions/grip-gl-mai')
-
-else:
-    raise ValueError('Case study for {} not setup yet.'.format(case_study))
+project_root = Path(dir_path+'/../regions/'+case_study)
 
 
 # LSTM settings: 675=5*3*3*15 experiments
 settings = {
   'learning_rate': [
-     {0: 0.0001, 20: 5e-05, 30: 1e-05},
+     {0: 0.0001, 20: 5e-05, 30: 1e-05},   # not used in hyper-param tuning only in "low-lr"
      {0: 0.0005, 20: 0.0001, 30: 5e-05},  # used for GRIP-GL (Mai 2022 (HESS))
      {0: 0.001},                          # used for CONUS studies (Kratzert 2019 (WRR), Kratzert 2019 (HESS))
      {0: 0.001, 20: 0.0005, 30: 0.0001},  # used for CONUS studies (Gauch 2021 (HESS) but with epochs 0:,10:,25:)
      {0: 0.005, 10: 0.001, 20: 0.0005},
    ],
-   'hidden_size': [ 64, 128, 256 ],
-   'batch':  [ 64, 128, 256 ],
-   'epochs': [ 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45 ],
+   'hidden_size': [ 64, 128, 256 ],       # used for GRIP-GL: 256
+   'batch_size':  [ 64, 128, 256 ],       # used for GRIP-GL: 64
+   'epochs':      [ 45 ] #[ 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 42, 45 ],   # used for GRIP-GL: 30
 }
 
+# Martin's hyper-parameter tuning settings in GRIP-GL:
+# 540 = 3 [seed] x 3 [hidden] x 1 [epoch=45] x 3 [batch] x 4 [learn: 2-5] x 5 [fold]
+
+    
 # with 3 different seeds
 nseeds = 3
 
@@ -204,7 +193,7 @@ for seed in range(1,nseeds+1):
     counter = 0
     for learning_rate in settings['learning_rate']:
         for hidden_size in settings['hidden_size']:
-            for batch in settings['batch']:
+            for batch_size in settings['batch_size']:
                 for epochs in settings['epochs']:
                     for fold in range(1,nfolds+1):
 
@@ -220,7 +209,7 @@ for seed in range(1,nseeds+1):
 
                         # get name of experiment
                         # gripGL-hyperparam-tuning_learning_rate0001_hidden_size128_batch_size256_seed3_fold2
-                        experiment_name = f'{experiment}_learning_rate{learning_rate_str}_hidden_size{hidden_size}_batch{batch}_seed{seed}_fold{fold}'
+                        experiment_name = f'{experiment}_learning_rate{learning_rate_str}_hidden_size{hidden_size}_batch_size{batch_size}_seed{seed}_fold{fold}'
 
                         # get data directory
                         data_dir = str( Path( project_root / '..' / '..' / 'lstm' / experiment ) )
@@ -234,7 +223,7 @@ for seed in range(1,nseeds+1):
                             data_dir=data_dir,
                             learning_rate=learning_rate,
                             hidden_size=hidden_size,
-                            batch=batch,
+                            batch_size=batch_size,
                             epochs=epochs,
                             seed=seed,
                             test_file=test_file,

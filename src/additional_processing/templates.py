@@ -54,7 +54,7 @@ Written,  JM, Jul 2023
 
 
 TEMPLATE_NH_CONFIG = '''allow_subsequent_nan_losses: 10
-batch_size: {batch}
+batch_size: {batch_size}
 clip_gradient_norm: 1
 clip_targets_to_zero:
 - qobs_mm_per_day
