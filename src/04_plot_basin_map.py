@@ -30,6 +30,7 @@ from __future__ import print_function
 # python 04_plot_basin_map.py -s north-america-mai
 # python 04_plot_basin_map.py -s camels-us-newman
 # python 04_plot_basin_map.py -s lake-erie-us-gaffney
+# python 04_plot_basin_map.py -s prairie-canada-mai
 
 
 """
@@ -150,7 +151,7 @@ elif case_study == 'grip-gl-mai':
     urcrnrlon =  -72.0
     llcrnrlat =   39.0
     urcrnrlat =   51.0
-    parallels = np.arange( -80., 81., 3.),
+    parallels = np.arange( -80., 81., 3.)
     meridians = np.arange(-180.,181., 5.)
 
 elif case_study == 'north-america-mai':
@@ -158,7 +159,7 @@ elif case_study == 'north-america-mai':
     urcrnrlon =   -46.
     llcrnrlat =   18.    # lat: 26.920416654000064 to 59.33374999800003
     urcrnrlat =   58.
-    parallels = np.arange( -80., 81., 10.),
+    parallels = np.arange( -80., 81., 10.)
     meridians = np.arange(-180.,181., 15.)
 
 elif case_study == 'camels-us-newman':
@@ -166,7 +167,7 @@ elif case_study == 'camels-us-newman':
     urcrnrlon =  -60.0
     llcrnrlat =   20.5
     urcrnrlat =   51.5
-    parallels = np.arange( -80., 81., 10.),
+    parallels = np.arange( -80., 81., 10.)
     meridians = np.arange(-180.,181., 15.)
 
 elif case_study == 'lake-erie-us-gaffney':
@@ -176,6 +177,14 @@ elif case_study == 'lake-erie-us-gaffney':
     urcrnrlat =   44.0
     parallels = np.arange( -80., 81., 3.)
     meridians = np.arange(-180.,181., 5.)
+
+elif case_study == 'prairie-canada-mai':
+    llcrnrlon =  -116.   
+    urcrnrlon =   -86.
+    llcrnrlat =   43.   
+    urcrnrlat =   59.5
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
 
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
@@ -371,22 +380,40 @@ lat_2     =   (llcrnrlat+urcrnrlat)/2  # second "equator"
 lat_0     =   (llcrnrlat+urcrnrlat)/2  # center of the map
 lon_0     =   (llcrnrlon+urcrnrlon)/2  # center of the map
 
-m = Basemap(projection='lcc', area_thresh=2000.,
+if case_study == 'prairie-canada-mai':
+    # get rid of lake Winnipeg etc
+    area_thresh = 50000
+else:
+    area_thresh = 2000
+
+m = Basemap(projection='lcc', area_thresh=area_thresh,
             llcrnrlon=llcrnrlon, urcrnrlon=urcrnrlon, llcrnrlat=llcrnrlat, urcrnrlat=urcrnrlat,
             lat_1=lat_1, lat_2=lat_2, lat_0=lat_0, lon_0=lon_0,
             resolution='i') # Lambert conformal
 
+import geopandas as gpd
+from shapely.geometry import Polygon as shpPolygon
+areas = []
 coord_catch = []
 for ishape in range(len(catchfile_shp)):
     with fiona.open(catchfile_shp[ishape]+'.shp') as src:
         for ii in range(len(src)):
             coord_catch.append(src[ii]['geometry']['coordinates'])
 
+            # get area (not in km2 but enough to sort roughly)
+            lon_lat_list = [ list(icc) for icc in coord_catch[-1][0]]
+            polygon_geom = shpPolygon(lon_lat_list)
+            polygon = gpd.GeoDataFrame(index=[0], crs='epsg:4326', geometry=[polygon_geom])
+            area = (polygon.to_crs('epsg:3574').area/1000./1000.).item()
+            areas.append(area)
+
+idx_area = np.argsort(areas)[::-1]
+
 
 # draw parallels and meridians.
 # labels: [left, right, top, bottom]
-m.drawparallels(parallels,labels=[1,0,1,0], dashes=[1,1], linewidth=0.25, color='0.5')
-m.drawmeridians(meridians,labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
+#m.drawparallels(parallels[0],labels=[1,0,1,0], dashes=[1,1], linewidth=0.25, color='0.5')
+#m.drawmeridians(meridians,labels=[0,0,0,1], dashes=[1,1], linewidth=0.25, color='0.5')
 
 # draw cooastlines and countries
 m.drawcoastlines(linewidth=0.3)
@@ -405,7 +432,7 @@ min_lon = 99999.
 max_lon = -99999.
 min_lat = 99999.
 max_lat = -99999.
-for ishape in range(nshapes):
+for ishape in np.arange(nshapes)[idx_area]:
     try:
         xy = np.array(coord_catch[ishape])
     except:
@@ -474,6 +501,11 @@ elif case_study == 'camels-us-newman':
                  fontsize=textsize,transform=sub.transAxes)
 elif case_study == 'lake-erie-us-gaffney':
     sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[0:2]).title()+' '+case_study.replace('-',' ').split(' ')[2].upper(),usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'prairie-canada-mai':
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).title(),usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)
