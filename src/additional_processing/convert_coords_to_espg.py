@@ -43,9 +43,11 @@ import numpy as np
 import sys
 import geopandas as gpd
 import json
+# get equal-area projection and derive overlay
+from   osgeo   import ogr
 
 
-def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326,extract=None):
+def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326,extract=None,attribute_type='int'):
 
     """
     Converts given shapefile into shapefile with given ESPG of a CRS.
@@ -77,7 +79,10 @@ def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326,extract=None):
 
     attribute_key = extract.split('=')[0]
     attribute_val = extract.split('=')[1]
-    attribute_type = 'int'
+    if (len(extract.split('=')) == 3):
+        attribute_type = extract.split('=')[2]
+    else:
+        attribute_type = 'int'
 
 
     # open file
@@ -90,6 +95,8 @@ def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326,extract=None):
         if not(extract is None):
             if attribute_type == 'int':
                 shape_idx = int( np.where(np.array([ ii['properties'][attribute_key] for ii in shp_in ])==int(attribute_val))[0][0] )
+            elif attribute_type == 'str':
+                shape_idx = int( np.where(np.array([ ii['properties'][attribute_key] for ii in shp_in ])==str(attribute_val))[0][0] )
             else:
                 raise ValueError('Implement other attribute type.')
             print('Shape to extract: {}'.format(shape_idx))
@@ -118,10 +125,16 @@ def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326,extract=None):
     if one_more_dim:
         coords = shapes.coordinates[idx_longest][0]
     else:
-        coords = shapes.coordinates[idx_longest]
+        if len(np.shape(shapes.coordinates[idx_longest][0])) == 2:
+            # these are really weird and this is probably not right
+            coords = shapes.coordinates[idx_longest][0]
+        else:
+            coords = shapes.coordinates[idx_longest]
 
     # make list; not tuple
     coords = [ list(ii) for ii in coords ]
+
+    print('shape of coords written to shapefile: ', np.shape(coords))
 
     if sys.version_info < (3,0,0):
         # ------------------------
@@ -174,6 +187,7 @@ def convert_coords_to_espg(shapefile_in,shapefile_out,espg=4326,extract=None):
     print('Saved data to: {}.[dbf,prj,shp,shx,json]'.format(shapefile_out))
 
 
+
     return
 
 if __name__ == '__main__':
@@ -200,7 +214,7 @@ if __name__ == '__main__':
                             help='ESPG of coordinate reference system to convert to. Default: 4326.')
     parser.add_argument('-x', '--extract', action='store',
                             default=extract, dest='extract', metavar='extract',
-                            help='Extract only shape where shapefile_attribute_key=ID specified. String needs to be in format: "<shapefile_attribute_key>=<ID>". Default: None.')
+                            help='Extract only shape where shapefile_attribute_key=ID specified. String needs to be in format: "<shapefile_attribute_key>=<ID>=<type_of_value>". type_of_value is set to "int" by default. But can also be set to "str". Default: None.')
 
     args          = parser.parse_args()
     shapefile_in  = args.shapefile_in
@@ -212,6 +226,7 @@ if __name__ == '__main__':
         raise ValueError('convert_coords_to_espg: Input shapefile (-i) is mandatory.')
     if shapefile_out is None:
         raise ValueError('convert_coords_to_espg: Output shapefile (-o) is mandatory.')
+
 
 
 

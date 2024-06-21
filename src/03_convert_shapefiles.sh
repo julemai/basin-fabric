@@ -24,6 +24,7 @@
 # ./03_convert_shapefiles.sh -s grip-gl-mai
 # ./03_convert_shapefiles.sh -s camels-us-newman
 # ./03_convert_shapefiles.sh -s lake-erie-us-gaffney
+# ./03_convert_shapefiles.sh -s prairie-canada-mai
 
 
 set -e
@@ -54,6 +55,7 @@ case ${case_study} in
     'grip-gl-mai')          ok='True' ;;
     'camels-us-newman')     ok='True' ;;
     'lake-erie-us-gaffney') ok='True' ;;
+    'prairie-canada-mai')   ok='True' ;;
     *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney'.\n\n"; exit 1;;
 esac
 
@@ -87,8 +89,16 @@ else
 		basins=$(  \ls ${dprog}/../regions/${region_tag}/20230828_Katie_Shape_files_raw/*/*.shp | rev | cut -d '/' -f 2 | rev )
 		nbasins=$( \ls ${dprog}/../regions/${region_tag}/20230828_Katie_Shape_files_raw/*/*.shp | rev | cut -d '/' -f 2 | rev | wc -l )
 	    else
-		echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney'.\n\n"
-		exit 1
+		if [[ ${case_study} == 'prairie-canada-mai' ]] ; then
+		    # prairie-canada-mai
+		    region_tag='prairie-canada-mai'
+		    
+		    basins=$(  cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" )
+		    nbasins=$( cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" | wc -l )
+		else
+		    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney', 'prairie-canada-mai'.\n\n"
+		    exit 1
+		fi
 	    fi
 	fi
     fi
@@ -142,41 +152,54 @@ for bb in ${basins} ; do
 		       -x "hru_id=${basin_id_in_shp}" \
 		       -e 4326
 	    else
-		if [[ ${case_study} == 'lake-erie-us-gaffney' ]] ; then
-
-		    # find basin name in basins.csv
-		    bb_parts=$( echo ${bb} | tr '_' ' ' )
-		    found=False
-		    while read -r line; do
-			good='True'
-			for part in ${bb_parts} ; do
-			    if [[ ${line} != *"${part}"* ]] ; then
-				#echo "Not there!"
-				good='False'
-			    fi
-			done
-			if [[ ${good} == 'True' ]] ; then
-			    ibb=$( echo ${line} | cut -d ',' -f 1 )
-			    echo "Found basin ${bb} as ID ${ibb}"
-			fi
-		    done < ${dprog}/../regions/${region_tag}/basins.csv
-
+		if [[ ${case_study} == 'prairie-canada-mai' ]] ; then
+		    # prairie-canada-mai
+		    # extract basins from shapefile containing all basins and convert into standard one (save only longest feature; add ESPG)
+		   
+		    basin_id_in_shp=${bb}
+		    
 		    python additional_processing/convert_coords_to_espg.py \
+			   -i ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai/NC_bsns_25finalsubs.shp \
+			   -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
+			   -x "stnid=${basin_id_in_shp}=str" \
+			   -e 4326
+		else
+		    if [[ ${case_study} == 'lake-erie-us-gaffney' ]] ; then
+			
+			# find basin name in basins.csv
+			bb_parts=$( echo ${bb} | tr '_' ' ' )
+			found=False
+			while read -r line; do
+			    good='True'
+			    for part in ${bb_parts} ; do
+				if [[ ${line} != *"${part}"* ]] ; then
+				    #echo "Not there!"
+				    good='False'
+				fi
+			    done
+			    if [[ ${good} == 'True' ]] ; then
+				ibb=$( echo ${line} | cut -d ',' -f 1 )
+				echo "Found basin ${bb} as ID ${ibb}"
+			    fi
+			done < ${dprog}/../regions/${region_tag}/basins.csv
+			
+			python additional_processing/convert_coords_to_espg.py \
 			       -i ${dprog}/../regions/${region_tag}/20230828_Katie_Shape_files_raw/${bb}/area-of-interest.shp \
 			       -o ${dprog}/../regions/${region_tag}/shapefiles/${ibb}/${ibb}_lp \
 			       -x "FID=0" \
 			       -e 4326
-
-		else
-		    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'.\n\n"
-		    exit 1
+			
+		    else
+			echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'.\n\n"
+			exit 1
+		    fi
 		fi
 	    fi
 	fi
     fi
-
+    
     cc=$(( cc+1 ))
-
+    
 done
 
 exit 0
