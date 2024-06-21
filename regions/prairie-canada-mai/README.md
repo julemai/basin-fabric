@@ -14,7 +14,8 @@
 
 ## Standardize provided basin shapefiles
 
-Extract data from CAMELS shapefile. This means the correct
+Extract data from Hai's shapefile (shapefiles_prairie-canada-mai.zip
+--> NC_bsns_25finalsubs.shp). This means the correct
 coordinate reference system (ESPG=4326) is added and one shapefile
 created per basin.
 
@@ -41,7 +42,7 @@ Creates: shapefiles/*/*_lp.*
 Plot all the shapes on a map. Basically to check if this all makes
 sense and shapefiles are readible.
 ```
-pyenv activate env-3.8.5-nrcan
+pyenv activate env-3.11.9
 cd basin-fabric/src
 python 04_plot_basin_map.py -s prairie-canada-mai
 ```
