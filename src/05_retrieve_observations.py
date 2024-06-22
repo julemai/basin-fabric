@@ -21,12 +21,13 @@ from __future__ import print_function
 #
 
 # pyenv activate env-3.8.5-basin-fabric
-# python 05_retrieve_observations.py -s wisconsin-lewis   -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s grip-gl-mai       -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s ontario-zhi       -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s conus-zhi         -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s north-america-mai -p 1980-01-01:2018-12-31
-# python 05_retrieve_observations.py -s camels-us-newman  -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s wisconsin-lewis    -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s grip-gl-mai        -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s ontario-zhi        -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s conus-zhi          -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s north-america-mai  -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s camels-us-newman   -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s prairie-canada-mai -p 1980-01-01:2018-12-31
 
 """
 
@@ -133,9 +134,13 @@ for iobs_q in obs_q:
     if ( str(iobs_q) != 'nan' ):
 
         pattern_CA = re.compile("^([0-9][0-9][A-Z][A-Z][0-9]+)+$")
+        pattern_CA2 = re.compile("^([0-9][0-9][A-Z][A-Z][A-Z][0-9]+)+$")
         pattern_US = re.compile("^([0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]+)+$")
 
         if pattern_CA.match(iobs_q):
+            #print("{} is Canadian".format(iobs_q))
+            obs_q_CA.append(iobs_q)
+        elif pattern_CA2.match(iobs_q):
             #print("{} is Canadian".format(iobs_q))
             obs_q_CA.append(iobs_q)
         elif pattern_US.match(iobs_q):

@@ -30,6 +30,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s north-america-mai
 # python 06_static_attributes_geophysical.py -s camels-us-newman
 # python 06_static_attributes_geophysical.py -s lake-erie-us-gaffney
+# python 06_static_attributes_geophysical.py -s prairie-canada-mai
 
 
 """
@@ -154,6 +155,11 @@ elif case_study == 'camels-us-newman':
 
 elif case_study == 'lake-erie-us-gaffney':
     project_root = Path(dir_path+'/../regions/lake-erie-us-gaffney/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
+
+elif case_study == 'prairie-canada-mai':
+    project_root = Path(dir_path+'/../regions/prairie-canada-mai/')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 

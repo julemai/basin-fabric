@@ -396,6 +396,14 @@ from shapely.geometry import Polygon as shpPolygon
 areas = []
 coord_catch = []
 for ishape in range(len(catchfile_shp)):
+
+    data = gpd.read_file(catchfile_shp[ishape]+'.shp')
+    data_copy = data.copy()
+    data_copy = data_copy.to_crs({'proj':'cea'})
+    area = (data_copy['geometry'].area/ 1000. / 1000.).item()
+
+    print("GPD: Shape: {} --> Area: {} [km2]".format(catchfile_shp[ishape]+'.shp',area))
+            
     with fiona.open(catchfile_shp[ishape]+'.shp') as src:
         for ii in range(len(src)):
             coord_catch.append(src[ii]['geometry']['coordinates'])
@@ -404,8 +412,12 @@ for ishape in range(len(catchfile_shp)):
             lon_lat_list = [ list(icc) for icc in coord_catch[-1][0]]
             polygon_geom = shpPolygon(lon_lat_list)
             polygon = gpd.GeoDataFrame(index=[0], crs='epsg:4326', geometry=[polygon_geom])
-            area = (polygon.to_crs('epsg:3574').area/1000./1000.).item()
+            area = (polygon.to_crs('epsg:3574').area/1000./1000.).item()    # WGS 84 / North Pole LAEA Atlantic
             areas.append(area)
+
+            print("FIONA: Shape: {} --> Area: {} [km2]".format(catchfile_shp[ishape]+'.shp',area))
+
+
 
 idx_area = np.argsort(areas)[::-1]
 

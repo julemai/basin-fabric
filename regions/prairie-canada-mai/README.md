@@ -50,35 +50,45 @@ python 04_plot_basin_map.py -s prairie-canada-mai
 Creates: maps/map.png
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## Retrieve observations
 
 Retrieves streamflow observations for streamflow gauge stations listed
-in clumn `obs_q` in `basins.csv`. Data are either retrieved from
+in column `obs_q` in `basins.csv`. Data are either retrieved from
 downloaded HYDAT database
 (`data/observations/streamflow/Hydat.sqlite3`) or directly from
 USGS. Data should be downloaded at least for the period the forcings
 will be available for (option -p).
 
 ```
-source env-3.10/bin/activate
-pyenv activate env-3.8.5-ravenpy-new
-python 05_retrieve_observations.py -s ontario-zhi -p 1980-01-01:2018-12-31
+pyenv activate env-3.11.9
+python 05_retrieve_observations.py -s prairie-canada-mai -p 1980-01-01:2018-12-31
 ```
 
 Creates: observations/daily_streamflow.nc
+
+
+No observations found for the following stations:
+'05DEU01', '05DFU01', '05ECU01', '05EDU01', '05EFU01'
+
+Guessing that these are stations stations' data is to be extracted
+from estimated Weekly Naturalized Flow which Dr. Amin collected from
+another project in Alberta. Then we can treat as natural flows. These
+stations are not available in ECCC data. They are all listed in
+"NC_bsns_natualizedflows.shp" (i.e., '05AK001', '05CK004', '05DEU01',
+'05DFU01', '05ECU01', '05EDU01', '05EFU01'). 
+
+
+info of station 05AK001: {'name': 'SOUTH SASKATCHEWAN RIVER AT HIGHWAY
+NO. 41', 'lat': 50.73749923706055, 'lon': -110.09583282470705,
+'area_km2': 66000.0, 'Q': {'start': '1966-04-01', 'end':
+'1993-12-31'}} 
+
+info of station 05CK004: {'name': 'RED DEER RIVER NEAR BINDLOSS',
+'lat': 50.90269088745117, 'lon': -110.29949951171876, 'area_km2':
+47800.0, 'Q': {'start': '1960-10-01', 'end': '2022-12-31'}} 
+
+
+TODO :: Need to get observations as provided by Hai
 
 
 ## Derive geophysical attributes
@@ -87,9 +97,8 @@ Derive static attributes from geophysical datasets, i.e. DEM, soil,
 and landcover, and save them in a CSV file.
 
 ```
-source env-3.10/bin/activate
-pyenv activate env-3.8.5-ravenpy-new
-python 06_static_attributes_geophysical.py -s ontario-zhi
+pyenv activate env-3.11.9
+python 06_static_attributes_geophysical.py -s prairie-canada-mai
 ```
 
 Creates: attributes/static_attributes.csv
@@ -100,12 +109,16 @@ Creates: attributes/static_attributes.csv
 Extract forcings for each basin XXXX from RDRS-v2.1.
 
 ```
-source env-3.10/bin/activate
-pyenv activate env-3.8.5-basin-fabric
-python src/07_create_lumped_forcings.py -s ontario-zhi -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+pyenv activate env-3.11.9
+python src/07_create_lumped_forcings.py -s prairie-canada-mai -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
 
 Creates: forcings/*_agg_*_*_lp.nc
+
+
+
+
+
 
 
 ## Derive meteorologic attributes
