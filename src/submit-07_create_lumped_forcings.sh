@@ -263,6 +263,24 @@ done
 
 
 
+
+# ------------------
+# region_tag_python="prairie-canada-mai"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+#
+# ------------------
+# check completeness Prairie Canada forcings  (should be 135)
+# ls /scratch/julemai/basin-fabric/regions/prairie-canada-mai/forcings/*/*.done | wc -l
+# ls /scratch/julemai/basin-fabric/regions/prairie-canada-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
+# ------------------
+# JOBID
+# 22512827   --> all basins                        ;  1GB ; 72h   ; 135 tasks (each 1 basin)
+
+
+
+
+
+
 # ls /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
 # ls /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
 
