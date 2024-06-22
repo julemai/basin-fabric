@@ -60,10 +60,15 @@
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-78
 
-#SBATCH --job-name=agg-na                          # name of job in queque
+##SBATCH --job-name=agg-na                          # name of job in queque
+##SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
+##SBATCH --array=1-100
+
+#SBATCH --job-name=agg-prairie                     # name of job in queque
 #SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
-#SBATCH --array=1-100
+#SBATCH --array=1-135
 
 
 
@@ -134,19 +139,23 @@ cd /scratch/julemai/basin-fabric/src/
 # region_tag_python="lake-erie-us-gaffney"
 # forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
 
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=100                                  # <<<<<<<<<<<<<<<<
+# region="north-america-mai"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="north-america-mai"
+# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+
 # set number of tasks (make sure it is consistent with above)
-ntasks=100                                  # <<<<<<<<<<<<<<<<
-region="north-america-mai"                  # <<<<<<<<<<<<<<<<
-region_tag_python="north-america-mai"
+ntasks=135                                  # <<<<<<<<<<<<<<<<
+region="prairie-canada-mai"                  # <<<<<<<<<<<<<<<<
+region_tag_python="prairie-canada-mai"
 forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
-
-
 
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
 nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
-nbasins=$( cat /scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
+#nbasins=$( cat /scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
 
 #ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
 ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
@@ -154,7 +163,7 @@ start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
 basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
-basins=$( cat "/scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
+#basins=$( cat "/scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
 
