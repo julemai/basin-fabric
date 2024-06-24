@@ -125,6 +125,10 @@ project_root = Path(dir_path,'..','regions',case_study,'forcings')
 filenames = np.sort(glob.glob(str(Path(project_root,'*','*_agg_'+forcing+'_lp_daily_local.nc'))))
 
 if len(filenames) == 0:
+    do_forcing = True
+    filenames = np.sort(glob.glob(str(Path(project_root,'*','*_agg_'+forcing+'_lp.nc'))))
+
+if len(filenames) == 0:
     do_forcing = False
     project_root = Path(dir_path,'..','lstm',case_study,'time_series')
     filenames = np.sort(glob.glob(str(Path(project_root,'*.nc'))))
@@ -159,7 +163,7 @@ for filename in filenames:
             found_outlier = True
 
 if not(found_outlier):
-    print('No outliers/missing values found in any of the forcing files.')
+    print('No outliers/missing values found in any of the {} forcing files analysed.'.format(len(filenames)))
 
 
 
