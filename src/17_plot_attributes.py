@@ -217,7 +217,7 @@ sig         = 'J Mai' # sign the plot
 
 import matplotlib as mpl
 from matplotlib.patches import Rectangle, Circle, Polygon
-from mpl_toolkits.basemap import Basemap
+#from mpl_toolkits.basemap import Basemap
 
 
 # colors
