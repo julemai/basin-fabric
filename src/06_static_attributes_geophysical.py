@@ -219,7 +219,8 @@ if True: #do_area:
         for gl_shape in gl_shapes:
             basin = gl_shape.parent.stem
             df = gpd.read_file(gl_shape)
-            df = df.to_crs('ESRI:102017')
+            df = df.to_crs('ESRI:102017')    # used for Lake Erie US (and others??)
+            #df = df.to_crs('EPSG:7030')
 
             if len(df) != 1:
                 raise ValueError(f'Found != 1 shapes in {gl_shape}')
