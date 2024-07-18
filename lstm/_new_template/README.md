@@ -83,3 +83,13 @@ Or submit a job (revise submit-script first):
 cd /scratch/julemai/basin-fabric/lstm/ZZZZ/
 sbatch submit-cedar-train-lstm.sh
 ```
+
+
+### Restart job for training
+In case training was not finished, add this to submit script instead
+of using `nh-run train --config-file
+final-training/seed${SLURM_ARRAY_TASK_ID}.yml` where `AAAA` (e.g., 1206) and `BBBBBB`
+(e.g., 075810) need to be adjusted to the IDs that the initial training used:
+```
+nh-run continue_training --run-dir runs/ZZZ-finalTraining-seed${SLURM_ARRAY_TASK_ID}_AAAA_BBBBBB/
+```
