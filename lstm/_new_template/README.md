@@ -52,25 +52,25 @@ ln -s ../../../regions/XXXX/attributes/climate_indices_rdrs-v2.1_north-america.c
 
 ### Request interactive node with GPU
 ```
-cd /scratch/julemai/basin-fabric/
+cd /home/julemai/projects/def-julemai/julemai/
 salloc --time=04:00:00 --mem=4G --ntasks=1 --account=def-julemai --gpus-per-node=1
 ```
 
 ### Load some modules
 ```
-module load mpi4py/3.1.3
+module load mpi4py/3.1.4
 ```
 
 ### Load Python environment
 Load an environment that has NeuralHydrology and cuda etc.
 ```
-source /scratch/julemai/basin-fabric/env-cuda/bin/activate
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
 ```
 
 ### Do training
 Each of these take about 3h20.
 ```
-cd /scratch/julemai/basin-fabric/lstm/ZZZZ/
+cd /home/julemai/projects/def-julemai/julemai/lstm/ZZZZ/
 nh-run train --config-file final-training/seed1.yml
 nh-run train --config-file final-training/seed2.yml
 ...
@@ -80,7 +80,7 @@ nh-run train --config-file final-training/seed10.yml
 ### Submit job for training
 Or submit a job (revise submit-script first):
 ```
-cd /scratch/julemai/basin-fabric/lstm/ZZZZ/
+cd /home/julemai/projects/def-julemai/julemai/lstm/ZZZZ/
 sbatch submit-cedar-train-lstm.sh
 ```
 
@@ -91,5 +91,43 @@ of using `nh-run train --config-file
 final-training/seed${SLURM_ARRAY_TASK_ID}.yml` where `AAAA` (e.g., 1206) and `BBBBBB`
 (e.g., 075810) need to be adjusted to the IDs that the initial training used:
 ```
-nh-run continue_training --run-dir runs/ZZZ-finalTraining-seed${SLURM_ARRAY_TASK_ID}_AAAA_BBBBBB/
+nh-run continue_training --run-dir runs/ZZZZ-finalTraining-seed${SLURM_ARRAY_TASK_ID}_AAAA_BBBBBB/
+```
+
+
+### Run validation experiments
+For example, evaluate all models on a new region (XXXX):
+```
+cd /home/julemai/projects/def-julemai/julemai/
+salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1
+
+module load mpi4py/3.1.4
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
+cd /home/julemai/projects/def-julemai/julemai/src
+
+python 14_run_validation_experiments.py -s XXXX -u grip-gl-mai-v2      -p 1980-01-01:2018-12-31 -f ZZZZ
+python 14_run_validation_experiments.py -s XXXX -u grip-gl-mai-v3      -p 1980-01-01:2018-12-31 -f ZZZZ
+python 14_run_validation_experiments.py -s XXXX -u conus-zhi-v1        -p 1980-01-01:2018-12-31 -f ZZZZ
+python 14_run_validation_experiments.py -s XXXX -u conus-zhi-v2        -p 1980-01-01:2018-12-31 -f ZZZZ
+python 14_run_validation_experiments.py -s XXXX -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f ZZZZ
+```
+
+For example, evaluate all regions with new model
+(ZZZZ) which can only be done when training of that
+model is finished:
+```
+cd /home/julemai/projects/def-julemai/julemai/
+salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1
+
+module load mpi4py/3.1.4
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
+cd /home/julemai/projects/def-julemai/julemai/src
+
+python 14_run_validation_experiments.py -s wisconsin-lewis      -u ZZZZ -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u ZZZZ -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+python 14_run_validation_experiments.py -s ontario-zhi          -u ZZZZ -p 1980-01-01:2018-12-31 -f ontario-zhi-v1
+python 14_run_validation_experiments.py -s grip-gl-mai          -u ZZZZ -p 1980-01-01:2018-12-31 -f grip-gl-mai-v3
+python 14_run_validation_experiments.py -s conus-zhi            -u ZZZZ -p 1980-01-01:2018-12-31 -f conus-zhi-v1
+python 14_run_validation_experiments.py -s camels-us-newman     -u ZZZZ -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
+python 14_run_validation_experiments.py -s XXXX                 -u ZZZZ -p 1980-01-01:2018-12-31 -f ZZZZ
 ```

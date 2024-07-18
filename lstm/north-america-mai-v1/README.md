@@ -52,7 +52,8 @@ ln -s ../../../regions/north-america-mai/attributes/climate_indices_rdrs-v2.1_no
 
 ### Request interactive node with GPU
 ```
-cd /scratch/julemai/basin-fabric/
+# cd /scratch/julemai/basin-fabric/
+cd /home/julemai/projects/def-julemai/julemai/
 salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1
 ```
 
@@ -94,3 +95,40 @@ final-training/seed${SLURM_ARRAY_TASK_ID}.yml` where `AAAA` (e.g., 1206) and `BB
 nh-run continue_training --run-dir runs/north-america-mai-v1-finalTraining-seed${SLURM_ARRAY_TASK_ID}_AAAA_BBBBBB/
 ```
 
+
+### Run validation experiments
+For example, evaluate all models on a new region (north-america-mai):
+```
+cd /home/julemai/projects/def-julemai/julemai/
+salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1
+
+module load mpi4py/3.1.4
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
+cd /home/julemai/projects/def-julemai/julemai/src
+
+python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v2      -p 1980-01-01:2018-12-31 -f north-america-mai-v1
+python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v3      -p 1980-01-01:2018-12-31 -f north-america-mai-v1
+python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v1        -p 1980-01-01:2018-12-31 -f north-america-mai-v1
+python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v2        -p 1980-01-01:2018-12-31 -f north-america-mai-v1
+python 14_run_validation_experiments.py -s north-america-mai -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1
+```
+
+For example, evaluate all regions with new model
+(north-america-mai-v1) which can only be done when training of that
+model is finished:
+```
+cd /home/julemai/projects/def-julemai/julemai/
+salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1 
+
+module load mpi4py/3.1.4
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
+cd /home/julemai/projects/def-julemai/julemai/src
+
+python 14_run_validation_experiments.py -s wisconsin-lewis      -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1
+python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1
+python 14_run_validation_experiments.py -s ontario-zhi          -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f ontario-zhi-v1
+python 14_run_validation_experiments.py -s grip-gl-mai          -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f grip-gl-mai-v3
+python 14_run_validation_experiments.py -s conus-zhi            -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f conus-zhi-v1
+python 14_run_validation_experiments.py -s camels-us-newman     -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
+python 14_run_validation_experiments.py -s north-america-mai    -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1
+```
