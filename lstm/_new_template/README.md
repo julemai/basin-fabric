@@ -95,6 +95,14 @@ nh-run continue_training --run-dir runs/ZZZZ-finalTraining-seed${SLURM_ARRAY_TAS
 ```
 
 
+Then just copy all `*.pt` files in `continue_training_from_epoch*` to
+main folder (per seed), e.g.,
+```
+cd ZZZZ-finalTraining-seed2 _AAAA_BBBBBB/
+cp continue_training_from_epoch*/*.pt .
+```
+
+
 ### Run validation experiments
 For example, evaluate all models on a new region (XXXX):
 ```

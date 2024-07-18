@@ -95,6 +95,12 @@ final-training/seed${SLURM_ARRAY_TASK_ID}.yml` where `AAAA` (e.g., 1206) and `BB
 nh-run continue_training --run-dir runs/north-america-mai-v1-finalTraining-seed${SLURM_ARRAY_TASK_ID}_AAAA_BBBBBB/
 ```
 
+Then just copy all `*.pt` files in `continue_training_from_epoch*` to
+main folder (per seed), e.g.,
+```
+cd north-america-mai-v1-finalTraining-seed2_1206_075810/
+cp continue_training_from_epoch*/*.pt .
+```
 
 ### Run validation experiments
 For example, evaluate all models on a new region (north-america-mai):
