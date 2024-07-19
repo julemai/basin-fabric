@@ -12,9 +12,16 @@
 #SBATCH --gpus-per-node=1
 
 #SBATCH --job-name=lstm-eval                       # name of job in queque
-#SBATCH --time=2-00:00:00                          # time (DD-HH:MM:SS);
-#SBATCH --mem=16G                                  # memory; default unit is megabytes
 
+## -----------------------------------------------------------------------------------------------
+## step 2-3 (evaluate + merge)
+##SBATCH --time=2-00:00:00                          # time (DD-HH:MM:SS);
+##SBATCH --mem=16G                                  # memory; default unit is megabytes
+## -----------------------------------------------------------------------------------------------
+## step 4 (netcdf)
+#SBATCH --time=0-06:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --mem=200G                                  # memory; default unit is megabytes
+## -----------------------------------------------------------------------------------------------
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
 # task-id :: ${SLURM_ARRAY_TASK_ID}
@@ -28,14 +35,14 @@ source /project/6067703/julemai/env-3.11-cuda/bin/activate
 # Do evaluation
 cd /project/6067703/julemai/src
 
-# # evaluate all models on a new region (north-america-mai)
-# python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v2      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071584   
-# python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v3      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071556
+# # evaluate all models on a new region (north-america-mai)                                                                                      # --------- step 2-3 ---------------
+python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v2      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071584   
+python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v3      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071556
 # python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v1        -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071575
-# python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v2        -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071610
-# python 14_run_validation_experiments.py -s north-america-mai -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071617
+python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v2        -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071610
+python 14_run_validation_experiments.py -s north-america-mai -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071617
 
-# # evaluate all regions with new model (north-america-mai-v1)
+# # evaluate all regions with new model (north-america-mai-v1)                                                                                   # --------- step 2-3 ---------------
 # python 14_run_validation_experiments.py -s wisconsin-lewis      -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1         #   (47) 5min/seed  1.0h  DONE interactively
 # python 14_run_validation_experiments.py -s lake-erie-us-gaffney -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f lake-erie-us-gaffney-v1    #   (78) 9min/seed  2.0h  DONE interactively
 # python 14_run_validation_experiments.py -s ontario-zhi          -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f ontario-zhi-v1             #  (361) ??/seed   10.0h  1.0GB  37071442
