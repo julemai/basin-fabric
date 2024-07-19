@@ -6,6 +6,14 @@ list_*.dat
 #lstm/*
 regions/north-america-mai/observations/daily_streamflow.nc
 
+# zipped folders
+*.tar
+*.tar.gz
+
+# synch between clusters
+cron-sync-scratch-project.sh
+sync_scratch2project
+
 # Slurm outputs
 src/slurm-*.out
 
