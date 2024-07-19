@@ -102,11 +102,12 @@ cd north-america-mai-v1-finalTraining-seed2_1206_075810/
 cp continue_training_from_epoch*/*.pt .
 ```
 
+
 ### Run validation experiments
 For example, evaluate all models on a new region (north-america-mai):
 ```
 cd /home/julemai/projects/def-julemai/julemai/
-salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1
+salloc --time=02:00:00 --mem=200G --ntasks=1 --account=def-julemai --gpus-per-node=1
 
 module load mpi4py/3.1.4
 source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
@@ -137,4 +138,21 @@ python 14_run_validation_experiments.py -s grip-gl-mai          -u north-america
 python 14_run_validation_experiments.py -s conus-zhi            -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f conus-zhi-v1
 python 14_run_validation_experiments.py -s camels-us-newman     -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f camels-us-newman-v1
 python 14_run_validation_experiments.py -s north-america-mai    -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1
+```
+
+
+### Plot results
+Plots results and prints median results on screen:
+```
+module load mpi4py/3.1.4
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
+cd /home/julemai/projects/def-julemai/julemai/src
+
+python 15_plot_results_validation_experiments.py -s wisconsin-lewis      -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31     # no results as there are no observations available for this region
+python 15_plot_results_validation_experiments.py -s lake-erie-us-gaffney -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31     # no results as there are no observations available for this region
+python 15_plot_results_validation_experiments.py -s ontario-zhi          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+python 15_plot_results_validation_experiments.py -s grip-gl-mai          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+python 15_plot_results_validation_experiments.py -s conus-zhi            -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31 
+python 15_plot_results_validation_experiments.py -s camels-us-newman     -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+python 15_plot_results_validation_experiments.py -s north-america-mai    -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 ```
