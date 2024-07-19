@@ -103,9 +103,7 @@ from __future__ import print_function
 do_setup    = False
 do_evaluate = False
 do_merge    = False
-do_netcdf   = True     # might require increase of requested memory because of pkl read :(
-                        # 16GB conus-zhi        - 513 basins - 39 years
-                        # 50GB camels-us-newman - 671 basins - 39 years
+do_netcdf   = True     
 
 
 
