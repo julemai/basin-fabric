@@ -369,10 +369,11 @@ if do_setup:
         ff.close()
 
 else:
-    folders_lstm = glob.glob( str(Path.joinpath(Path(lstm_root),Path('*finalTraining-seed*'))) )
-    if len(folders_lstm) != 10:
-        raise ValueError('LSTM does not seem to have 10 ensemble members; only {}.\nSee under: {}'.format(
-            len(folders_lstm),Path.joinpath(lstm_root,'*finalTraining-seed*') ))
+    if do_evaluate or do_merge:
+        folders_lstm = glob.glob( str(Path.joinpath(Path(lstm_root),Path('*finalTraining-seed*'))) )
+        if len(folders_lstm) != 10:
+            raise ValueError('LSTM does not seem to have 10 ensemble members; only {}.\nSee under: {}'.format(
+                len(folders_lstm),Path.joinpath(lstm_root,'*finalTraining-seed*') ))
 
 
 if do_evaluate:
@@ -433,7 +434,11 @@ if do_netcdf:
         static_attributes = pd.read_csv(Path.joinpath(project_root,'attributes', 'static_attributes.csv'), index_col=[0], dtype={'basin': 'str'})
 
         all_results = []
+        cc = 0
         for basin, basin_results in results_file.items():
+            cc += 1
+            print('Working on basin {} ({} of {})'.format(basin,cc,len(results_file.items())))
+            
             xr_results = basin_results['1D']['xr']
 
             # clip values to >= 0
@@ -449,8 +454,10 @@ if do_netcdf:
             xr_results['basin'] = [basin]
             all_results.append(xr_results)
 
+        print('Here 1')
         all_results = xr.merge(all_results)
 
+        print('Here 2')
         all_results.to_netcdf(netcdf_file)
 
         print('Wrote: {}'.format(netcdf_file))
