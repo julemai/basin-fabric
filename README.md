@@ -164,6 +164,16 @@ pip install ipython
 pip install jupyter
 ```
 
+### On MacOS: setting up the Cuda env from Cedar to do NetCDF export of script 14
+```
+pyenv install 3.11.5
+pyenv virtualenv 3.11.5 env-3.11.5-basin-fabric-cuda
+
+pyenv activate env-3.11.5-basin-fabric-cuda
+pip install --upgrade pip
+pip install -r requirements_env-3.11-cuda.txt 
+```
+
 ### Run CUDA on Cedar
 
 ```
