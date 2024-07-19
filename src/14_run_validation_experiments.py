@@ -100,10 +100,10 @@ from __future__ import print_function
 # python 14_run_validation_experiments.py -s north-america-mai    -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1
 
 
-do_setup    = True
-do_evaluate = True
-do_merge    = True
-do_netcdf   = False     # might require increase of requested memory because of pkl read :(
+do_setup    = False
+do_evaluate = False
+do_merge    = False
+do_netcdf   = True     # might require increase of requested memory because of pkl read :(
                         # 16GB conus-zhi        - 513 basins - 39 years
                         # 50GB camels-us-newman - 671 basins - 39 years
 
