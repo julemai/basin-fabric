@@ -434,10 +434,10 @@ if do_netcdf:
         static_attributes = pd.read_csv(Path.joinpath(project_root,'attributes', 'static_attributes.csv'), index_col=[0], dtype={'basin': 'str'})
 
         all_results = []
-        cc = 0
+        #cc = 0
         for basin, basin_results in results_file.items():
-            cc += 1
-            print('Working on basin {} ({} of {})'.format(basin,cc,len(results_file.items())))
+            #cc += 1
+            #print('Working on basin {} ({} of {})'.format(basin,cc,len(results_file.items())))
             
             xr_results = basin_results['1D']['xr']
 
@@ -454,10 +454,11 @@ if do_netcdf:
             xr_results['basin'] = [basin]
             all_results.append(xr_results)
 
-        print('Here 1')
-        all_results = xr.merge(all_results)
-
-        print('Here 2')
+        # # takes really long and uses HUGE amounts of RAM
+        # all_results = xr.merge(all_results) 
+        # # assumes that there are no conflicts between datasets (but that shouldnt be the case anyway)
+        all_results = xr.combine_nested(all_results,concat_dim='basin')
+        
         all_results.to_netcdf(netcdf_file)
 
         print('Wrote: {}'.format(netcdf_file))
