@@ -31,6 +31,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s camels-us-newman
 # python 06_static_attributes_geophysical.py -s lake-erie-us-gaffney
 # python 06_static_attributes_geophysical.py -s prairie-canada-mai
+# python 06_static_attributes_geophysical.py -s prairie-canada-downstream-mai
 
 
 """
@@ -163,6 +164,11 @@ elif case_study == 'prairie-canada-mai':
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
+elif case_study == 'prairie-canada-downstream-mai':
+    project_root = Path(dir_path+'/../regions/prairie-canada-downstream-mai/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
+
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -219,8 +225,35 @@ if True: #do_area:
         for gl_shape in gl_shapes:
             basin = gl_shape.parent.stem
             df = gpd.read_file(gl_shape)
-            df = df.to_crs('ESRI:102017')    # used for Lake Erie US (and others??)
-            #df = df.to_crs('EPSG:7030')
+
+            # --------------------------
+            # Martin used = ESRI:102017 = used for all basin-fabric except prairie
+            # --------------------------
+            # Name: North_Pole_Lambert_Azimuthal_Equal_Area
+
+            # Projection: Lambert_Azimuthal_Equal_Area
+
+            #     PARAMETER["latitude_of_center",90],
+            #     PARAMETER["longitude_of_center",0],
+            #     PARAMETER["false_easting",0],
+            # PARAMETER["false_northing",0],
+
+            # Linear Unit: Meter (1.0)
+            # df = df.to_crs(crs='ESRI:102017')     # WGS 1984 Lambert Azimuthal EqArea North Pole; Martin used this one; used for Lake Erie US (and others??)
+
+            # --------------------------
+            # Statistics Canada = EPSG: 3347
+            # --------------------------
+            # https://www12.statcan.gc.ca/census-recensement/2021/ref/dict/az/Definition-eng.cfm?ID=geo016#
+            # Projection: Lambert_Conformal_Conic
+            # false_easting: 0.0
+            # false_northing: 0.0
+            # central_meridian: -91.8667
+            # standard_parallel_1: 49.0
+            # standard_parallel_2: 77.0
+            # latitude_of_origin: ???
+            # Linear Unit: Meter (1.0)
+            df = df.to_crs(crs='EPSG:3347')   # NAD83 / Statistics Canada Lambert
 
             if len(df) != 1:
                 raise ValueError(f'Found != 1 shapes in {gl_shape}')
@@ -256,6 +289,7 @@ if do_landcover:
     lc_fractions = pd.DataFrame(columns=lc_classes.values(), index=shapes.keys())
 
     with rio.open(project_root / '../..' / 'data' / 'landcover' / 'NA_NALCMS_2010_v2_land_cover_30m.tif') as gridded_ds:
+    #with rio.open(project_root / '../..' / 'data' / 'landcover' / 'NA_NALCMS_2015_v3_land_cover_30m.tif') as gridded_ds:    # only for pairie
         for basin, shape in shapes.items():
 
             # transform shape to gridded_ds crs
@@ -297,7 +331,7 @@ if do_soildata:
                         cropped.append(cropped_ds)
 
             cropped = np.concatenate(cropped, axis=0)
-            soil_data.loc[basin, soil_set] = np.nanmean(cropped_ds)
+            soil_data.loc[basin, soil_set] = np.nanmean(cropped) # np.nanmean(cropped_ds) --> this is wrong but was used for most regions and models!!!! --> updated for prairie and beyond
 
     print('soil_data = {}'.format(soil_data))
 
