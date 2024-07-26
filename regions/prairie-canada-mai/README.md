@@ -22,7 +22,7 @@ created per basin.
 ```bash
 # unzip raw file
 cd basin-fabric/regions/prairie-canada-mai/
-unzip shapefiles_prairie-canada-mai.zip
+unzip shapefiles_prairie-canada-mai_20240723.zip
 
 # convert raw shapefiles
 cd basin-fabric/src
@@ -31,7 +31,7 @@ pyenv activate env-3.11.9
 
 # remove unzipped folder
 cd basin-fabric/regions/prairie-canada-mai/
-rm -r shapefiles_prairie-canada-mai
+rm -r shapefiles_prairie-canada-mai_20240723
 ```
 
 Creates: shapefiles/*/*_lp.*

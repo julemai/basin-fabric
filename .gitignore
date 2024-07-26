@@ -84,6 +84,7 @@ data/soil/*.zip
 ## LANDCOVER
 # this is the important file but it's too large
 data/landcover/NA_NALCMS_2010_v2_land_cover_30m.tif
+data/landcover/NA_NALCMS_2015_v3_land_cover_30m.tif
 
 ## METEO
 data/meteorology/era5-land_grip-gl/*.nc
