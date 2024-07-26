@@ -25,6 +25,7 @@
 # ./03_convert_shapefiles.sh -s camels-us-newman
 # ./03_convert_shapefiles.sh -s lake-erie-us-gaffney
 # ./03_convert_shapefiles.sh -s prairie-canada-mai
+# ./03_convert_shapefiles.sh -s prairie-canada-downstream-mai
 
 
 set -e
@@ -51,11 +52,12 @@ if [[ ${case_study} == 'None' ]] ; then
     exit 1
 fi
 case ${case_study} in
-    'conus-zhi')            ok='True' ;;
-    'grip-gl-mai')          ok='True' ;;
-    'camels-us-newman')     ok='True' ;;
-    'lake-erie-us-gaffney') ok='True' ;;
-    'prairie-canada-mai')   ok='True' ;;
+    'conus-zhi')            	       ok='True' ;;
+    'grip-gl-mai')          	       ok='True' ;;
+    'camels-us-newman')     	       ok='True' ;;
+    'lake-erie-us-gaffney') 	       ok='True' ;;
+    'prairie-canada-mai')              ok='True' ;;
+    'prairie-canada-downstream-mai')   ok='True' ;;
     *) printf "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney'.\n\n"; exit 1;;
 esac
 
@@ -90,14 +92,29 @@ else
 		nbasins=$( \ls ${dprog}/../regions/${region_tag}/20230828_Katie_Shape_files_raw/*/*.shp | rev | cut -d '/' -f 2 | rev | wc -l )
 	    else
 		if [[ ${case_study} == 'prairie-canada-mai' ]] ; then
-		    # prairie-canada-mai
+		    # entire drainage areas
+		    # prairie-canada-mai   
 		    region_tag='prairie-canada-mai'
-		    
-		    basins=$(  cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" )
-		    nbasins=$( cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" | wc -l )
+
+		    # 2024-07-23 - basins with entire drainage area - resolved gaps and overlapping areas
+		    basins=$(  cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" )
+		    nbasins=$( cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" | wc -l )
+
 		else
-		    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney', 'prairie-canada-mai'.\n\n"
-		    exit 1
+
+		    if [[ ${case_study} == 'prairie-canada-downstream-mai' ]] ; then
+			# only downstream portions of drainage areas
+			# prairie-canada-downstream-mai    
+			region_tag='prairie-canada-downstream-mai'
+
+
+			# 2024-07-23 - basins with downstream drainage area - resolved gaps and overlapping areas
+			basins=$(  cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" )
+			nbasins=$( cat ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/NC_bsns25_attrb.csv | cut -d ',' -f 2 | grep -v 'stnid' | grep -v "^$" | wc -l )
+		    else
+			echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman', 'lake-erie-us-gaffney', 'prairie-canada-mai', 'prairie-canada-downstream-mai'.\n\n"
+			exit 1
+		    fi
 		fi
 	    fi
 	fi
@@ -157,41 +174,66 @@ for bb in ${basins} ; do
 		    # extract basins from shapefile containing all basins and convert into standard one (save only longest feature; add ESPG)
 		   
 		    basin_id_in_shp=${bb}
-		    
+
+		    # # 2024-06-14 - basins with ENTIRE drainage area - has lots of gaps and overlapping areas
+		    # python additional_processing/convert_coords_to_espg.py \
+		    # 	   -i ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240614/NC_bsns_25finalsubs.shp \
+		    # 	   -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
+		    # 	   -x "stnid=${basin_id_in_shp}=str" \
+		    # 	   -e 4326
+
+		    # 2024-07-23 - basins with ENTIRE drainage area - resolved gaps and overlapping areas
 		    python additional_processing/convert_coords_to_espg.py \
-			   -i ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai/NC_bsns_25finalsubs.shp \
-			   -o ${dprog}/../regions/${region_tag}/shapefiles/${bb}/${bb}_lp \
-			   -x "stnid=${basin_id_in_shp}=str" \
-			   -e 4326
+		    	   -i ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/NC_merit_135bsns.shp \
+		    	   -o ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/${bb}/${bb}_lp \
+		    	   -x "STATION_NU=${basin_id_in_shp}=str" \
+		    	   -e 4326
+
 		else
-		    if [[ ${case_study} == 'lake-erie-us-gaffney' ]] ; then
+		    if [[ ${case_study} == 'prairie-canada-downstream-mai' ]] ; then
+			# prairie-canada-downstream-mai
+			# extract basins from shapefile containing all basins and convert into standard one (save only longest feature; add ESPG)
 			
-			# find basin name in basins.csv
-			bb_parts=$( echo ${bb} | tr '_' ' ' )
-			found=False
-			while read -r line; do
-			    good='True'
-			    for part in ${bb_parts} ; do
-				if [[ ${line} != *"${part}"* ]] ; then
-				    #echo "Not there!"
-				    good='False'
-				fi
-			    done
-			    if [[ ${good} == 'True' ]] ; then
-				ibb=$( echo ${line} | cut -d ',' -f 1 )
-				echo "Found basin ${bb} as ID ${ibb}"
-			    fi
-			done < ${dprog}/../regions/${region_tag}/basins.csv
+			basin_id_in_shp=${bb}
 			
+			# 2024-07-23 - basins with only DOWNSTREAM drainage area - resolved gaps and overlapping areas
+			#  --> this file has basin 06CD002 with "island": shapefiles_prairie-canada-mai_20240723/NC_merit_re135bsns.shp
+			#  --> this file resolved that:                   shapefiles_prairie-canada-mai_20240723/NC_re135bsns_mJ.shp
 			python additional_processing/convert_coords_to_espg.py \
-			       -i ${dprog}/../regions/${region_tag}/20230828_Katie_Shape_files_raw/${bb}/area-of-interest.shp \
-			       -o ${dprog}/../regions/${region_tag}/shapefiles/${ibb}/${ibb}_lp \
-			       -x "FID=0" \
+			       -i ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/NC_re135bsns_mJ.shp \
+			       -o ${dprog}/../regions/${region_tag}/shapefiles_prairie-canada-mai_20240723/${bb}/${bb}_lp \
+			       -x "STATION_NU=${basin_id_in_shp}=str" \
 			       -e 4326
-			
 		    else
-			echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'.\n\n"
-			exit 1
+			if [[ ${case_study} == 'lake-erie-us-gaffney' ]] ; then
+			    
+			    # find basin name in basins.csv
+			    bb_parts=$( echo ${bb} | tr '_' ' ' )
+			    found=False
+			    while read -r line; do
+				good='True'
+				for part in ${bb_parts} ; do
+				    if [[ ${line} != *"${part}"* ]] ; then
+					#echo "Not there!"
+					good='False'
+				    fi
+				done
+				if [[ ${good} == 'True' ]] ; then
+				    ibb=$( echo ${line} | cut -d ',' -f 1 )
+				    echo "Found basin ${bb} as ID ${ibb}"
+				fi
+			    done < ${dprog}/../regions/${region_tag}/basins.csv
+			    
+			    python additional_processing/convert_coords_to_espg.py \
+				   -i ${dprog}/../regions/${region_tag}/20230828_Katie_Shape_files_raw/${bb}/area-of-interest.shp \
+				   -o ${dprog}/../regions/${region_tag}/shapefiles/${ibb}/${ibb}_lp \
+				   -x "FID=0" \
+				   -e 4326
+			    
+			else
+			    echo "Error ${pprog}: Option (-s) needs to be one of the following: 'conus-zhi', 'grip-gl-mai', 'camels-us-newman'.\n\n"
+			    exit 1
+			fi
 		    fi
 		fi
 	    fi

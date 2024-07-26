@@ -31,6 +31,7 @@ from __future__ import print_function
 # python 04_plot_basin_map.py -s camels-us-newman
 # python 04_plot_basin_map.py -s lake-erie-us-gaffney
 # python 04_plot_basin_map.py -s prairie-canada-mai
+# python 04_plot_basin_map.py -s prairie-canada-downstream-mai
 
 
 """
@@ -179,6 +180,14 @@ elif case_study == 'lake-erie-us-gaffney':
     meridians = np.arange(-180.,181., 5.)
 
 elif case_study == 'prairie-canada-mai':
+    llcrnrlon =  -116.   
+    urcrnrlon =   -86.
+    llcrnrlat =   43.   
+    urcrnrlat =   59.5
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
+
+elif case_study == 'prairie-canada-downstream-mai':
     llcrnrlon =  -116.   
     urcrnrlon =   -86.
     llcrnrlat =   43.   
@@ -380,7 +389,7 @@ lat_2     =   (llcrnrlat+urcrnrlat)/2  # second "equator"
 lat_0     =   (llcrnrlat+urcrnrlat)/2  # center of the map
 lon_0     =   (llcrnrlon+urcrnrlon)/2  # center of the map
 
-if case_study == 'prairie-canada-mai':
+if case_study == 'prairie-canada-mai' or case_study == 'prairie-canada-downstream-mai':
     # get rid of lake Winnipeg etc
     area_thresh = 50000
 else:
@@ -517,6 +526,11 @@ elif case_study == 'lake-erie-us-gaffney':
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)
 elif case_study == 'prairie-canada-mai':
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).title(),usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'prairie-canada-downstream-mai':
     sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).title(),usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
