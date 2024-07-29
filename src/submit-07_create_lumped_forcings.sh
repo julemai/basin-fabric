@@ -68,7 +68,7 @@
 #SBATCH --job-name=agg-prairie                     # name of job in queque
 #SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
-#SBATCH --array=1-11
+#SBATCH --array=1-135
 
 
 
@@ -283,11 +283,25 @@ done
 # ls /project/6070465/julemai/basin-fabric/regions/prairie-canada-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
 # ------------------
 # JOBID
-# 22512827   --> all basins                        ;  1GB ; 72h   ; 135 tasks (each 1 basin)
-#            --> missing 11 basins
+#    --> all basins                        ;  1GB ; 72h   ; 135 tasks (each 1 basin)
+#          
+#
+#
 
 
-
+# ------------------
+# region_tag_python="prairie-canada-downstream-mai"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+#
+# ------------------
+# check completeness downstream Prairie Canada forcings  (should be 135)
+# ls /project/6070465/julemai/basin-fabric/regions/prairie-canada-downstream-mai/forcings/*/*.done | wc -l
+# ls /project/6070465/julemai/basin-fabric/regions/prairie-canada-downstream-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
+# ------------------
+# JOBID
+# 23674586   --> all basins                        ;  1GB ; 72h   ; 135 tasks (each 1 basin)
+#
+#
 
 
 # ls /project/6070465/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
