@@ -95,10 +95,12 @@ module load StdEnv/2023 gcc/12.3 netcdf/4.9.2 gdal/3.7.2 mpi4py/3.1.4 proj/9.2.0
 
 # load pyenv
 # source /home/julemai/env-3.10/bin/activate
-source /scratch/julemai/basin-fabric/env-3.11/bin/activate
+# source /scratch/julemai/basin-fabric/env-3.11/bin/activate
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate   # rpp-julemai
 
 # change to right dir
-cd /scratch/julemai/basin-fabric/src/
+# cd /scratch/julemai/basin-fabric/src/
+cd /project/6070465/julemai/basin-fabric/src/
 
 
 # ----------------------------------------------------------------------------------------
@@ -107,76 +109,83 @@ cd /scratch/julemai/basin-fabric/src/
 # ntasks=257                          # <<<<<<<<<<<<<<<<
 # region="conus-zhi"                  # <<<<<<<<<<<<<<<<
 # region_tag_python="conus-zhi"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=47                           # <<<<<<<<<<<<<<<<
 # region="wisconsin-lewis"            # <<<<<<<<<<<<<<<<
 # region_tag_python="wisconsin-lewis"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=212                            # <<<<<<<<<<<<<<<<
 # region="grip-gl-mai"                  # <<<<<<<<<<<<<<<<
 # region_tag_python="grip-gl-mai"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=361                            # <<<<<<<<<<<<<<<<
 # region="ontario-zhi"                  # <<<<<<<<<<<<<<<<
 # region_tag_python="ontario-zhi"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=224                                 # <<<<<<<<<<<<<<<<
 # region="camels-us-newman"                  # <<<<<<<<<<<<<<<<
 # region_tag_python="camels-us-newman"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=78                                 # <<<<<<<<<<<<<<<<
 # region="lake-erie-us-gaffney"                  # <<<<<<<<<<<<<<<<
 # region_tag_python="lake-erie-us-gaffney"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=100                                  # <<<<<<<<<<<<<<<<
 # region="north-america-mai"                  # <<<<<<<<<<<<<<<<
 # region_tag_python="north-america-mai"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # set number of tasks (make sure it is consistent with above)
-ntasks=11 #135                                  # <<<<<<<<<<<<<<<<
+ntasks=135                                  # <<<<<<<<<<<<<<<<
 region="prairie-canada-mai"                  # <<<<<<<<<<<<<<<<
 region_tag_python="prairie-canada-mai"
-forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+
+# set number of tasks (make sure it is consistent with above)
+ntasks=135                                              # <<<<<<<<<<<<<<<<
+region="prairie-canada-downstream-mai"                  # <<<<<<<<<<<<<<<<
+region_tag_python="prairie-canada-downstream-mai"
+forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+
 
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
-nbasins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
-nbasins=$( cat /scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
+nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
+#nbasins=$( cat /project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
 
 #ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
 ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
-basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
-basins=$( cat "/scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
+basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
+#basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
 
     # # check if and old file needs to be deleted
-    # if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then
-    # 	last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev )
+    # if [ ! -e /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then
+    # 	last=$( \ls -latrh /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev )
     # 	rm ${last}
     # fi
 
     echo "Aggregate forcings for basin ${bb}"
 
     python 07_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham
-    touch /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}.done
+    touch /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}.done
 
 done
 
@@ -189,24 +198,24 @@ done
 # region='camels-us-newman'
 # region='lake-erie-us-gaffney'
 
-# basins=$( \ls -d /scratch/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
+# basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 
-# for bb in $basins ; do if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 ) ; echo $bb ${last} ; fi ; done
+# for bb in $basins ; do if [ ! -e /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 ) ; echo $bb ${last} ; fi ; done
 
-# miss_file="/scratch/julemai/basin-fabric/regions/${region}/basins_missing.dat"
-# for bb in $basins ; do if [ ! -e /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /scratch/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; echo ${bb} > ${miss_file} ; rm ${last} ; fi ; done
+# miss_file="/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat"
+# for bb in $basins ; do if [ ! -e /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; echo ${bb} > ${miss_file} ; rm ${last} ; fi ; done
 
 
 # ------------------
 # region_tag_python="conus-zhi"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 # ------------------
 # JOBID
 # 9383171   --> all basins                        ;  1GB ; 72h   ; 257 tasks (each 2 basins)
 
 # ------------------
 # region_tag_python="wisconsin-lewis"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 # ------------------
 # JOBID
 # 9383028   --> all basins                        ;  1GB ; 24h   ; 47 tasks (each 1 basin)
@@ -214,7 +223,7 @@ done
 
 # ------------------
 # region_tag_python="grip-gl-mai"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 # ------------------
 # JOBID
 # 9523378   --> all basins                        ;  1GB ; 24h   ; 212 tasks (each 1 basin)
@@ -223,7 +232,7 @@ done
 
 # ------------------
 # region_tag_python="ontario-zhi"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 # ------------------
 # JOBID
 # 9523633   --> all basins                        ;  1GB ; 24h   ; 361 tasks (each 1 basin)
@@ -232,12 +241,12 @@ done
 
 # ------------------
 # region_tag_python="camels-us-newman"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 #
 # ------------------
 # check completeness CAMELS-US forcings  (should be 671)
-# ls /scratch/julemai/basin-fabric/regions/camels-us-newman/forcings/*/*.done | wc -l
-# ls /scratch/julemai/basin-fabric/regions/camels-us-newman/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
+# ls /project/6070465/julemai/basin-fabric/regions/camels-us-newman/forcings/*/*.done | wc -l
+# ls /project/6070465/julemai/basin-fabric/regions/camels-us-newman/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
 # ------------------
 # JOBID
 # 10190113   --> all basins                        ;  1GB ; 24h   ; 224 tasks (each 3 basin)
@@ -249,12 +258,12 @@ done
 
 # ------------------
 # region_tag_python="lake-erie-us-gaffney"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 #
 # ------------------
 # check completeness Lake Erie US forcings  (should be 78)
-# ls /scratch/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*.done | wc -l
-# ls /scratch/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
+# ls /project/6070465/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*.done | wc -l
+# ls /project/6070465/julemai/basin-fabric/regions/lake-erie-us-gaffney/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
 # ------------------
 # JOBID
 # 10574850   --> all basins                        ;  1GB ; 24h   ; 78 tasks (each 1 basin)
@@ -266,12 +275,12 @@ done
 
 # ------------------
 # region_tag_python="prairie-canada-mai"
-# forcings="/scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 #
 # ------------------
 # check completeness Prairie Canada forcings  (should be 135)
-# ls /scratch/julemai/basin-fabric/regions/prairie-canada-mai/forcings/*/*.done | wc -l
-# ls /scratch/julemai/basin-fabric/regions/prairie-canada-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
+# ls /project/6070465/julemai/basin-fabric/regions/prairie-canada-mai/forcings/*/*.done | wc -l
+# ls /project/6070465/julemai/basin-fabric/regions/prairie-canada-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
 # ------------------
 # JOBID
 # 22512827   --> all basins                        ;  1GB ; 72h   ; 135 tasks (each 1 basin)
@@ -281,11 +290,11 @@ done
 
 
 
-# ls /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
-# ls /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
+# ls /project/6070465/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
+# ls /project/6070465/julemai/basin-fabric/regions/grip-gl-mai/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
 
-# ls /scratch/julemai/basin-fabric/regions/ontario-zhi/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
-# ls /scratch/julemai/basin-fabric/regions/ontario-zhi/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
+# ls /project/6070465/julemai/basin-fabric/regions/ontario-zhi/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | rev | cut -d '/' -f 2 | rev | sort > merge_exists.dat
+# ls /project/6070465/julemai/basin-fabric/regions/ontario-zhi/forcings/*/*.done | rev | cut -d '/' -f 2 | rev | sort > done_exists.dat
 
 # missing=$( comm -23 done_exists.dat merge_exists.dat )
 # echo ${missing}
@@ -295,8 +304,8 @@ done
 # for bb in ${missing} ; do python 07_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done
 
 # --> delete corruped files manually
-# /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/02HL008/02HL008_agg_rdrs-v2.1_north-america_1989_RDRS_v2.1_A_PR0_SFC.nc_lp.nc
-# /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/02LC029/02LC029_agg_rdrs-v2.1_north-america_1987_RDRS_v2.1_P_PR0_SFC.nc_lp.nc
-# /scratch/julemai/basin-fabric/regions/grip-gl-mai/forcings/04040500/04040500_agg_rdrs-v2.1_north-america_1985_RDRS_v2.1_P_UU_10m.nc_lp.nc
+# /project/6070465/julemai/basin-fabric/regions/grip-gl-mai/forcings/02HL008/02HL008_agg_rdrs-v2.1_north-america_1989_RDRS_v2.1_A_PR0_SFC.nc_lp.nc
+# /project/6070465/julemai/basin-fabric/regions/grip-gl-mai/forcings/02LC029/02LC029_agg_rdrs-v2.1_north-america_1987_RDRS_v2.1_P_PR0_SFC.nc_lp.nc
+# /project/6070465/julemai/basin-fabric/regions/grip-gl-mai/forcings/04040500/04040500_agg_rdrs-v2.1_north-america_1985_RDRS_v2.1_P_UU_10m.nc_lp.nc
 
 # for bb in ${missing} ; do python 07_create_lumped_forcings.py -s ${region_tag_python} -b ${bb} -f ${forcings} -y graham ; done
