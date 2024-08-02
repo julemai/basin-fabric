@@ -299,8 +299,8 @@ done
 # ls /project/6070465/julemai/basin-fabric/regions/prairie-canada-downstream-mai/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc | wc -l
 # ------------------
 # JOBID
-# 23674586   --> all basins                        ;  1GB ; 72h   ; 135 tasks (each 1 basin)
-#
+# 23674586   --> all basins                            ;  1GB ; 72h   ; 135 tasks (each 1 basin)
+# 23763636   --> all basins replaced missing 1997 file ;  1GB ; 72h   ; 135 tasks (each 1 basin)
 #
 
 
