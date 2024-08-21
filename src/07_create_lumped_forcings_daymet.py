@@ -22,13 +22,8 @@ from __future__ import print_function
 
 # pyenv activate env-3.8.5-ravenpy-new
 
-# python 07_create_lumped_forcings.py -s ontario-zhi -b 03005400102 -f /Users/j6mai/Documents/Nandita/ontario-zhi/gridded_data/rdrs_v2/ -y mac
-
-# takes 73.5 minutes
-# python 07_create_lumped_forcings.py -s ontario-zhi -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2_grip-gl/ -y graham
-
 # takes XXX minutes
-# python 07_create_lumped_forcings.py -s ontario-zhi -b 03005400102 -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+# python 07_create_lumped_forcings_daymet.py -s prairie-canada-downstream-mai -b 05BA002 -f /project/6070465/julemai/blended-model-na/data_in/daymet_v4R1/ -y graham
 
 
 """
@@ -231,16 +226,16 @@ if do_forcings:
         with nc.Dataset(ff) as iff:
 
            if (irlat is None):
-               irlat = iff.dimensions['rlat'].size
+               irlat = iff.dimensions['y'].size
            else:
-               if ( iff.dimensions['rlat'].size != irlat ):
-                   raise ValueError('rlat dimension of file {} is {} but is expected to be {}'.format(ff,iff.dimensions['rlat'].size,irlat))
+               if ( iff.dimensions['y'].size != irlat ):
+                   raise ValueError('rlat dimension of file {} is {} but is expected to be {}'.format(ff,iff.dimensions['y'].size,irlat))
 
            if (irlon is None):
-               irlon = iff.dimensions['rlon'].size
+               irlon = iff.dimensions['x'].size
            else:
-               if ( iff.dimensions['rlon'].size != irlon ):
-                   raise ValueError('rlon dimension of file {} is {} but is expected to be {}'.format(ff,iff.dimensions['rlon'].size,irlon))
+               if ( iff.dimensions['x'].size != irlon ):
+                   raise ValueError('rlon dimension of file {} is {} but is expected to be {}'.format(ff,iff.dimensions['x'].size,irlon))
 
     # 3- read grid of one file
     with nc.Dataset(filenames[0]) as iff:
@@ -272,7 +267,7 @@ if do_forcings:
 
         subprocess.run([pyenv, "additional_processing/derive_grid_weights.py",
                         "-i", filenames[0],
-                        "-d", "rlon,rlat",
+                        "-d", "x,y",
                         "-v", "lon,lat",
                         "-r", shpfile,
                         "-b", basin,
@@ -304,7 +299,7 @@ if do_forcings:
 
             # ravenpy aggregate-forcings-to-hrus --dim-names rlon rlat --var-to-aggregate "RDRS_v2_A_PR0_SFC" --output-nc-file ${outfile_prec} ${infile_prec} ${weights_file}
             args = ["ravenpy", "aggregate-forcings-to-hrus",
-                                "--dim-names", "rlon", "rlat" ] + ivars_3d + [   # n times "--var-to-aggregate"
+                                "--dim-names", "x", "y" ] + ivars_3d + [   # n times "--var-to-aggregate"
                                 "--output-nc-file", outfile_agg,
                                 filename,
                                 weightsfile ]
