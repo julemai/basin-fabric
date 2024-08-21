@@ -110,15 +110,18 @@ Extract forcings for each basin XXXX from RDRS-v2.1.
 
 ```
 pyenv activate env-3.11.9
-python src/07_create_lumped_forcings.py -s prairie-canada-mai -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+python src/07_create_lumped_forcings.py -s prairie-canada-mai -b XXXX -f /project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/ -y graham
 ```
 
-Creates: forcings/*_agg_*_*_lp.nc
+Creates: forcings/*_agg_annual_lp.nc
 
+Need to be renamed:
+```
+files=$( \ls regions/prairie-canada-mai/forcings/*/*_agg_annual_lp.nc)
+for ff in $files ; do ss=$( echo $ff ) ; ss2=$( echo "${ss/annual/rdrs-v2.1_north-america}" ) ; echo $ss ; echo $ss2 ; echo "" ; cp $ss $ss2 ; done
+```
 
-
-
-
+Creates: forcings/*_agg_rdrs-v2.1_north-america_lp.nc
 
 
 ## Derive meteorologic attributes
@@ -126,9 +129,9 @@ Creates: forcings/*_agg_*_*_lp.nc
 Derive attributes based on meteorology.
 
 ```
-source env-3.10/bin/activate
+source env-3.11/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s ontario-zhi -f 'rdrs-v2.1_north-america' -p 'all' -a
+python src/08_static_attributes_forcings.py -s prairie-canada-mai -f 'rdrs-v2.1_north-america' -p 'all' -a
 ```
 
 Creates: attributes/climate_indices_rdrs-v2.1_north-america.csv
@@ -136,8 +139,12 @@ Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 
 Add produced files to Git:
 ```
-git add regions/ontario-zhi/forcings/*/*_agg_*_daily_local.nc
+git add regions/prairie-canada-mai/forcings/*/*_agg_*_daily_local.nc
 ```
+
+
+
+
 
 
 ## Merge observations and forcings
@@ -149,8 +156,12 @@ needed.
 
 ```
 source env-3.10/bin/activate
-python src/09_merge_forcings_and_observations.py -s 'ontario-zhi'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x ontario-zhi-v1
+python src/09_merge_forcings_and_observations.py -s prairie-canada-mai  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x prairie-canada-mai-v1
 ```
+
+
+
+
 
 
 ## Run validation experiment
