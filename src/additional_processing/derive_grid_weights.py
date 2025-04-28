@@ -330,7 +330,10 @@ if ( Path(input_file).suffix == '.nc'):
     else:
         if 'grid_mapping' in nc_in.variables[vars_3D[0]].ncattrs():
             grid_map_var = nc_in.variables[vars_3D[0]].getncattr('grid_mapping')
-            crs_wkt_grid = nc_in.variables[grid_map_var].getncattr('crs_wkt')
+            # if 'crs_wkt' in nc_in.variables[grid_map_var].ncattrs():
+            #     crs_wkt_grid = nc_in.variables[grid_map_var].getncattr('crs_wkt')
+            # else:
+            #     crs_wkt_grid = 4326
             if projection_netcdf is None:
                 raise ValueError('The NetCDF file contains coordinates using grid-mapping. In this case you need to specify the EPSG for those coordinates. Can only be in degrees (4326) or an equal area one (e.g., 5070, 3573).')
             else:
