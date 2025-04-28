@@ -132,3 +132,33 @@ if __name__ == '__main__':
     filename = 'polygon'   # don't use any file ending here
 
     coords2shapefile(filename,coords)
+
+
+    
+
+    # path_to_file = '../../regions/duc8-camelo/4326_HydrologyAnalyst_Basins.geojson'
+
+    # import geojson
+    # import geopandas as gpd
+    # import json
+    
+    # with open(path_to_file) as f:
+    #     gj = geojson.load(f)
+
+    # nfeatures = len(gj['features'])
+    # for ifeature in range(nfeatures):
+
+    #     basin = gj['features'][ifeature]['properties']['id']
+    #     filename = '../../regions/duc8-camelo/shapefiles/{}/{}_lp'.format(basin,basin)
+
+    #     print('Working on basin {}'.format(basin))
+
+    #     # write shapefile
+    #     coords = gj['features'][ifeature]['geometry']['coordinates'][0]
+    #     coords2shapefile(filename,coords)
+
+    #     # write as GeoJSON
+    #     shape_subbasins = gpd.read_file(filename+'.shp')  # is a GeoPandas DataFrame
+    #     json_dict = json.loads(gpd.GeoDataFrame(shape_subbasins, crs="EPSG:4326").to_json())  # is a dictionary
+    #     with open(filename+".json", "w") as outfile:
+    #         json.dump(json_dict, outfile)

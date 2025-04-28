@@ -32,6 +32,8 @@ from __future__ import print_function
 # python 04_plot_basin_map.py -s lake-erie-us-gaffney
 # python 04_plot_basin_map.py -s prairie-canada-mai
 # python 04_plot_basin_map.py -s prairie-canada-downstream-mai
+# python 04_plot_basin_map.py -s duc8-camelo
+# python 04_plot_basin_map.py -s wq-us-chang
 
 
 """
@@ -192,6 +194,22 @@ elif case_study == 'prairie-canada-downstream-mai':
     urcrnrlon =   -86.
     llcrnrlat =   43.   
     urcrnrlat =   59.5
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
+
+elif case_study == 'duc8-camelo':
+    llcrnrlon =  -82.2
+    urcrnrlon =  -80.9
+    llcrnrlat =   42.6
+    urcrnrlat =   43.0
+    parallels = np.arange( -80., 81., 0.1)
+    meridians = np.arange(-180.,181., 0.1)
+
+elif case_study == 'wq-us-chang':
+    llcrnrlon =  -116.   # lon: -131.36749999999995 to -60.98499999999996
+    urcrnrlon =   -46.
+    llcrnrlat =   18.    # lat: 26.920416654000064 to 59.33374999800003
+    urcrnrlat =   58.
     parallels = np.arange( -80., 81., 10.)
     meridians = np.arange(-180.,181., 15.)
 
@@ -411,7 +429,7 @@ for ishape in range(len(catchfile_shp)):
     data_copy = data_copy.to_crs({'proj':'cea'})
     area = (data_copy['geometry'].area/ 1000. / 1000.).item()
 
-    print("GPD: Shape: {} --> Area: {} [km2]".format(catchfile_shp[ishape]+'.shp',area))
+    #print("GPD: Shape: {} --> Area: {} [km2]".format(catchfile_shp[ishape]+'.shp',area))
             
     with fiona.open(catchfile_shp[ishape]+'.shp') as src:
         for ii in range(len(src)):
@@ -424,7 +442,7 @@ for ishape in range(len(catchfile_shp)):
             area = (polygon.to_crs('epsg:3574').area/1000./1000.).item()    # WGS 84 / North Pole LAEA Atlantic
             areas.append(area)
 
-            print("FIONA: Shape: {} --> Area: {} [km2]".format(catchfile_shp[ishape]+'.shp',area))
+            #print("FIONA: Shape: {} --> Area: {} [km2]".format(catchfile_shp[ishape]+'.shp',area))
 
 
 
@@ -532,6 +550,16 @@ elif case_study == 'prairie-canada-mai':
                  fontsize=textsize,transform=sub.transAxes)
 elif case_study == 'prairie-canada-downstream-mai':
     sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).title(),usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'duc8-camelo':
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).title(),usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'wq-us-chang':
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).upper(),usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)

@@ -544,7 +544,7 @@ def write_streamflow_nc(info_dict=None,data_dict=None,filename='streamflow.nc',w
 
     # Convert the array of strings to a fixed-size numpy array
     name_data_fixed_size = np.zeros((nstations, string_length), dtype='S1')
-    print(name_data)
+    #print(name_data)
     for ii, string in enumerate(name_data):
         string = string.replace('\xc8','E').replace('\xc9','E').replace('\xc0','A').replace('\xc1','A')
         name_data_fixed_size[ii,:len(string)] = np.array(list(string), dtype='S1')

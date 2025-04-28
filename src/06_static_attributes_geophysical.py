@@ -32,6 +32,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s lake-erie-us-gaffney
 # python 06_static_attributes_geophysical.py -s prairie-canada-mai
 # python 06_static_attributes_geophysical.py -s prairie-canada-downstream-mai
+# python 06_static_attributes_geophysical.py -s duc8-camelo
 
 
 """
@@ -166,6 +167,11 @@ elif case_study == 'prairie-canada-mai':
 
 elif case_study == 'prairie-canada-downstream-mai':
     project_root = Path(dir_path+'/../regions/prairie-canada-downstream-mai/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
+
+elif case_study == 'duc8-camelo':
+    project_root = Path(dir_path+'/../regions/duc8-camelo/')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
@@ -323,12 +329,12 @@ if do_soildata:
             cropped = []
             for i in [1, 2]:
                 with rio.open(project_root / '../..' / 'data' / 'soil' / f'{soil_set}{i}.nc') as gridded_ds:
-                        # crop to basin outline
-                        cropped_ds, _ = mask.mask(gridded_ds, [transformed_shape], crop=True,
-                                                  filled=True, nodata=gridded_ds.nodata)
-                        cropped_ds = cropped_ds.astype( float )
-                        cropped_ds[cropped_ds == gridded_ds.nodata] = np.nan
-                        cropped.append(cropped_ds)
+                    # crop to basin outline
+                    cropped_ds, _ = mask.mask(gridded_ds, [transformed_shape], crop=True, #all_touched=True,
+                                              filled=True, nodata=gridded_ds.nodata)
+                    cropped_ds = cropped_ds.astype( float )
+                    cropped_ds[cropped_ds == gridded_ds.nodata] = np.nan
+                    cropped.append(cropped_ds)
 
             cropped = np.concatenate(cropped, axis=0)
             soil_data.loc[basin, soil_set] = np.nanmean(cropped) # np.nanmean(cropped_ds) --> this is wrong but was used for most regions and models!!!! --> updated for prairie and beyond

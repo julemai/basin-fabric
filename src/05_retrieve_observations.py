@@ -28,6 +28,7 @@ from __future__ import print_function
 # python 05_retrieve_observations.py -s north-america-mai  -p 1980-01-01:2018-12-31
 # python 05_retrieve_observations.py -s camels-us-newman   -p 1980-01-01:2018-12-31
 # python 05_retrieve_observations.py -s prairie-canada-mai -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s wq-us-chang        -p 1980-01-01:2018-12-31
 
 """
 
@@ -165,7 +166,7 @@ if len(obs_q_US) > 0:
     pairsfile = None
 
     info_streamflow_US = get_info_station(source=source,filename=filename,station=station,pairsfile=pairsfile,silent=False)
-    data_streamflow_US = read_streamflow( source=source,filename=filename,station=station,pairsfile=pairsfile,silent=True)
+    data_streamflow_US = read_streamflow( source=source,filename=filename,station=station,pairsfile=pairsfile,silent=False)
 
     info_streamflow.update( info_streamflow_US )
     data_streamflow.update( data_streamflow_US )

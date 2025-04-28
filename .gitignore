@@ -5,6 +5,7 @@
 list_*.dat
 #lstm/*
 regions/north-america-mai/observations/daily_streamflow.nc
+regions/wq-us-chang
 
 # zipped folders
 *.tar
@@ -35,10 +36,18 @@ regions/*/forcings/*/*_agg_rdrs-v2.1_north-america_lp.nc
 regions/*/forcings/*/*_gridweights_rdrs-v2.1_north-america_lp.txt
 regions/*/forcings/*/*_gridweights_rdrs-v2.1_north-america_lp_aggregated.rvt
 regions/*/forcings/*/*.done
+
+regions/duc8-camelo/forcings/*/*_agg_gTREND-P-CA_v1_gTREND-P-Canada_v1_*.nc_lp.nc
+regions/duc8-camelo/forcings/*/*_gridweights_gTREND-P-CA_v1_lp_aggregated.rvt
+regions/duc8-camelo/forcings/*/*_gridweights_gTREND-P-CA_v1_lp.txt
+
+regions/prairie-canada-downstream-mai/forcings/*/*_agg_daymet_v4R1_daymet_v4_*.nc_lp.nc
+
 #regions/*/forcings
 #regions/*/attributes
 #regions/*/maps
 regions/*.zip
+regions/duc8-camelo/shapefiles/4326_HydrologyAnalyst_Basins.geojson
 
 # attribute plots
 regions/*/attributes/*.pdf
@@ -95,6 +104,8 @@ data/meteorology/rdrs-v2_grip-gl/*.nc
 data/routing/*/*.zip
 data/routing/*/*/*.*
 
+## NUTRIENTS
+data/nutrients/gTREND-P-CA_v1/gTREND-P-Canada_v1_*.nc
 
 
 # Byte-compiled / optimized / DLL files

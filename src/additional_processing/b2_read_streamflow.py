@@ -828,33 +828,36 @@ def read_streamflow(source=None,filename='/tmp/test',station=None,pairsfile=None
 
             if check_status_usgs(response1.status_code):
 
+                print('Working on station {}'.format(station))
+
                 # load data
                 usgs = json.loads(response1.content.decode('utf-8'))
-                all_data = usgs['value']['timeSeries'][0]['values'][0]['value']        # get only data
-                #                                                                      # [ {'value': '787', 'qualifiers': ['A'], 'dateTime': '1956-02-24T00:00:00.000'},
-                #                                                                      #   {'value': '765', 'qualifiers': ['A'], 'dateTime': '1956-02-25T00:00:00.000'}, ...]
-                unit = usgs['value']['timeSeries'][0]['variable']['unit']['unitCode']  # unit (for conversion of 'ft3/s' --> 'm3/s')
+                if len(usgs['value']['timeSeries']) > 0:
+                    all_data = usgs['value']['timeSeries'][0]['values'][0]['value']        # get only data
+                    #                                                                      # [ {'value': '787', 'qualifiers': ['A'], 'dateTime': '1956-02-24T00:00:00.000'},
+                    #                                                                      #   {'value': '765', 'qualifiers': ['A'], 'dateTime': '1956-02-25T00:00:00.000'}, ...]
+                    unit = usgs['value']['timeSeries'][0]['variable']['unit']['unitCode']  # unit (for conversion of 'ft3/s' --> 'm3/s')
 
-                # conversion factor
-                if unit == 'ft3/s':
-                    mult = 0.028316832
-                    if not(silent): print("   Data for station {} will be converted from ft3/s to m3/s.".format(station))
-                else:
-                    mult = 1.0
+                    # conversion factor
+                    if unit == 'ft3/s':
+                        mult = 0.028316832
+                        if not(silent): print("   Data for station {} will be converted from ft3/s to m3/s.".format(station))
+                    else:
+                        mult = 1.0
 
-                # gather data
-                tmp = {}
-                for idata in all_data:
-                    idate = [ int(ii) for ii in idata['dateTime'].split('T')[0].split('-') ]
-                    tmp['{:04d}-{:02d}-{:02d}'.format(idate[0],idate[1],idate[2])] = {'val':float(idata['value'])*mult,'sym':','.join(idata['qualifiers'])}
+                    # gather data
+                    tmp = {}
+                    for idata in all_data:
+                        idate = [ int(ii) for ii in idata['dateTime'].split('T')[0].split('-') ]
+                        tmp['{:04d}-{:02d}-{:02d}'.format(idate[0],idate[1],idate[2])] = {'val':float(idata['value'])*mult,'sym':','.join(idata['qualifiers'])}
 
-                if station in data.keys():
-                    data[station].update( tmp )
-                else:
-                    data[station] = tmp
+                    if station in data.keys():
+                        data[station].update( tmp )
+                    else:
+                        data[station] = tmp
 
-                if not(silent): print("   Data of station {}: {} ... {}".format(station,dict(list(data[station].items())[0:2]),dict(list(data[station].items())[-2:])))
-                if not(silent): print("\n")
+                    if not(silent): print("   Data of station {}: {} ... {}".format(station,dict(list(data[station].items())[0:2]),dict(list(data[station].items())[-2:])))
+                    if not(silent): print("\n")
 
     else:
         raise ValueError("read_streamflow: source needs to be one of the following: {}".format(sources))
@@ -1500,4 +1503,5 @@ if __name__ == '__main__':
     source   = 'usgs'
     filename = None
     station  = '04069500,04084500,04085200,04087000,04096015'
+    station  = '01111230'
     data_streamflow = read_streamflow(source=source,filename=filename,station=station,silent=False)

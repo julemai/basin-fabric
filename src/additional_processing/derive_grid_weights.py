@@ -52,6 +52,10 @@ from   osgeo   import ogr
 from   osgeo   import osr
 from   osgeo   import __version__ as osgeo_version
 
+# this is only to remove GDAL warnings that exceptions are not switched on
+from osgeo import gdal
+gdal.UseExceptions() 
+
 
 
 input_file           = "example/input_VIC/VIC_streaminputs.nc"
@@ -66,6 +70,7 @@ key_colname          = "HRU_ID"
 key_colname_model    = None
 area_error_threshold = 0.05
 dojson               = False
+projection_netcdf    = None
 
 parser      = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
               description='''Convert files from ArcGIS raster format into NetDF file usable in CaSPAr.''')
@@ -105,6 +110,10 @@ parser.add_argument('-e', '--area_error_threshold', action='store',
 parser.add_argument('-j', '--dojson', action='store_true',
                     default=dojson, dest='dojson',
                     help='If given, the GeoJSON of grid cells contributing to at least one HRU are dumped into  GeoJSON. Default: False.')
+parser.add_argument('-p', '--projection_netcdf', action='store',
+                    default=projection_netcdf, dest='projection_netcdf', metavar='projection_netcdf',
+                    help='Projection used for lat/lon in NetCDF file. Needs to be set if grid-mapping is set. NetCDF variables can only be lat/lon in degree or a equal area projection. Default: False.')
+
 
 args                 = parser.parse_args()
 input_file           = args.input_file
@@ -119,6 +128,7 @@ key_colname          = args.key_colname
 key_colname_model    = args.key_colname_model
 area_error_threshold = float(args.area_error_threshold)
 dojson               = args.dojson
+projection_netcdf    = int(args.projection_netcdf)
 
 if dojson:
     # write geoJSON files (eventually)
@@ -142,7 +152,7 @@ del parser, args
 
 # better dont chnage that ever
 crs_lldeg = 4326        # EPSG id of lat/lon (deg) coordinate referenence system (CRS)
-crs_caea  = 3573        # EPSG id of equal-area    coordinate referenence system (CRS)
+crs_caea  = 3573        # EPSG id of equal-area    coordinate referenence system (CRS) # will be overwritten with (-p) if 3D NetCDF variables have grid_mapping
 
 
 def create_gridcells_from_centers(lat, lon):
@@ -169,7 +179,8 @@ def create_gridcells_from_centers(lat, lon):
 
     return [lath,lonh]
 
-def shape_to_geometry(shape_from_jsonfile,epsg=None):
+
+def shape_to_geometry(shape_from_jsonfile,epsg_in=crs_lldeg,epsg_out=None):
 
     # converts shape read from shapefile to geometry
     # epsg :: integer EPSG code
@@ -184,17 +195,48 @@ def shape_to_geometry(shape_from_jsonfile,epsg=None):
     poly_shape = ogr.Geometry(ogr.wkbPolygon)
     poly_shape.AddGeometry(ring_shape)
 
-    if not( epsg is None):
+    if not( epsg_out is None):
         source = osr.SpatialReference()
-        source.ImportFromEPSG(crs_lldeg)       # usual lat/lon projection
+        source.ImportFromEPSG(epsg_in)        # usual lat/lon projection = crs_lldeg
 
         target = osr.SpatialReference()
-        target.ImportFromEPSG(epsg)       # any projection to convert to
+        target.ImportFromEPSG(epsg_out)       # any projection to convert to
 
         transform = osr.CoordinateTransformation(source, target)
         poly_shape.Transform(transform)
 
     return poly_shape
+
+
+
+# def shape_to_geometry(shape_from_jsonfile,epsg=None):
+
+#     # converts shape read from shapefile to geometry
+#     # epsg :: integer EPSG code
+
+#     ring_shape = ogr.Geometry(ogr.wkbLinearRing)
+
+#     for ii in shape_from_jsonfile:
+#         ring_shape.AddPoint_2D(ii[0],ii[1])
+#     # close ring
+#     ring_shape.AddPoint_2D(shape_from_jsonfile[0][0],shape_from_jsonfile[0][1])
+
+#     poly_shape = ogr.Geometry(ogr.wkbPolygon)
+#     poly_shape.AddGeometry(ring_shape)
+
+#     if not( epsg is None):
+#         source = osr.SpatialReference()
+#         source.ImportFromEPSG(crs_lldeg)       # usual lat/lon projection
+
+#         target = osr.SpatialReference()
+#         target.ImportFromEPSG(epsg)       # any projection to convert to
+
+#         transform = osr.CoordinateTransformation(source, target)
+#         poly_shape.Transform(transform)
+
+#     return poly_shape
+
+
 
 def check_proximity_of_envelops(gridcell_envelop, shape_envelop):
 
@@ -277,6 +319,22 @@ if ( Path(input_file).suffix == '.nc'):
     lon_dims = nc_in.variables[varname[0]].dimensions
     lat      = nc_in.variables[varname[1]][:]
     lat_dims = nc_in.variables[varname[1]].dimensions
+
+    # see if 3D vars have a grid_mapping and if so save; otherwise assume crs_lldeg
+    vars_3D = [ vv for vv in nc_in.variables.keys() if len(nc_in.variables[vv].shape) == 3 ]
+    if len(vars_3D) == 0:
+        raise ValueError('There is no 3D variable in this NetCDF file.')
+    else:
+        if 'grid_mapping' in nc_in.variables[vars_3D[0]].ncattrs():
+            grid_map_var = nc_in.variables[vars_3D[0]].getncattr('grid_mapping')
+            crs_wkt_grid = nc_in.variables[grid_map_var].getncattr('crs_wkt')
+            if projection_netcdf is None:
+                raise ValueError('The NetCDF file contains coordinates using grid-mapping. In this case you need to specify the EPSG for those coordinates. Can only be in degrees (4326) or an equal area one (e.g., 5070, 3573).')
+            else:
+                if projection_netcdf != 4326:
+                    crs_caea = projection_netcdf
+        else:
+            projection_netcdf = 4326
     nc_in.close()
 
 
@@ -489,24 +547,25 @@ if ( Path(input_file).suffix == '.nc'):
             # EPSG:3573   does not need a swap after transform ... and is much faster than transform with EPSG:3035
             # -------------------------
             #
-            # Windows            Python 3.8.5 GDAL 3.1.3 --> lat/lon (Ming)
-            # MacOS 10.15.6      Python 3.8.5 GDAL 3.1.3 --> lat/lon (Julie)
-            # Graham             Python 3.8.2 GDAL 3.0.4 --> lat/lon (Julie)
-            # Graham             Python 3.6.3 GDAL 2.2.1 --> lon/lat (Julie)
-            # Ubuntu 18.04.2 LTS Python 3.6.8 GDAL 2.2.3 --> lon/lat (Etienne)
+            # Graham             Python 3.6.3  GDAL 2.2.1 --> lon/lat (Julie)
+            # Ubuntu 18.04.2 LTS Python 3.6.8  GDAL 2.2.3 --> lon/lat (Etienne)
+            # Windows            Python 3.8.5  GDAL 3.1.3 --> lat/lon (Ming)
+            # MacOS 10.15.6      Python 3.8.5  GDAL 3.1.3 --> lat/lon (Julie)
+            # Graham             Python 3.8.2  GDAL 3.0.4 --> lat/lon (Julie)
+            # MacOS 14.2.1       Python 3.11.9 GDAL 3.9.0 --> lon/lat (Julie)
             #
             if osgeo_version < '3.0':
-                gridcell_edges = [ [lonh[ilat,  ilon]   , lath[ilat,ilon]      ],            # for some reason need to switch lat/lon that transform works
+                gridcell_edges = [ [lonh[ilat,  ilon]   , lath[ilat,  ilon]    ],            # for some reason need to switch lat/lon that transform works
                                    [lonh[ilat+1,ilon]   , lath[ilat+1,ilon]    ],
                                    [lonh[ilat+1,ilon+1] , lath[ilat+1,ilon+1]  ],
-                                   [lonh[ilat,  ilon+1] , lath[ilat,ilon+1]    ]]
+                                   [lonh[ilat,  ilon+1] , lath[ilat,  ilon+1]  ]]
             else:
-                gridcell_edges = [ [lath[ilat,ilon]     , lonh[ilat,  ilon]    ],            # for some reason lat/lon order works
+                gridcell_edges = [ [lath[ilat,  ilon]   , lonh[ilat,  ilon]    ],            # for some reason lat/lon order works
                                    [lath[ilat+1,ilon]   , lonh[ilat+1,ilon]    ],
                                    [lath[ilat+1,ilon+1] , lonh[ilat+1,ilon+1]  ],
-                                   [lath[ilat,ilon+1]   , lonh[ilat,  ilon+1]  ]]
+                                   [lath[ilat,  ilon+1] , lonh[ilat,  ilon+1]  ]]
 
-            tmp = shape_to_geometry(gridcell_edges, epsg=crs_caea)
+            tmp = shape_to_geometry(gridcell_edges, epsg_in=projection_netcdf, epsg_out=crs_caea)
             grid_cell_geom_gpd_wkt_ea[ilat][ilon] = tmp
 
             if dojson:

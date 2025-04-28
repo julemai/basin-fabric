@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
-# Copyright 2023 Juliane Mai - contact[at]juliane-mai[dot]com
+# Copyright 2025 Juliane Mai - contact[at]juliane-mai[dot]com
 #
 # License
 # This file is part of Juliane Mai's personal code library.
@@ -23,13 +23,18 @@ from __future__ import print_function
 # pyenv activate env-3.8.5-ravenpy-new
 
 # takes XXX minutes
-# python 07_create_lumped_forcings_daymet.py -s prairie-canada-downstream-mai -b 05BA002 -f /project/6070465/julemai/blended-model-na/data_in/daymet_v4R1/ -y graham
+#    35 -- ON
+#    24 -- QC
+#    48 -- AB
+#    46 -- MB
+#    59 -- BC
+# python 07_create_lumped_forcings_gTREND-P-CA_v1.py -s duc8-camelo -b BL -f ../data/nutrients/gTREND-P-CA_v1/gTREND-P-Canada_v1_35 -y graham
 
 
 """
 
 Creates lumped forcings for all basins in a project (shapefiles) and list of netCDF files
-containing variables (e.g., file for precipitation, temperature, and wind speed).
+containing variables (e.g., file for manure, fertilizer, etc.).
 
 
 License
@@ -75,7 +80,7 @@ parser  = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFor
 parser.add_argument('-s', '--case_study', action='store', default=case_study, dest='case_study',
                     help="Case study. One of ['wisconsin-lewis', 'ontario-zhi', 'conus-zhi', 'grip-gl-mai'].")
 parser.add_argument('-f', '--forcings', action='store', default=forcings, dest='forcings',
-                    help="Name of folder containing forcings for a larger region (e.g., Great Lakes or North America).")
+                    help="Name of folder containing nutrients for a larger region (e.g., Great Lakes or North America).")
 parser.add_argument('-b', '--basin', action='store', default=basin, dest='basin',
                     help="Name of basin to process. Shapefile in subfolder 'shapefile' is assumed to be named like this ID.")
 parser.add_argument('-y', '--system', action='store', default=system, dest='system',
@@ -202,6 +207,17 @@ elif case_study == 'prairie-canada-downstream-mai':
         project_root = Path(str(Path(__file__).parent)+'/../regions/prairie-canada-downstream-mai/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
+
+elif case_study == 'duc8-camelo':
+    column_id = "FIRST_FLD"
+    if system == 'mac':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/duc8-camelo/')
+        #raise ValueError('Do not know where to find data here.')
+        #project_root = Path('/Users/j6mai/Documents/GitHub/')
+    elif system == 'graham':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/duc8-camelo/')
+    else:
+        raise ValueError('System not known. Specify a valid one with (-y) option.')
     
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
@@ -216,8 +232,8 @@ do_forcings       = True
 
 if do_forcings:
 
-    # 1- find all netcdf files in forcing folder
-    filenames = np.sort( glob.glob(forcings+'/*.nc') )
+    # 1- find all netcdf files in nutrient folder
+    filenames = np.sort( glob.glob(forcings+'*.nc') )
 
     # 2- check they are consistent regarding lat/lon/time
     irlat = None
@@ -240,8 +256,16 @@ if do_forcings:
 
     # 3- read grid of one file
     with nc.Dataset(filenames[0]) as iff:
-        lat = iff['lat']
-        lon = iff['lon']
+        try:
+            lat = iff['lat']
+            lon = iff['lon']
+            dimnames = "x,y"
+            varnames = "lon,lat"
+        except:
+            lat = iff['x']
+            lon = iff['y']
+            dimnames = "y,x"   # for some reason this needs to be flipped....
+            varnames = "y,x"   # for some reason this needs to be flipped....
 
     # 4- find shapefile
     shpfile = Path( project_root, 'shapefiles', basin, basin+'_lp.shp' )
@@ -267,15 +291,18 @@ if do_forcings:
         else:
             raise ValueError('System not known. Specify a valid one with (-y) option.')
 
-        subprocess.run([pyenv, "additional_processing/derive_grid_weights.py",
+        cmd = [pyenv, "additional_processing/derive_grid_weights.py",
                         "-i", filenames[0],
-                        "-d", "x,y",
-                        "-v", "lon,lat",
-                        "-r", shpfile,
+                        "-d", dimnames,
+                        "-v", varnames,
+                        "-r", str(shpfile),
                         "-b", basin,
-                        "-o", weightsfile,
+                        "-o", str(weightsfile),
                         "-a",
-                        "-c", column_id ])
+                        "-c", column_id,
+                        "-p", "5070"]
+        subprocess.run(cmd)
+        
     else:
         print("Weightsfile existed. Will not be overwritten.\nFile = {}\n".format(weightsfile))
 
@@ -301,7 +328,7 @@ if do_forcings:
 
             # ravenpy aggregate-forcings-to-hrus --dim-names rlon rlat --var-to-aggregate "RDRS_v2_A_PR0_SFC" --output-nc-file ${outfile_prec} ${infile_prec} ${weights_file}
             args = ["ravenpy", "aggregate-forcings-to-hrus",
-                                "--dim-names", "x", "y" ] + ivars_3d + [   # n times "--var-to-aggregate"
+                                "--dim-names", dimnames.split(',')[0], dimnames.split(',')[1] ] + ivars_3d + [   # n times "--var-to-aggregate"
                                 "--output-nc-file", outfile_agg,
                                 filename,
                                 weightsfile ]
