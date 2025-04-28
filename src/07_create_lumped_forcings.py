@@ -208,7 +208,7 @@ elif case_study == 'prairie-canada-downstream-mai':
         raise ValueError('System not known. Specify a valid one with (-y) option.')
 
 elif case_study == 'wq-us-chang':
-    column_id = "FIRST_FLD"
+    column_id = "index"
     if system == 'mac':
         raise ValueError('Do not know where to find data here.')
         project_root = Path('/Users/j6mai/Documents/GitHub/')
