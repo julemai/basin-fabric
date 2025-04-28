@@ -128,7 +128,10 @@ key_colname          = args.key_colname
 key_colname_model    = args.key_colname_model
 area_error_threshold = float(args.area_error_threshold)
 dojson               = args.dojson
-projection_netcdf    = int(args.projection_netcdf)
+projection_netcdf    = args.projection_netcdf
+
+if not(projection_netcdf is None):
+    projection_netcdf = int(projection_netcdf)
 
 if dojson:
     # write geoJSON files (eventually)
