@@ -206,6 +206,7 @@ done
 # region='grip-gl-mai'
 # region='camels-us-newman'
 # region='lake-erie-us-gaffney'
+# region='wq-us-chang'
 
 # basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | rev | cut -d '/' -f 1 | rev )
 
@@ -213,6 +214,17 @@ done
 
 # miss_file="/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat"
 # for bb in $basins ; do if [ ! -e /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_lp.nc ] ; then last=$( \ls -latrh /project/6070465/julemai/basin-fabric/regions/${region}/forcings/${bb}/${bb}_agg_rdrs-v2.1_north-america_*.nc_lp.nc | tail -1 | rev | cut -d ' ' -f 1 | rev ) ; echo ${bb} > ${miss_file} ; rm ${last} ; fi ; done
+
+
+# ------------------
+# region_tag_python="wq-us-chang"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+# ------------------
+# JOBID
+# 28492605   --> all basins                        ;  1GB ; 72h   ; 100 tasks (each 24 basins)
+
+
+
 
 
 # ------------------
