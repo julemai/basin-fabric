@@ -65,12 +65,15 @@
 ##SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
 ##SBATCH --array=1-100
 
-#SBATCH --job-name=agg-prairie                     # name of job in queque
-#SBATCH --time=1-12:00:00                          # time (DD-HH:MM:SS);
-#SBATCH --mem-per-cpu=9G                           # memory; default unit is megabytes
-#SBATCH --array=1-135
+##SBATCH --job-name=agg-prairie                     # name of job in queque
+##SBATCH --time=1-12:00:00                          # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=9G                           # memory; default unit is megabytes
+##SBATCH --array=1-135
 
-
+#SBATCH --job-name=agg-wq-us                       # name of job in queque
+#SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
+#SBATCH --array=1-100
 
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
@@ -147,17 +150,23 @@ cd /project/6070465/julemai/basin-fabric/src/
 # region_tag_python="north-america-mai"
 # forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
-# set number of tasks (make sure it is consistent with above)
-ntasks=135                                  # <<<<<<<<<<<<<<<<
-region="prairie-canada-mai"                  # <<<<<<<<<<<<<<<<
-region_tag_python="prairie-canada-mai"
-forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=135                                  # <<<<<<<<<<<<<<<<
+# region="prairie-canada-mai"                  # <<<<<<<<<<<<<<<<
+# region_tag_python="prairie-canada-mai"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # # set number of tasks (make sure it is consistent with above)
 # ntasks=135                                              # <<<<<<<<<<<<<<<<
 # region="prairie-canada-downstream-mai"                  # <<<<<<<<<<<<<<<<
 # region_tag_python="prairie-canada-downstream-mai"
 # forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+
+# set number of tasks (make sure it is consistent with above)
+ntasks=100                                  # <<<<<<<<<<<<<<<<
+region="wq-us-chang"                        # <<<<<<<<<<<<<<<<
+region_tag_python="wq-us-chang"
+forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 
 # ----------------------------------------------------------------------------------------
@@ -166,8 +175,8 @@ forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
 #nbasins=$( cat /project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
 
-#ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
-ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
+ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
+#ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
