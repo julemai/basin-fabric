@@ -277,6 +277,7 @@ if do_forcings:
         elif system == 'graham':
             pyenv = "/home/julemai/env-3.10/bin/python"
             pyenv = "/scratch/julemai/basin-fabric/env-3.11/bin/python"
+            pyenv = "/project/6070465/julemai/basin-fabric/env-3.11/bin/python"
         else:
             raise ValueError('System not known. Specify a valid one with (-y) option.')
 
