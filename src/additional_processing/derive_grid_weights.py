@@ -335,7 +335,7 @@ if ( Path(input_file).suffix == '.nc'):
             # else:
             #     crs_wkt_grid = 4326
             if projection_netcdf is None:
-                raise ValueError('The NetCDF file contains coordinates using grid-mapping. In this case you need to specify the EPSG for those coordinates. Can only be in degrees (4326) or an equal area one (e.g., 5070, 3573).')
+                raise ValueError('The NetCDF file contains coordinates using grid-mapping. In this case you need to specify the EPSG for those coordinates (-p). Can only be in degrees (4326) or an equal area one (e.g., 5070, 3573).')
             else:
                 if projection_netcdf != 4326:
                     crs_caea = projection_netcdf

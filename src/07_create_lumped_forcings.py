@@ -289,7 +289,8 @@ if do_forcings:
                         "-b", basin,
                         "-o", weightsfile,
                         "-a",
-                        "-c", column_id ])
+                        "-c", column_id,
+                        "-p", "4326"])
     else:
         print("Weightsfile existed. Will not be overwritten.\nFile = {}\n".format(weightsfile))
 
