@@ -828,8 +828,6 @@ def read_streamflow(source=None,filename='/tmp/test',station=None,pairsfile=None
 
             if check_status_usgs(response1.status_code):
 
-                print('Working on station {}'.format(station))
-
                 # load data
                 usgs = json.loads(response1.content.decode('utf-8'))
                 if len(usgs['value']['timeSeries']) > 0:

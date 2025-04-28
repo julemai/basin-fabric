@@ -5,7 +5,7 @@
 list_*.dat
 #lstm/*
 regions/north-america-mai/observations/daily_streamflow.nc
-regions/wq-us-chang
+#regions/wq-us-chang
 
 # zipped folders
 *.tar
@@ -48,6 +48,10 @@ regions/prairie-canada-downstream-mai/forcings/*/*_agg_daymet_v4R1_daymet_v4_*.n
 #regions/*/maps
 regions/*.zip
 regions/duc8-camelo/shapefiles/4326_HydrologyAnalyst_Basins.geojson
+
+regions/wq-us-chang/shapefiles/WQP_US_WSHD_5070_Finalized_09172024.gpkg*
+regions/wq-us-chang/shapefiles/read_gpkg.py
+
 
 # attribute plots
 regions/*/attributes/*.pdf
@@ -106,7 +110,7 @@ data/routing/*/*/*.*
 
 ## NUTRIENTS
 data/nutrients/gTREND-P-CA_v1/gTREND-P-Canada_v1_*.nc
-
+data/nutrients/gTREND-P-CA_v1/gTREND-P-Canada_v1_*.nc.aux.xml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

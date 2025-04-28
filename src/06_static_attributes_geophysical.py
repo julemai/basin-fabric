@@ -33,6 +33,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s prairie-canada-mai
 # python 06_static_attributes_geophysical.py -s prairie-canada-downstream-mai
 # python 06_static_attributes_geophysical.py -s duc8-camelo
+# python 06_static_attributes_geophysical.py -s wq-us-chang
 
 
 """
@@ -175,6 +176,11 @@ elif case_study == 'duc8-camelo':
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
+elif case_study == 'wq-us-chang':
+    project_root = Path(dir_path+'/../regions/wq-us-chang/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
+
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -191,9 +197,10 @@ for typ in types:
     gl_shapefiles = Path(project_root / typ ).glob(filepattern)
     cc = 0
     for gl_shp in gl_shapefiles:
-        basin_id = gl_shp.parent.stem
+        basin_id = gl_shp.parent.name
         if basin_id in shapes:
             print(f'Already processed {basin_id}')
+            stop
         with fiona.open(gl_shp) as shapefile:
             shapefile_crs = shapefile.crs
             if len(shapefile) != 1:
@@ -229,7 +236,7 @@ if True: #do_area:
     for typ in types:
         gl_shapes = Path(project_root / typ ).glob(filepattern)
         for gl_shape in gl_shapes:
-            basin = gl_shape.parent.stem
+            basin = gl_shape.parent.name
             df = gpd.read_file(gl_shape)
 
             # --------------------------
@@ -245,7 +252,7 @@ if True: #do_area:
             # PARAMETER["false_northing",0],
 
             # Linear Unit: Meter (1.0)
-            # df = df.to_crs(crs='ESRI:102017')     # WGS 1984 Lambert Azimuthal EqArea North Pole; Martin used this one; used for Lake Erie US (and others??)
+            df = df.to_crs(crs='ESRI:102017')     # WGS 1984 Lambert Azimuthal EqArea North Pole; Martin used this one; used for Lake Erie US (and others??)
 
             # --------------------------
             # Statistics Canada = EPSG: 3347
@@ -259,7 +266,7 @@ if True: #do_area:
             # standard_parallel_2: 77.0
             # latitude_of_origin: ???
             # Linear Unit: Meter (1.0)
-            df = df.to_crs(crs='EPSG:3347')   # NAD83 / Statistics Canada Lambert
+            # df = df.to_crs(crs='EPSG:3347')   # NAD83 / Statistics Canada Lambert      # only for pairie?!
 
             if len(df) != 1:
                 raise ValueError(f'Found != 1 shapes in {gl_shape}')
@@ -320,6 +327,8 @@ if do_soildata:
     soil_data = pd.DataFrame(columns=soil_sets, index=shapes.keys())
 
     for basin, shape in shapes.items():
+        # print("Working on basin {} ({:.2f} km2)".format(basin,area_info.loc[basin, 'area_km2']))
+        
         # transform shape to gridded_ds crs
         transformed_shape = transform.transform_geom(shapefile_crs, {'init': 'epsg:4326'}, shape)
 
@@ -330,7 +339,11 @@ if do_soildata:
             for i in [1, 2]:
                 with rio.open(project_root / '../..' / 'data' / 'soil' / f'{soil_set}{i}.nc') as gridded_ds:
                     # crop to basin outline
-                    cropped_ds, _ = mask.mask(gridded_ds, [transformed_shape], crop=True, #all_touched=True,
+                    if area_info.loc[basin, 'area_km2'] < 1.0:  # for small basins
+                        cropped_ds, _ = mask.mask(gridded_ds, [transformed_shape], crop=True, all_touched=True,
+                                              filled=True, nodata=gridded_ds.nodata)
+                    else:
+                        cropped_ds, _ = mask.mask(gridded_ds, [transformed_shape], crop=True,
                                               filled=True, nodata=gridded_ds.nodata)
                     cropped_ds = cropped_ds.astype( float )
                     cropped_ds[cropped_ds == gridded_ds.nodata] = np.nan
