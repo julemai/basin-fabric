@@ -76,6 +76,14 @@
 #SBATCH --array=1-700
 
 
+#SBATCH --job-name=agg-wrtdsk                      # name of job in queque
+#SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
+#SBATCH --array=1-660
+
+
+
+
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
 # task-id :: ${SLURM_ARRAY_TASK_ID}
 
@@ -169,19 +177,29 @@ region_tag_python="wq-us-chang"
 forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 
+
+# set number of tasks (make sure it is consistent with above)
+ntasks=660                                  # <<<<<<<<<<<<<<<<
+region="wrtdsk-mai"                        # <<<<<<<<<<<<<<<<
+region_tag_python="wrtdsk-mai"
+forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+
+
+
+
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
-nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | wc -l )
+nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | wc -l )
 #nbasins=$( cat /project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
 
-ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
-#ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
+#ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
+ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
-#basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
-basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
+basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
+#basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
 
