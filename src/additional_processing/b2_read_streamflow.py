@@ -255,7 +255,7 @@ def get_info_station(source=None,filename='/tmp/test',station=None,pairsfile=Non
             # - https://waterservices.usgs.gov/rest/Site-Service.html
 
             # get most data
-            api_str = 'https://waterservices.usgs.gov/nwis/dv/?format=json&sites='+station+'&parameterCd=00060&siteStatus=all&startDT='+start_period  #+'&endDT=2023-03-20'
+            api_str = 'https://waterservices.usgs.gov/nwis/dv/?format=json&sites='+station+'&parameterCd=00060&statCd=00003&siteStatus=all&startDT='+start_period  #+'&endDT=2023-03-20'
             headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
             if not(silent): print("   Downloading:        {}".format(api_str))
@@ -292,6 +292,7 @@ def get_info_station(source=None,filename='/tmp/test',station=None,pairsfile=Non
                         tmp['nodata'] = None
 
                     # find date range
+                    print()
                     dates = usgs['value']['timeSeries'][0]['values'][0]['value']               # [ {'value': '787', 'qualifiers': ['A'], 'dateTime': '1956-02-24T00:00:00.000'},
                     #                                                                          #   {'value': '765', 'qualifiers': ['A'], 'dateTime': '1956-02-25T00:00:00.000'}, ...]
                     dates = np.array([ idate['dateTime'].split('T')[0] for idate in dates ])   # '1956-02-24T00:00:00.000' --> '1956-02-24
@@ -813,7 +814,10 @@ def read_streamflow(source=None,filename='/tmp/test',station=None,pairsfile=None
 
             # get most data
             start_period = '1880-01-01'  # can be a lot of data...
-            api_str = 'https://waterservices.usgs.gov/nwis/dv/?format=json&sites='+station+'&parameterCd=00060&siteStatus=all&startDT='+start_period  #+'&endDT=2023-03-20'
+            # statCd=00003 is NEW :: it is now precisely requesting "mean" streamflow.
+            #                        before it requested min/max/mean and just the first one was analysed
+            #                        so basically we looked at min Q all the time
+            api_str = 'https://waterservices.usgs.gov/nwis/dv/?format=json&sites='+station+'&parameterCd=00060&statCd=00003&siteStatus=all&startDT='+start_period  #+'&endDT=2023-03-20'
             headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}
 
             if not(silent): print("   Downloading:        {}".format(api_str))

@@ -65,10 +65,6 @@ python src/06_static_attributes_geophysical.py -s wq-us-chang
 Creates: attributes/static_attributes.csv
 
 
-
-
-
-
 ## Clip forcings
 
 Extract forcings for each basin wq-us-chang from RDRS-v2.1.
@@ -80,6 +76,11 @@ python src/07_create_lumped_forcings.py -s wq-us-chang -b XXXX -f /scratch/julem
 ```
 
 Creates: forcings/*_agg_*_*_lp.nc
+
+
+
+
+
 
 
 ## Derive meteorologic attributes

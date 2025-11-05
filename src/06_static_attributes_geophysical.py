@@ -34,6 +34,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s prairie-canada-downstream-mai
 # python 06_static_attributes_geophysical.py -s duc8-camelo
 # python 06_static_attributes_geophysical.py -s wq-us-chang
+# python 06_static_attributes_geophysical.py -s wrtdsk-mai
 
 
 """
@@ -124,6 +125,7 @@ import fiona
 from fiona import transform
 import rasterio as rio
 from rasterio import mask
+import shapely.geometry
 
 
 if case_study == 'wisconsin-lewis':
@@ -181,6 +183,11 @@ elif case_study == 'wq-us-chang':
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
 
+elif case_study == 'wrtdsk-mai':
+    project_root = Path(dir_path+'/../regions/wrtdsk-mai/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.shp'
+    
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
@@ -364,6 +371,14 @@ if do_dem:
     with rio.open(project_root / '../..' / 'data' / 'dem' / 'na_ca_dem_3s.tif') as gridded_ds:
         for basin, shape in shapes.items():
 
+            # check if entirely above 60N --> discard
+            bbox = shapely.geometry.shape(shape).bounds  # returns (minx, miny, maxx, maxy)
+            if bbox[1] > 60.0:
+                print('DEM elevation: Skip basin {} since it is entirely above 60N and DEM not available there. bbox = (minx, miny, maxx, maxy) = {}'.format(basin,bbox))
+                dem_info.loc[basin, 'mean_elev'] = np.nan
+                dem_info.loc[basin, 'std_elev'] = np.nan
+                continue
+
             # transform shape to gridded_ds crs
             transformed_shape = transform.transform_geom(shapefile_crs, gridded_ds.crs.data, shape)
 
@@ -383,6 +398,14 @@ if do_dem:
 
     with rio.open(project_root / '../..' / 'data' / 'dem' / 'na_ca_dem_3s-slope.tif', driver='GTiff') as gridded_ds:
         for basin, shape in shapes.items():
+
+            # check if entirely above 60N --> discard
+            bbox = shapely.geometry.shape(shape).bounds  # returns (minx, miny, maxx, maxy)
+            if bbox[1] > 60.0:
+                print('DEM slope: Skip basin {} since it is entirely above 60N and DEM not available there. bbox = (minx, miny, maxx, maxy) = {}'.format(basin,bbox))
+                dem_info.loc[basin, 'mean_slope'] = np.nan
+                dem_info.loc[basin, 'std_slope'] = np.nan
+                continue
 
             # transform shape to gridded_ds crs
             transformed_shape = transform.transform_geom(shapefile_crs, gridded_ds.crs.data, shape)
