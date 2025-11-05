@@ -216,6 +216,16 @@ elif case_study == 'wq-us-chang':
         project_root = Path(str(Path(__file__).parent)+'/../regions/wq-us-chang/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
+
+elif case_study == 'wrtdsk-mai':
+    column_id = "FIRST_FLD"
+    if system == 'mac':
+        raise ValueError('Do not know where to find data here.')
+        project_root = Path('/Users/j6mai/Documents/GitHub/')
+    elif system == 'graham':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/wrtdsk-mai/')
+    else:
+        raise ValueError('System not known. Specify a valid one with (-y) option.')
     
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
