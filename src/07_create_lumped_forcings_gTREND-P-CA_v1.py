@@ -28,8 +28,9 @@ from __future__ import print_function
 #    48 -- AB
 #    46 -- MB
 #    59 -- BC
-# python 07_create_lumped_forcings_gTREND-P-CA_v1.py -s duc8-camelo -b BL -f ../data/nutrients/gTREND-P-CA_v1/gTREND-P-Canada_v1_35 -y graham
 
+# python 07_create_lumped_forcings_gTREND-P-CA_v1.py -s duc8-camelo -b BL     -f ../data/nutrients/gTREND-P-CA_v1/gTREND-P-Canada_v1_35 -y mac
+# python 07_create_lumped_forcings_gTREND-P-CA_v1.py -s wrtdsk-mai  -b 224839 -f ../data/nutrients/gTREND-P-CA_v1/gTREND-P-Canada_v1_35 -y mac
 
 """
 
@@ -216,6 +217,17 @@ elif case_study == 'duc8-camelo':
         #project_root = Path('/Users/j6mai/Documents/GitHub/')
     elif system == 'graham':
         project_root = Path(str(Path(__file__).parent)+'/../regions/duc8-camelo/')
+    else:
+        raise ValueError('System not known. Specify a valid one with (-y) option.')
+
+elif case_study == 'wrtdsk-mai':
+    column_id = "FIRST_FLD"
+    if system == 'mac':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/wrtdsk-mai/')
+        #raise ValueError('Do not know where to find data here.')
+        #project_root = Path('/Users/j6mai/Documents/GitHub/')
+    elif system == 'graham':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/wrtdsk-mai/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
     
