@@ -71,9 +71,9 @@
 ##SBATCH --array=1-135
 
 #SBATCH --job-name=agg-wq-us                       # name of job in queque
-#SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
-#SBATCH --array=1-100
+#SBATCH --array=1-700
 
 
 # job-id  :: ${SLURM_ARRAY_JOB_ID}
@@ -163,7 +163,7 @@ cd /project/6070465/julemai/basin-fabric/src/
 # forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # set number of tasks (make sure it is consistent with above)
-ntasks=100                                  # <<<<<<<<<<<<<<<<
+ntasks=700                                  # <<<<<<<<<<<<<<<<
 region="wq-us-chang"                        # <<<<<<<<<<<<<<<<
 region_tag_python="wq-us-chang"
 forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
@@ -180,8 +180,8 @@ ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
-basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
-#basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
+#basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
+basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
 
