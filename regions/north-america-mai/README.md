@@ -80,12 +80,6 @@ python 06_static_attributes_geophysical.py -s north-america-mai
 Creates: attributes/static_attributes.csv
 
 
-
-
-
-
-
-
 ## Clip forcings
 
 Extract forcings for each basin XXXX from RDRS-v2.1.
@@ -115,4 +109,25 @@ Creates: forcings/*_agg_rdrs-v2.1_north-america_lp_daily_local.nc
 Add produced files to Git:
 ```
 git add regions/north-america-mai/forcings/*/*_agg_*_daily_local.nc
+```
+
+
+## Check and plot attribute values
+
+```
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
+pyenv activate env-3.8.5-basin-fabric
+python src/17_plot_attributes.py -s 'north-america-mai' -f 'rdrs-v2.1_north-america'
+```
+
+Creates: Wrote: /project/6070465/julemai/basin-fabric/src/../regions/north-america-mai/attributes/climate_indices_rdrs-v2.1_north-america.pdf
+
+
+## Check forcings
+
+Checks the forcing files and ranges of variables:
+```
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
+pyenv activate env-3.8.5-basin-fabric
+python src/18_check_all_forcing_files.py -s 'north-america-mai' -f 'rdrs-v2.1_north-america' 
 ```

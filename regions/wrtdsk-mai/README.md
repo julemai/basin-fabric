@@ -105,6 +105,7 @@ Create shapefile for GeoJSON features by adding this to end of
 Plot all the shapes on a map. Basically to check if this all makes
 sense and shapefiles are readible.
 ```
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
 pyenv activate env-3.8.5-nrcan
 cd basin-fabric/src
 python 04_plot_basin_map.py -s wrtdsk-mai
@@ -122,7 +123,7 @@ The wetlands are so tiny that some require `all_touched=True` for the
 SOIL data.
 
 ```
-source env-3.10/bin/activate
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
 pyenv activate env-3.8.5-ravenpy-new
 python src/06_static_attributes_geophysical.py -s wrtdsk-mai
 ```
@@ -135,7 +136,7 @@ Creates: attributes/static_attributes.csv
 Extract nutrients for each basin wrtds-k from gTREND-P-Canada_v1.
 
 ```
-source env-3.10/bin/activate
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
 pyenv activate env-3.8.5-basin-fabric
 
 basins=$( \ls -d ../regions/wrtdsk-mai/shapefiles/[0-9]* | rev | cut -d '/' -f 1 | rev )
@@ -150,7 +151,7 @@ Creates: forcings/*/*_agg_gTREND-P-CA_v1.csv
 Extract forcings for each basin wrtdsk-mai from RDRS-v2.1.
 
 ```
-source env-3.10/bin/activate
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
 pyenv activate env-3.8.5-basin-fabric
 python src/07_create_lumped_forcings.py -s wrtdsk-mai -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
 ```
@@ -158,13 +159,12 @@ python src/07_create_lumped_forcings.py -s wrtdsk-mai -b XXXX -f /scratch/julema
 Creates: forcings/*_agg_*_*_lp.nc
 
 
-
 ## Derive meteorologic attributes
 
 Derive attributes based on meteorology.
 
 ```
-source env-3.10/bin/activate
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
 pyenv activate env-3.8.5-basin-fabric
 python src/08_static_attributes_forcings.py -s wrtdsk-mai -f 'rdrs-v2.1_north-america' -p 'all' -a 
 ```
@@ -172,7 +172,31 @@ python src/08_static_attributes_forcings.py -s wrtdsk-mai -f 'rdrs-v2.1_north-am
 Creates: attributes/climate_indices.csv
 Creates: forcings/*_agg_*_*_lp_daily_local.nc
 
-```
 Add produced files to Git:
 ```
 git add regions/wrtdsk-mai/forcings/*/*_agg_*_daily_local.nc
+```
+
+
+## Check and plot attribute values
+
+```
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
+pyenv activate env-3.8.5-basin-fabric
+python src/17_plot_attributes.py -s 'wrtdsk-mai' -f 'rdrs-v2.1_north-america'
+```
+
+Creates: ../regions/wrtdsk-mai/attributes/climate_indices_rdrs-v2.1_north-america.pdf
+
+
+## Check forcings
+
+Checks the forcing files and ranges of variables:
+```
+source /project/6070465/julemai/basin-fabric/env-3.11/bin/activate 
+pyenv activate env-3.8.5-basin-fabric
+python src/18_check_all_forcing_files.py -s 'wrtdsk-mai' -f 'rdrs-v2.1_north-america' 
+```
+
+
+
