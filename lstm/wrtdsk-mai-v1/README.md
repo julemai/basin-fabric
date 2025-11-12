@@ -7,6 +7,7 @@ predictions of streamflow for these basins. This dataset is NOT used
 to train an LSTM because no or not enough observations of streamflow
 are available. 
 
+
 ## Get forcings and observations
 ```
 source env-3.10/bin/activate
@@ -16,3 +17,29 @@ python 09_merge_forcings_and_observations.py -s 'wrtdsk-mai'  -f 'rdrs-v2.1_nort
 Creates: lstm/<experiment>/basins/basins_with_obs.txt<br>
 Creates: lstm/<experiment>/basins/basins_without_obs.txt<br>
 Creates: lstm/<experiment>/time_series/<basins_with_obs>.nc<br>
+
+
+### Run validation experiments
+Evaluate this region with an existing model (e.g., `north-america-mai-v1`):
+```
+cd /home/julemai/projects/def-julemai/julemai/
+salloc --time=04:00:00 --mem=64G --ntasks=1 --account=def-julemai --gpus-per-node=1 
+
+module load mpi4py/3.1.4
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
+cd /home/julemai/projects/def-julemai/julemai/src
+
+python 14_run_validation_experiments.py -s wrtdsk-mai -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1
+```
+
+
+### Plot results
+Plots results and prints median results on screen (will only show
+results if there are observations available for some basins in this project):
+```
+module load mpi4py/3.1.4
+source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
+cd /home/julemai/projects/def-julemai/julemai/src
+
+python 15_plot_results_validation_experiments.py -s wrtdsk-mai -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31  
+```
