@@ -26,7 +26,7 @@
 # submit with:
 #       sbatch submit-07_create_lumped_forcings.sh
 
-#SBATCH --account=rpp-julemai                      # your group
+#SBATCH --account=rpp-caspar                       # your group
 #SBATCH --mail-user=juliane.mai@uwaterloo.ca       # email address for notifications
 #SBATCH --mail-type=FAIL                           # email send only in case of failure
 
@@ -71,15 +71,15 @@
 ##SBATCH --array=1-135
 
 #SBATCH --job-name=agg-wq-us                       # name of job in queque
-#SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
-#SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
-#SBATCH --array=1-700
+#SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --mem-per-cpu=10G                           # memory; default unit is megabytes
+#SBATCH --array=1-1
 
 
-#SBATCH --job-name=agg-wrtdsk                      # name of job in queque
-#SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
-#SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
-#SBATCH --array=1-660
+##SBATCH --job-name=agg-wrtdsk                      # name of job in queque
+##SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=10G                           # memory; default unit is megabytes
+##SBATCH --array=1-1
 
 
 
@@ -171,7 +171,7 @@ cd /project/6070465/julemai/basin-fabric/src/
 # forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # set number of tasks (make sure it is consistent with above)
-ntasks=700                                  # <<<<<<<<<<<<<<<<
+ntasks=796                                  # <<<<<<<<<<<<<<<< 3 basins per task
 region="wq-us-chang"                        # <<<<<<<<<<<<<<<<
 region_tag_python="wq-us-chang"
 forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
@@ -179,10 +179,10 @@ forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 
 # set number of tasks (make sure it is consistent with above)
-ntasks=660                                  # <<<<<<<<<<<<<<<<
-region="wrtdsk-mai"                        # <<<<<<<<<<<<<<<<
-region_tag_python="wrtdsk-mai"
-forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
+#ntasks=1 #660                                  # <<<<<<<<<<<<<<<<
+#region="wrtdsk-mai"                        # <<<<<<<<<<<<<<<<
+#region_tag_python="wrtdsk-mai"
+#forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 
 
@@ -193,8 +193,8 @@ forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | wc -l )
 #nbasins=$( cat /project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
 
-#ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
-ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
+ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
+#ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
