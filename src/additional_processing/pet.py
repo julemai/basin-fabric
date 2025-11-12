@@ -67,14 +67,9 @@ def get_priestley_taylor_pet(t_min: np.ndarray, t_max: np.ndarray, s_rad: np.nda
     net_rad = np.where(np.isfinite(net_rad), net_rad, 0.0)  # JMJMJM
     net_rad = np.where(net_rad < 0, 0.0, net_rad)           # JMJMJM
 
-    print('net_rad: ',net_rad)
-
     # gamma
     atm_pressure = _get_atmos_pressure(elev)
     gamma = _get_psy_const(atm_pressure)
-
-    print('atm_pressure: ',atm_pressure)
-    print('gamma: ',gamma)
 
     # PET MJm-2day-1
     alpha = 1.26  # Calibrated in CAMELS, here static

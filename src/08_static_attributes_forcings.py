@@ -194,9 +194,6 @@ if do_forcings:
     
     for ibasin,basin in enumerate(sorted(static_attributes_basin.index)):
 
-        if ibasin != 395:
-            continue
-
         filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
         if aggregate:
             if not( filename.exists() ):
@@ -279,7 +276,6 @@ if do_forcings:
                                          lat=lat,
                                          elev=static_attributes_geophys.loc[basin, 'mean_elev'],
                                          doy=daily_forcings.index.dayofyear.values)
-
             else:
 
                 daily_forcings = forcing_set

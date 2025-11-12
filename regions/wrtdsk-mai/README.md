@@ -166,7 +166,7 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s wrtdsk-mai -f 'rdrs-v2.1_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s wrtdsk-mai -f 'rdrs-v2.1_north-america' -p 'all' -a 
 ```
 
 Creates: attributes/climate_indices.csv
