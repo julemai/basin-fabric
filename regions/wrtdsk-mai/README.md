@@ -99,7 +99,6 @@ Create shapefile for GeoJSON features by adding this to end of
 ```
 
 
-
 ## Plot map showing basins
 
 Plot all the shapes on a map. Basically to check if this all makes
@@ -112,6 +111,24 @@ python 04_plot_basin_map.py -s wrtdsk-mai
 ```
 
 Creates: maps/map.png
+
+
+## Retrieve observations
+
+Retrieves streamflow observations for streamflow gauge stations listed
+in clumn `obs_q` in `basins.csv`. Data are either retrieved from
+downloaded HYDAT database
+(`data/observations/streamflow/Hydat.sqlite3`) or directly from
+USGS. Data should be downloaded at least for the period the forcings
+will be available for (option -p).
+
+```
+source env-3.10/bin/activate
+pyenv activate env-3.8.5-ravenpy-new
+python 05_retrieve_observations.py -s wrtdsk-mai -p 1980-01-01:2018-12-31
+```
+
+Creates: observations/daily_streamflow.nc
 
 
 ## Derive geophysical attributes
