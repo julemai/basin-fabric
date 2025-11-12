@@ -10,7 +10,7 @@ are available.
 ## Get forcings and observations
 ```
 source env-3.10/bin/activate
-python 09_merge_forcings_and_observations.py -s 'wq-us-chang'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x wq-us-chang-v1
+python 09_merge_forcings_and_observations.py -s 'wrtdsk-mai'  -f 'rdrs-v2.1_north-america' -o 'daily_streamflow.nc' -p 'forcing' -x wrtdsk-mai-v1
 ```
 
 Creates: lstm/<experiment>/basins/basins_with_obs.txt<br>
