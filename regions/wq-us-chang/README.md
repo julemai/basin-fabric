@@ -79,10 +79,6 @@ Creates: forcings/*_agg_*_*_lp.nc
 
 
 
-
-
-
-
 ## Derive meteorologic attributes
 
 Derive attributes based on meteorology.
@@ -90,14 +86,14 @@ Derive attributes based on meteorology.
 ```
 source env-3.10/bin/activate
 pyenv activate env-3.8.5-basin-fabric
-python src/08_static_attributes_forcings.py -s XXXX -f 'rdrs-v2.1_north-america' -p 'all'
+python src/08_static_attributes_forcings.py -s wq-us-chang -f 'rdrs-v2.1_north-america' -p 'all'
 ```
 
 Creates: attributes/climate_indices.csv
 Creates: forcings/*_agg_*_*_lp_daily_local.nc
-```
 
+```
 Add produced files to Git:
 ```
-git add regions/XXXX/forcings/*/*_agg_*_daily_local.nc
+git add regions/wq-us-chang/forcings/*/*_agg_*_daily_local.nc
 ```

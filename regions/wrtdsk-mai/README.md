@@ -144,3 +144,35 @@ for bb in $basins ; do echo '' ; echo '-------------------' ; echo $bb ; python 
 
 Creates: forcings/*/*_agg_gTREND-P-CA_v1.csv
 
+
+## Clip forcings
+
+Extract forcings for each basin wrtdsk-mai from RDRS-v2.1.
+
+```
+source env-3.10/bin/activate
+pyenv activate env-3.8.5-basin-fabric
+python src/07_create_lumped_forcings.py -s wrtdsk-mai -b XXXX -f /scratch/julemai/basin-fabric/data/meteorology/rdrs-v2.1_north-america/ -y graham
+```
+
+Creates: forcings/*_agg_*_*_lp.nc
+
+
+
+## Derive meteorologic attributes
+
+Derive attributes based on meteorology.
+
+```
+source env-3.10/bin/activate
+pyenv activate env-3.8.5-basin-fabric
+python src/08_static_attributes_forcings.py -s wrtdsk-mai -f 'rdrs-v2.1_north-america' -p 'all'
+```
+
+Creates: attributes/climate_indices.csv
+Creates: forcings/*_agg_*_*_lp_daily_local.nc
+
+```
+Add produced files to Git:
+```
+git add regions/wrtdsk-mai/forcings/*/*_agg_*_daily_local.nc

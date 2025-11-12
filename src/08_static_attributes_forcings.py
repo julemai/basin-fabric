@@ -31,6 +31,8 @@ from __future__ import print_function
 # python 08_static_attributes_forcings.py -s 'camels-us-newman'     -f 'rdrs-v2.1_north-america' -p 'all' -a
 # python 08_static_attributes_forcings.py -s 'lake-erie-us-gaffney' -f 'rdrs-v2.1_north-america' -p 'all' -a
 # python 08_static_attributes_forcings.py -s 'north-america-mai'    -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'wrtdsk-mai'           -f 'rdrs-v2.1_north-america' -p 'all' -a
+# python 08_static_attributes_forcings.py -s 'wq-us-chang'          -f 'rdrs-v2.1_north-america' -p 'all' -a
 
 # NO AGGREGATION OF HOURLY->DAILY FORCINGS
 # python 08_static_attributes_forcings.py -s 'wisconsin-lewis'      -f 'rdrs-v2.1_north-america' -p 'all'
@@ -79,6 +81,7 @@ History
 -------
 Written,  MG, Jan 2022
 Modified, JM, Jun 2023 - modify from ipynb to python script
+Modified, JM, Nov 2025 - add fix to PET calculations for basins experiencing polar nights
 
 """
 
@@ -146,7 +149,8 @@ import xarray as xr
 
 from neuralhydrology.datautils.utils import load_basin_file
 from neuralhydrology.datautils.climateindices import calculate_dyn_climate_indices
-from neuralhydrology.datautils.pet import get_priestley_taylor_pet
+#from neuralhydrology.datautils.pet import get_priestley_taylor_pet
+from pet import get_priestley_taylor_pet  # same as NH but with fixed PET calculations for polar nights
 
 
 project_root = Path(dir_path+'/../regions/'+case_study)
@@ -187,7 +191,11 @@ if do_forcings:
     no_forcing_basins = []
     no_discharge_basins  = []
     nbasins = len(static_attributes_basin.index)
+    
     for ibasin,basin in enumerate(sorted(static_attributes_basin.index)):
+
+        if ibasin != 395:
+            continue
 
         filename = project_root / 'forcings' / f'{basin}' / f'{basin}_agg_{forcing}_lp_daily_local.nc'
         if aggregate:
@@ -262,6 +270,8 @@ if do_forcings:
                 # temp
                 daily_forcings[var_temp+'_min'] = daily_resampled[var_temp].min()
                 daily_forcings[var_temp+'_max'] = daily_resampled[var_temp].max()
+
+                # pet
                 daily_forcings['potential_evapotranspiration'] = \
                   get_priestley_taylor_pet(daily_forcings[var_temp+'_min'].values,
                                          daily_forcings[var_temp+'_max'].values,
