@@ -36,11 +36,12 @@ source /project/6067703/julemai/env-3.11-cuda/bin/activate
 cd /project/6067703/julemai/src
 
 # # evaluate all models on a new region (north-america-mai)                                                                                      # --------- step 2-3 ---------------
-python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v2      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071584   
-python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v3      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071556
+# python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v2      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071584   
+# python 14_run_validation_experiments.py -s north-america-mai -u grip-gl-mai-v3      -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071556
 # python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v1        -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071575
-python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v2        -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071610
-python 14_run_validation_experiments.py -s north-america-mai -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071617
+# python 14_run_validation_experiments.py -s north-america-mai -u conus-zhi-v2        -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071610
+# python 14_run_validation_experiments.py -s north-america-mai -u camels-us-newman-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1           # (2575) 2h/seed      2d   37071617
+
 
 # # evaluate all regions with new model (north-america-mai-v1)                                                                                   # --------- step 2-3 ---------------
 # python 14_run_validation_experiments.py -s wisconsin-lewis      -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wisconsin-lewis-v1         #   (47) 5min/seed  1.0h  DONE interactively
@@ -51,4 +52,21 @@ python 14_run_validation_experiments.py -s north-america-mai -u camels-us-newman
 # python 14_run_validation_experiments.py -s camels-us-newman     -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f camels-us-newman-v1        #  (671) ??/seed    8.0h  1.5GB  37071314
 # python 14_run_validation_experiments.py -s north-america-mai    -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1       # (2575) 3h/seed      3d  ???   37071252
 
+
+# evaluate all models on a new region (wrtdsk-mai)                                                                             # --------- step 2-3 ---------------
+python 14_run_validation_experiments.py -s wrtdsk-mai  -u grip-gl-mai-v2      - p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   8.0h  1.5GB  XXXXXX
+python 14_run_validation_experiments.py -s wrtdsk-mai  -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   8.0h  1.5GB  XXXXXX
+python 14_run_validation_experiments.py -s wrtdsk-mai  -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   8.0h  1.5GB  XXXXXX
+python 14_run_validation_experiments.py -s wrtdsk-mai  -u conus-zhi-v2         -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   8.0h  1.5GB  XXXXXX
+python 14_run_validation_experiments.py -s wrtdsk-mai  -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   8.0h  1.5GB  XXXXXX
+python 14_run_validation_experiments.py -s wrtdsk-mai  -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   8.0h  1.5GB  XXXXXX
+
+
+# evaluate all models on a new region (wrtdsk-mai)                                                                             # --------- step 2-3 ---------------
+python 14_run_validation_experiments.py -s wq-us-chang -u grip-gl-mai-v2       -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   3d  	16GB   XXXXXX
+python 14_run_validation_experiments.py -s wq-us-chang -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   3d  	16GB   XXXXXX
+python 14_run_validation_experiments.py -s wq-us-chang -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   3d  	16GB   XXXXXX
+python 14_run_validation_experiments.py -s wq-us-chang -u conus-zhi-v2         -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   3d  	16GB   XXXXXX
+python 14_run_validation_experiments.py -s wq-us-chang -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   3d  	16GB   XXXXXX
+python 14_run_validation_experiments.py -s wq-us-chang -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   3d  	16GB   XXXXXX
 
