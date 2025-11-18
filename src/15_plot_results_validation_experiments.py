@@ -234,6 +234,22 @@ elif case_study == 'lake-erie-us-gaffney':
     parallels = np.arange( -80., 81., 3.)
     meridians = np.arange(-180.,181., 5.)
 
+elif case_study == 'wq-us-chang':
+    llcrnrlon =  -116.   # lon: -131.36749999999995 to -60.98499999999996
+    urcrnrlon =   -46.
+    llcrnrlat =   18.    # lat: 26.920416654000064 to 59.33374999800003
+    urcrnrlat =   58.
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
+
+elif case_study == 'wrtdsk-mai':
+    llcrnrlon =  -120.   # lon: -131.36749999999995 to -60.98499999999996
+    urcrnrlon =   -20.
+    llcrnrlat =   20.    # lat: 26.920416654000064 to 59.33374999800003
+    urcrnrlat =   75.
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
+
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
