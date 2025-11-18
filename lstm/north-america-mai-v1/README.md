@@ -107,7 +107,7 @@ cp continue_training_from_epoch*/*.pt .
 For example, evaluate all models on a new region (north-america-mai):
 ```
 cd /home/julemai/projects/def-julemai/julemai/
-salloc --time=02:00:00 --mem=200G --ntasks=1 --account=def-julemai --gpus-per-node=1
+salloc --time=02:00:00 --mem=200G --ntasks=1 --account=def-julemai --gpus-per-node=h100:1
 
 module load mpi4py/3.1.4
 source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate

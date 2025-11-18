@@ -22,6 +22,8 @@ Creates: lstm/<experiment>/time_series/<basins_with_obs>.nc<br>
 ### Run validation experiments
 Evaluate this region with an existing model (e.g., `north-america-mai-v1`):
 ```
+salloc --time=02:00:00 --mem=40G --ntasks=1 --account=def-julemai --gpus-per-node=h100:1
+
 module load mpi4py/3.1.4
 source ~/projects/def-julemai/julemai/env-3.11-cuda/bin/activate
 cd /home/julemai/projects/def-julemai/julemai/src
