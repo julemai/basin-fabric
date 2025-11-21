@@ -1,0 +1,120 @@
+   grip-gl-mai-v2      : 2000-01-01:2018-12-31: median KGE = 0.4975949082143218 (p5=-3.902910465929436, p95=0.8252093468296879) based on 366 basins
+   grip-gl-mai-v2      : 2000-01-01:2018-12-31: median NSE = 0.5097406953573227 (p5=-21.3143253326416, p95=0.860546950250864) based on 366 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               1956
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   65
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        0
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            366
+
+   grip-gl-mai-v2      : 1980-01-01:1999-12-31: median KGE = 0.38923896311286243 (p5=-6.106280565878496, p95=0.7487744790570169) based on 289 basins
+   grip-gl-mai-v2      : 1980-01-01:1999-12-31: median NSE = 0.29505282640457153 (p5=-25.087920761108396, p95=0.6815990030765532) based on 289 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               2039
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   58
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        1
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            289
+
+   conus-zhi-v1        : 2000-01-01:2018-12-31: median KGE = 0.6676521920062521 (p5=-0.6139667336928736, p95=0.9093487021343634) based on 366 basins
+   conus-zhi-v1        : 2000-01-01:2018-12-31: median NSE = 0.7208737432956696 (p5=-0.8872803151607513, p95=0.92143321223557) based on 366 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               1956
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   65
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        0
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            366
+
+   conus-zhi-v1        : 1980-01-01:1999-12-31: median KGE = 0.5270005691803893 (p5=-1.0645711033713214, p95=0.7928197379791426) based on 289 basins
+   conus-zhi-v1        : 1980-01-01:1999-12-31: median NSE = 0.46798670291900635 (p5=-5.173631095886231, p95=0.7240360856056213) based on 289 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               2039
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   58
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        1
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            289
+
+   grip-gl-mai-v3      : 2000-01-01:2018-12-31: median KGE = 0.5007892279085752 (p5=-3.32113580011823, p95=0.8152731649415875) based on 366 basins
+   grip-gl-mai-v3      : 2000-01-01:2018-12-31: median NSE = 0.496396541595459 (p5=-12.137184381484985, p95=0.8618101961910725) based on 366 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               1956
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   65
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        0
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            366
+
+   grip-gl-mai-v3      : 1980-01-01:1999-12-31: median KGE = 0.3877405327564949 (p5=-4.898839445410773, p95=0.7289640808386586) based on 289 basins
+   grip-gl-mai-v3      : 1980-01-01:1999-12-31: median NSE = 0.26317089796066284 (p5=-20.150736236572264, p95=0.6572164893150328) based on 289 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               2039
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   58
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        1
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            289
+
+   conus-zhi-v2        : 2000-01-01:2018-12-31: median KGE = 0.6569833685046562 (p5=-0.48321398113583514, p95=0.8939959404780822) based on 366 basins
+   conus-zhi-v2        : 2000-01-01:2018-12-31: median NSE = 0.7189911156892776 (p5=-0.7390576303005219, p95=0.907307855784893) based on 366 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               1956
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   65
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        0
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            366
+
+   conus-zhi-v2        : 1980-01-01:1999-12-31: median KGE = 0.5260527916323967 (p5=-1.213019275862465, p95=0.8002138759100862) based on 289 basins
+   conus-zhi-v2        : 1980-01-01:1999-12-31: median NSE = 0.45789027214050293 (p5=-4.621509552001952, p95=0.7267328798770902) based on 289 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               2039
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   58
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        1
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            289
+
+   camels-us-newman-v1 : 2000-01-01:2018-12-31: median KGE = 0.617644432453212 (p5=-0.9761519726651455, p95=0.860108864615058) based on 366 basins
+   camels-us-newman-v1 : 2000-01-01:2018-12-31: median NSE = 0.6351240575313568 (p5=-2.128905951976776, p95=0.8817339055240154) based on 366 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               1956
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   65
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        0
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            366
+
+   camels-us-newman-v1 : 1980-01-01:1999-12-31: median KGE = 0.49101611028093467 (p5=-2.3860823545970864, p95=0.7708276206110324) based on 288 basins
+   camels-us-newman-v1 : 1980-01-01:1999-12-31: median NSE = 0.4094025790691376 (p5=-8.675812816619873, p95=0.7428002461791036) based on 288 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               2039
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   58
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        2
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            288
+
+   north-america-mai-v1: 2000-01-01:2018-12-31: median KGE = 0.6976107055977506 (p5=-0.3078577225405294, p95=0.9376902935728411) based on 366 basins
+   north-america-mai-v1: 2000-01-01:2018-12-31: median NSE = 0.7184505015611649 (p5=-1.270031213760376, p95=0.9497653096914291) based on 366 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               1956
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   65
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        0
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            366
+
+   north-america-mai-v1: 1980-01-01:1999-12-31: median KGE = 0.5259396091080313 (p5=-0.8008979771200213, p95=0.8033023306208397) based on 289 basins
+   north-america-mai-v1: 1980-01-01:1999-12-31: median NSE = 0.42396318912506104 (p5=-4.8615086555480955, p95=0.7574422508478164) based on 289 basins
+      START:     Number of basins available:                                      2387
+      Discard A: Number of basins discarded due to no observations:               2039
+      Discard B: Number of basins discarded due to less than 3 yrs obs available: 0
+      Discard C: Number of basins discarded due to being larger than 10000 km2:   58
+      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        1
+      Discard E: Number of basins discarded due to derived KGE being np.nan:      0
+      USED:      Number of basins used for statistics:                            289
+
