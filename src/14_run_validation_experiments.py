@@ -100,10 +100,10 @@ from __future__ import print_function
 # python 14_run_validation_experiments.py -s north-america-mai    -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1
 
 
-do_setup    = True
-do_evaluate = False
-do_merge    = False
-do_netcdf   = False     
+do_setup    = False
+do_evaluate = True
+do_merge    = True
+do_netcdf   = True    
 
 
 
