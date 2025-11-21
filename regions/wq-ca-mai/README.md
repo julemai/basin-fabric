@@ -12,6 +12,14 @@ have data between 1980-01-01 and 2018-12-31 which is the period we
 have RDRS-v2.1 forcings for. Then we want to add the information of
 co-located (Q) stations.
 
+The basins have to fullfil the following criteria:
+* Have C observations of any solute (soluble P, TP, nitrate, or TN)
+  between 1980 and 2018
+* C basin can not be entirely located above 60N (no DEM)
+* Basin needs to be smaller than 10,000 km2
+* We will later potentially also have to exclude the basins smaller
+  than 300 km2 but for now we keep them.
+
 All this can be done by running:
 ```
 python ../regions/wq-ca-mai/shapefiles/get_data.py
