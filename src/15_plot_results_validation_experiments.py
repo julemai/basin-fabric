@@ -35,6 +35,8 @@ from __future__ import print_function
 # python 15_plot_results_validation_experiments.py -s grip-gl-mai          -u grip-gl-mai-v2          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s camels-us-newman     -u camels-us-newman-v1     -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s lake-erie-us-gaffney -u grip-gl-mai-v2          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+# python 15_plot_results_validation_experiments.py -s wrtdsk-mai           -u north-america-mai-v1    -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+# python 15_plot_results_validation_experiments.py -s wq-us-chang          -u north-america-mai-v1    -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 
 # # TIMESERIES + MAP :: plot all available validation experiments (regions/<case_study>/predictions/using_*/ensemble/test_ensemble_results.nc)
 # python 15_plot_results_validation_experiments.py -s wisconsin-lewis      -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
@@ -43,6 +45,8 @@ from __future__ import print_function
 # python 15_plot_results_validation_experiments.py -s grip-gl-mai          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s camels-us-newman     -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s lake-erie-us-gaffney -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+# python 15_plot_results_validation_experiments.py -s wrtdsk-mai           -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+# python 15_plot_results_validation_experiments.py -s wq-us-chang          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 
 
 """
@@ -599,9 +603,9 @@ if not( experiment is None):
                     kges = np.append(kges, ikge)
                     nses = np.append(nses, inse)
                 else:
-                    gauges_not_enough_obs += 1
+                    gauges_wo_kge += 1
             else:
-                gauges_wo_kge += 1
+                gauges_not_enough_obs += 1
 
         if dosig:
             from signature2plot import signature2plot
@@ -609,6 +613,12 @@ if not( experiment is None):
                        horizontalalignment='left',
                        color='gray',
                        italic=True, small=True, mathrm=True, usetex=usetex)
+
+        # print number stations
+        print('')
+        print('Number of basins discarded with not enough data:   {}'.format(gauges_not_enough_obs))
+        print('Number of basins discarded with no  KGE available: {}'.format(gauges_wo_kge))
+        print('Number of basins with               KGE available: {}'.format(gauges_w_kge))
 
         # median
         print('median KGE = {} (p5={}, p95={}) based on {} basins'.format(np.median(kges),np.percentile(kges,5),np.percentile(kges,95),len(kges)))
@@ -773,13 +783,30 @@ elif not(using_lstm is None):
                                                         dtype={'id': 'str', 'name': 'str', 'lat': 'float', 'lon': 'float', 'obs_q': 'str'})
         qobs_location = { bb: { 'lat': static_attributes_basin.loc[bb]['lat'],
                                 'lon': static_attributes_basin.loc[bb]['lon'],
-                                'name': static_attributes_basin.loc[bb]['name'] }
+                                'name': (
+                                    bb
+                                    if pd.isna(static_attributes_basin.loc[bb]['name'])
+                                    else static_attributes_basin.loc[bb]['name']
+                                    ),
+                                }
+                          for bb in list(static_attributes_basin.index) }
+
+        static_attributes_basin   = pd.read_csv(project_root / '_'.join(using_lstm.split('_')[0:-1]) / 'attributes' / 'static_attributes.csv', index_col=[0],
+                                                        dtype={'basin': 'str', 'area_km2': 'float'})
+        basin_attributes = { bb: { 'area_km2': static_attributes_basin.loc[bb]['area_km2'] }
                           for bb in list(static_attributes_basin.index) }
 
         basins = results[using_lstms[0]]['basin'].data # assuming all have same basins
         print('Number of basins found:                {}'.format(len(basins)))
         kges = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
         nses = { uu: { bb: { period['string']: nodata for period in periods } for bb in basins } for uu in using_lstms }
+
+        nbasins_no_obs           = { uu: { period['string']: 0 for period in periods } for uu in using_lstms }
+        nbasins_less_3yr_obs     = { uu: { period['string']: 0 for period in periods } for uu in using_lstms }
+        nbasins_too_large        = { uu: { period['string']: 0 for period in periods } for uu in using_lstms }
+        nbasins_lstmQ_const_zero = { uu: { period['string']: 0 for period in periods } for uu in using_lstms }
+        nbasins_kge_is_nan       = { uu: { period['string']: 0 for period in periods } for uu in using_lstms }
+        nbasins_used             = { uu: { period['string']: 0 for period in periods } for uu in using_lstms }
         for ibasin, basin in enumerate(basins):
 
             ifig += 1
@@ -809,16 +836,31 @@ elif not(using_lstm is None):
                     data_obs = data_for_period['qobs_m3_per_s_obs'][idx_basin].data
 
                     # derive KGE
-                    if not( np.all(np.isnan(data_obs)) ):
+                    if np.all(np.isnan(data_obs)):
+                        print('A: No observation found for basin {} in LSTM model {} in period {}'.format(basin,using_lstm,period['string']))
+                        nbasins_no_obs[using_lstm][period['string']] += 1
+                    else:
                         idx_time = ~( np.isnan(data_obs) | np.isnan(data_sim) )
-                        if (len(idx_time) > 3*365):   # at least 3 years of observations
+                        if (len(idx_time) < 3*365):   # at least 3 years of observations needed
+                            print('B: Basin {} has less than 3 years of data in LSTM model {} in period {}.'.format(basin,using_lstm,period['string']))
+                            nbasins_less_3yr_obs[using_lstm][period['string']] += 1
+                        elif basin_attributes[basin]['area_km2'] > 10000.0:
+                            print('C: Basin {} is too large in LSTM model {} in period {}.'.format(basin,using_lstm,period['string']))
+                            nbasins_too_large[using_lstm][period['string']] += 1
+                        elif np.std(data_sim[idx_time]) == 0.0:
+                            print('D: Simulation for basin {} is constant in LSTM model {} in period {}.'.format(basin,using_lstm,period['string']))
+                            nbasins_lstmQ_const_zero[using_lstm][period['string']] += 1
+                        else:
                             ikge = kge(data_obs[idx_time], data_sim[idx_time])
                             inse = nse(data_obs[idx_time], data_sim[idx_time])
-                            kges[using_lstm][basin][period['string']] = ikge
-                            nses[using_lstm][basin][period['string']] = inse
-                    else:
-                        print('No observation found for basin {} in LSTM model {} in period {}'.format(basin,using_lstm,period['string']))
-
+                            if np.isnan(ikge):
+                                print('E: Derived KGE for basin {} is np.nan in LSTM model {} in period {}.'.format(basin,using_lstm,period['string']))
+                                nbasins_kge_is_nan[using_lstm][period['string']] += 1
+                            else:
+                                kges[using_lstm][basin][period['string']] = ikge
+                                nses[using_lstm][basin][period['string']] = inse
+                                nbasins_used[using_lstm][period['string']] += 1
+                        
                     # plot observation (one time only)
                     if iusing_lstm == 0:
                         if not( np.all(np.isnan(data_obs)) ):
@@ -907,6 +949,8 @@ elif not(using_lstm is None):
 
             for iperiod,period in enumerate(periods):
 
+                print('')
+
                 kges_lstm = np.array([ kges[using_lstm][bb][period['string']] for bb in basins if ((kges[using_lstm][bb][period['string']] != nodata) and (not(np.isnan(kges[using_lstm][bb][period['string']]))))])
                 if len(kges_lstm > 0):
                     summary_string = '   {:20s}: {}: median KGE = {} (p5={}, p95={}) based on {} basins'.format(
@@ -938,6 +982,35 @@ elif not(using_lstm is None):
                         period['string'])
                 print(summary_string)
                 ff.write(summary_string+'\n')
+
+                # write number of basins used and discarded along the way
+                summary_string = '      START:     Number of basins available:                                      {}'.format(len(basins))
+                print(summary_string)
+                ff.write(summary_string+'\n')
+                
+                summary_string = '      Discard A: Number of basins discarded due to no observations:               {}'.format(nbasins_no_obs[using_lstm][period['string']])
+                print(summary_string)
+                ff.write(summary_string+'\n')
+                
+                summary_string = '      Discard B: Number of basins discarded due to less than 3 yrs obs available: {}'.format(nbasins_less_3yr_obs[using_lstm][period['string']])
+                print(summary_string)
+                ff.write(summary_string+'\n')
+                
+                summary_string = '      Discard C: Number of basins discarded due to being larger than 10000 km2:   {}'.format(nbasins_too_large[using_lstm][period['string']])
+                print(summary_string)
+                ff.write(summary_string+'\n')
+
+                summary_string = '      Discard D: Number of basins discarded due to LSTM prediction Q(t)=0:        {}'.format(nbasins_lstmQ_const_zero[using_lstm][period['string']])
+                print(summary_string)
+                ff.write(summary_string+'\n')
+
+                summary_string = '      Discard E: Number of basins discarded due to derived KGE being np.nan:      {}'.format(nbasins_kge_is_nan[using_lstm][period['string']])
+                print(summary_string)
+                ff.write(summary_string+'\n')
+
+                summary_string = '      USED:      Number of basins used for statistics:                            {}'.format(nbasins_used[using_lstm][period['string']])
+                print(summary_string)
+                ff.write(summary_string+'\n\n')
 
         ff.close()
         print('Wrote: {}'.format(filename))
