@@ -35,6 +35,7 @@ from __future__ import print_function
 # python 04_plot_basin_map.py -s duc8-camelo
 # python 04_plot_basin_map.py -s wq-us-chang
 # python 04_plot_basin_map.py -s wrtdsk-mai
+# python 04_plot_basin_map.py -s wq-ca-mai
 
 
 """
@@ -124,7 +125,8 @@ t1 = time.time()
 
 project_root = dir_path+'/../regions/'+case_study+'/shapefiles/'
 outfolder    = dir_path+'/../regions/'+case_study+'/maps/'
-shpfile = glob.glob( project_root+'/*/*_lp.shp')
+#shpfile = glob.glob( project_root+'/*/*_lp.shp')
+shpfile = glob.glob( project_root+'/*/*_lp.json')
 
 if case_study == 'wisconsin-lewis':
     llcrnrlon =  -93.0
@@ -215,6 +217,14 @@ elif case_study == 'wq-us-chang':
     meridians = np.arange(-180.,181., 15.)
 
 elif case_study == 'wrtdsk-mai':
+    llcrnrlon =  -120.   # lon: -131.36749999999995 to -60.98499999999996
+    urcrnrlon =   -20.
+    llcrnrlat =   20.    # lat: 26.920416654000064 to 59.33374999800003
+    urcrnrlat =   75.
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
+
+elif case_study == 'wq-ca-mai':
     llcrnrlon =  -120.   # lon: -131.36749999999995 to -60.98499999999996
     urcrnrlon =   -20.
     llcrnrlat =   20.    # lat: 26.920416654000064 to 59.33374999800003
@@ -433,14 +443,14 @@ areas = []
 coord_catch = []
 for ishape in range(len(catchfile_shp)):
 
-    data = gpd.read_file(catchfile_shp[ishape]+'.shp')
+    data = gpd.read_file(catchfile_shp[ishape]+'.json') #gpd.read_file(catchfile_shp[ishape]+'.shp')
     data_copy = data.copy()
     data_copy = data_copy.to_crs({'proj':'cea'})
     area = (data_copy['geometry'].area/ 1000. / 1000.).item()
 
     #print("GPD: Shape: {} --> Area: {} [km2]".format(catchfile_shp[ishape]+'.shp',area))
             
-    with fiona.open(catchfile_shp[ishape]+'.shp') as src:
+    with fiona.open(catchfile_shp[ishape]+'.json') as src: #fiona.open(catchfile_shp[ishape]+'.shp') as src:
         for ii in range(len(src)):
             coord_catch.append(src[ii]['geometry']['coordinates'])
 
@@ -568,12 +578,17 @@ elif case_study == 'duc8-camelo':
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)
 elif case_study == 'wq-us-chang':
-    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).upper(),usetex=usetex),
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).upper()+' ('+case_study.replace('-',' ').split(' ')[-1].title()+')',usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)
 elif case_study == 'wrtdsk-mai':
     sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).upper(),usetex=usetex),
+                 verticalalignment='bottom',horizontalalignment='center',
+                 fontweight='bold',
+                 fontsize=textsize,transform=sub.transAxes)
+elif case_study == 'wq-ca-mai':
+    sub.text(0.5,1.0,str2tex(' '.join(case_study.replace('-',' ').split(' ')[:-1]).upper()+' ('+case_study.replace('-',' ').split(' ')[-1].title()+')',usetex=usetex),
                  verticalalignment='bottom',horizontalalignment='center',
                  fontweight='bold',
                  fontsize=textsize,transform=sub.transAxes)

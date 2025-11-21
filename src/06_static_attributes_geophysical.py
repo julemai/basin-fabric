@@ -35,6 +35,7 @@ from __future__ import print_function
 # python 06_static_attributes_geophysical.py -s duc8-camelo
 # python 06_static_attributes_geophysical.py -s wq-us-chang
 # python 06_static_attributes_geophysical.py -s wrtdsk-mai
+# python 06_static_attributes_geophysical.py -s wq-ca-mai
 
 
 """
@@ -187,6 +188,11 @@ elif case_study == 'wrtdsk-mai':
     project_root = Path(dir_path+'/../regions/wrtdsk-mai/')
     types = ['shapefiles']
     filepattern = '*/*_lp.shp'
+
+elif case_study == 'wq-ca-mai':
+    project_root = Path(dir_path+'/../regions/wq-ca-mai/')
+    types = ['shapefiles']
+    filepattern = '*/*_lp.json'
     
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))

@@ -226,13 +226,23 @@ elif case_study == 'wrtdsk-mai':
         project_root = Path(str(Path(__file__).parent)+'/../regions/wrtdsk-mai/')
     else:
         raise ValueError('System not known. Specify a valid one with (-y) option.')
+
+elif case_study == 'wq-ca-mai':
+    column_id = "FIRST_FLD"
+    if system == 'mac':
+        raise ValueError('Do not know where to find data here.')
+        project_root = Path('/Users/j6mai/Documents/GitHub/')
+    elif system == 'graham':
+        project_root = Path(str(Path(__file__).parent)+'/../regions/wq-ca-mai/')
+    else:
+        raise ValueError('System not known. Specify a valid one with (-y) option.')
     
 else:
     raise ValueError('Case study for {} not setup yet.'.format(case_study))
 
 
 if (basin is None):
-    raise ValueError("Basin to process. Shapefile of this basin is assumed to be found under {}/shapefiles/<basin>/<basin>_lp.shp.".format(project_root))
+    raise ValueError("Basin to process. Shapefile of this basin is assumed to be found under {}/shapefiles/<basin>/<basin>_lp.json.".format(project_root))
 
 do_forcings       = True
 
@@ -268,7 +278,8 @@ if do_forcings:
         lon = iff['lon']
 
     # 4- find shapefile
-    shpfile = Path( project_root, 'shapefiles', basin, basin+'_lp.shp' )
+    #shpfile = Path( project_root, 'shapefiles', basin, basin+'_lp.shp' )
+    shpfile = Path( project_root, 'shapefiles', basin, basin+'_lp.json' )
     if not( shpfile.exists() ):
         raise ValueError('No shapefile found under {} for basin {}'.format(shpfile, basin))
 

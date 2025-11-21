@@ -29,6 +29,8 @@ from __future__ import print_function
 # python 05_retrieve_observations.py -s camels-us-newman   -p 1980-01-01:2018-12-31
 # python 05_retrieve_observations.py -s prairie-canada-mai -p 1980-01-01:2018-12-31
 # python 05_retrieve_observations.py -s wq-us-chang        -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s wrtdsk-mai         -p 1980-01-01:2018-12-31
+# python 05_retrieve_observations.py -s wq-ca-mai          -p 1980-01-01:2018-12-31
 
 """
 
