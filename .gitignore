@@ -1,3 +1,5 @@
+regions/wq-ca-mai/shapefiles/*/*_lp.json
+
 # MacOS
 .DS_Store
 
@@ -50,7 +52,7 @@ regions/*.zip
 regions/duc8-camelo/shapefiles/4326_HydrologyAnalyst_Basins.geojson
 
 regions/wq-us-chang/shapefiles/WQP_US_WSHD_5070_Finalized_09172024.gpkg*
-regions/wq-us-chang/shapefiles/read_gpkg.py
+#regions/wq-us-chang/shapefiles/read_gpkg.py
 
 
 # attribute plots
@@ -69,6 +71,7 @@ regions/*/predictions/plots/*.pdf
 
 # Predictions (too large to keep on GitHub)
 regions/north-america-mai/predictions/using_*/ensemble/test_ensemble_results.nc
+regions/wq-us-chang/predictions/using_*/ensemble/test_ensemble_results.nc
 
 # Gridded data (too large to get on GitHub)
 
