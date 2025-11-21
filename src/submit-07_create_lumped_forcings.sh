@@ -51,35 +51,39 @@
 ##SBATCH --array=1-361
 
 ##SBATCH --job-name=agg-camels                     # name of job in queque
-##SBATCH --time=0-01:00:00    # 3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --time=0-01:00:00    # 3-00:00:00         # time (DD-HH:MM:SS);
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-224
 
 ##SBATCH --job-name=agg-erie-us                    # name of job in queque
-##SBATCH --time=0-01:00:00   # 3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --time=0-01:00:00   # 3-00:00:00          # time (DD-HH:MM:SS);
 ##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-78
 
-##SBATCH --job-name=agg-na                          # name of job in queque
-##SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
-##SBATCH --mem-per-cpu=1G                           # memory; default unit is megabytes
+##SBATCH --job-name=agg-na                         # name of job in queque
+##SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=1G                          # memory; default unit is megabytes
 ##SBATCH --array=1-100
 
-##SBATCH --job-name=agg-prairie                     # name of job in queque
-##SBATCH --time=1-12:00:00                          # time (DD-HH:MM:SS);
-##SBATCH --mem-per-cpu=9G                           # memory; default unit is megabytes
+##SBATCH --job-name=agg-prairie                    # name of job in queque
+##SBATCH --time=1-12:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=9G                          # memory; default unit is megabytes
 ##SBATCH --array=1-135
 
-#SBATCH --job-name=agg-wq-us                       # name of job in queque
-#SBATCH --time=3-00:00:00                          # time (DD-HH:MM:SS);
-#SBATCH --mem-per-cpu=10G                           # memory; default unit is megabytes
-#SBATCH --array=1-1
-
-
-##SBATCH --job-name=agg-wrtdsk                      # name of job in queque
-##SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
-##SBATCH --mem-per-cpu=10G                           # memory; default unit is megabytes
+##SBATCH --job-name=agg-wq-us                      # name of job in queque
+##SBATCH --time=3-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=10G                         # memory; default unit is megabytes
 ##SBATCH --array=1-1
+
+##SBATCH --job-name=agg-wrtdsk                     # name of job in queque
+##SBATCH --time=1-00:00:00                         # time (DD-HH:MM:SS);
+##SBATCH --mem-per-cpu=10G                         # memory; default unit is megabytes
+##SBATCH --array=1-1
+
+#SBATCH --job-name=agg-wq-ca                       # name of job in queque
+#SBATCH --time=2-00:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --mem-per-cpu=10G                          # memory; default unit is megabytes
+#SBATCH --array=1-663
 
 
 
@@ -170,13 +174,11 @@ cd /project/6070465/julemai/basin-fabric/src/
 # region_tag_python="prairie-canada-downstream-mai"
 # forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
-# set number of tasks (make sure it is consistent with above)
-ntasks=796                                  # <<<<<<<<<<<<<<<< 3 basins per task
-region="wq-us-chang"                        # <<<<<<<<<<<<<<<<
-region_tag_python="wq-us-chang"
-forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
-
-
+# # set number of tasks (make sure it is consistent with above)
+# ntasks=796                                  # <<<<<<<<<<<<<<<< 3 basins per task
+# region="wq-us-chang"                        # <<<<<<<<<<<<<<<<
+# region_tag_python="wq-us-chang"
+# forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # set number of tasks (make sure it is consistent with above)
 #ntasks=1 #660                                  # <<<<<<<<<<<<<<<<
@@ -184,13 +186,17 @@ forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 #region_tag_python="wrtdsk-mai"
 #forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
-
+# set number of tasks (make sure it is consistent with above)
+ntasks=663                                # <<<<<<<<<<<<<<<<  2 basins per task (2 basin packages ue to limited # of files available)
+region="wq-ca-mai"                        # <<<<<<<<<<<<<<<<
+region_tag_python="wq-ca-mai"
+forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 
 # ----------------------------------------------------------------------------------------
 
 # get basins to aggregate
-nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | wc -l )
+nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | grep -v .py | wc -l )
 #nbasins=$( cat /project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
 
 ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
@@ -198,7 +204,8 @@ ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
-basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
+basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | grep -v .py | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
+#basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_1-1325.dat" | head -${end_idx} | tail -${ibasins} )
 #basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
