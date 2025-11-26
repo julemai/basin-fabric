@@ -4,13 +4,13 @@
 #       cd /project/6067703/julemai/src
 #       sbatch submit-cedar-validation_experiments.sh
 
-#SBATCH --account=def-julemai                       # def-richard0 # def-julemai                      # rpp-julemai    # your group
+#SBATCH --account=def-julemai                      # def-richard0 # def-julemai                      # rpp-julemai    # your group
 #SBATCH --mail-user=juliane.mai@uwaterloo.ca       # email address for notifications
 #SBATCH --mail-type=END,FAIL                       # email send only in case of failure
 
 #SBATCH --ntasks=1
 
-##SBATCH --gres=gpu:h100:1                          # REQUIRED FIX to make sure we get a GPU
+##SBATCH --gres=gpu:h100:1                         # REQUIRED FIX to make sure we get a GPU
 #SBATCH --gpus-per-node=h100:1                     # optional but ok
 
 #SBATCH --job-name=lstm-eval                       # name of job in queque
@@ -72,7 +72,7 @@ echo "---------------------------------------------"
 # python 14_run_validation_experiments.py -s north-america-mai    -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f north-america-mai-v1       # (2575) 3h/seed      3d  ???   37071252
 
 
-# evaluate all models on a new region (wrtdsk-mai)                                                                             # --------- step 2-4 ---------------
+# evaluate all models on a new region (wrtdsk-mai)                                                                              # --------- step 2-4 ---------------
 #python 14_run_validation_experiments.py -s wrtdsk-mai  -u grip-gl-mai-v2       -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   4.0h  6GB  11773491
 #python 14_run_validation_experiments.py -s wrtdsk-mai  -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   4.0h  6GB  11773745
 #python 14_run_validation_experiments.py -s wrtdsk-mai  -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   4.0h  6GB  11773921
@@ -81,11 +81,19 @@ echo "---------------------------------------------"
 #python 14_run_validation_experiments.py -s wrtdsk-mai  -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wrtdsk-mai-v1       #  (660)   4.0h  6GB  11583881
 
 
-# evaluate all models on a new region (wrtdsk-mai)                                                                             # --------- step 2-4 ---------------
-#python 14_run_validation_experiments.py -s wq-us-chang -u grip-gl-mai-v2       -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d  	10GB   11774853
-#python 14_run_validation_experiments.py -s wq-us-chang -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d  	10GB   11774879
-#python 14_run_validation_experiments.py -s wq-us-chang -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d  	10GB   11774965
-#python 14_run_validation_experiments.py -s wq-us-chang -u conus-zhi-v2         -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d  	10GB   11775064
-#python 14_run_validation_experiments.py -s wq-us-chang -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d  	10GB   11775118
-#python 14_run_validation_experiments.py -s wq-us-chang -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d  	10GB   11603769
+# evaluate all models on a new region (wq-us-chang)                                                                             # --------- step 2-4 ---------------
+#python 14_run_validation_experiments.py -s wq-us-chang -u grip-gl-mai-v2       -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d   10GB   11774853
+#python 14_run_validation_experiments.py -s wq-us-chang -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d   10GB   11774879
+#python 14_run_validation_experiments.py -s wq-us-chang -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d   10GB   11774965
+#python 14_run_validation_experiments.py -s wq-us-chang -u conus-zhi-v2         -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d   10GB   11775064
+#python 14_run_validation_experiments.py -s wq-us-chang -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d   10GB   11775118
+#python 14_run_validation_experiments.py -s wq-us-chang -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wq-us-chang-v1      # (2387)   1d   10GB   11603769
 
+
+# evaluate all models on a new region (wq-ca-mai)                                                                               # --------- step 2-4 ---------------
+#python 14_run_validation_experiments.py -s wq-ca-mai -u grip-gl-mai-v2       -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
+#python 14_run_validation_experiments.py -s wq-ca-mai -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
+#python 14_run_validation_experiments.py -s wq-ca-mai -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
+#python 14_run_validation_experiments.py -s wq-ca-mai -u conus-zhi-v2         -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
+#python 14_run_validation_experiments.py -s wq-ca-mai -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
+#python 14_run_validation_experiments.py -s wq-ca-mai -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
