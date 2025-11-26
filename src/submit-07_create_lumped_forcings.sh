@@ -81,9 +81,9 @@
 ##SBATCH --array=1-1
 
 #SBATCH --job-name=agg-wq-ca                       # name of job in queque
-#SBATCH --time=2-00:00:00                          # time (DD-HH:MM:SS);
+#SBATCH --time=1-00:00:00                          # time (DD-HH:MM:SS);
 #SBATCH --mem-per-cpu=10G                          # memory; default unit is megabytes
-#SBATCH --array=1-663
+#SBATCH --array=1-25
 
 
 
@@ -187,7 +187,7 @@ cd /project/6070465/julemai/basin-fabric/src/
 #forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # set number of tasks (make sure it is consistent with above)
-ntasks=663                                # <<<<<<<<<<<<<<<<  2 basins per task (2 basin packages ue to limited # of files available)
+ntasks=25                                # <<<<<<<<<<<<<<<<  2 basins per task (2 basin packages ue to limited # of files available)
 region="wq-ca-mai"                        # <<<<<<<<<<<<<<<<
 region_tag_python="wq-ca-mai"
 forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
@@ -197,16 +197,17 @@ forcings="/project/6070465/julemai/blended-model-na/data_in/rdrs_v2.1/annual/"
 
 # get basins to aggregate
 nbasins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | grep -v .py | wc -l )
-#nbasins=$( cat /project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
+nbasins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_1301-2650.dat" | wc -l )
+nbasins=$( cat /project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat | wc -l )
 
-ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
-#ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
+#ibasins=$(( ${nbasins} / ${ntasks} + 1 ))   # number of basins per array-task  (if division with remainder != 0)
+ibasins=$(( ${nbasins} / ${ntasks} ))       # number of basins per array-task  (if division with remainder == 0)
 start_idx=$(( (${SLURM_ARRAY_TASK_ID} - 1)*${ibasins} + 1 ))
 end_idx=$((   (${SLURM_ARRAY_TASK_ID}    )*${ibasins}     ))
 
-basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | grep -v .py | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
-#basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_1-1325.dat" | head -${end_idx} | tail -${ibasins} )
-#basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
+#basins=$( \ls -d /project/6070465/julemai/basin-fabric/regions/${region}/shapefiles/* | grep -v README | grep -v .py | head -${end_idx} | tail -${ibasins} | rev | cut -d '/' -f 1 | rev )
+basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_1301-2650.dat" | head -${end_idx} | tail -${ibasins} )
+basins=$( cat "/project/6070465/julemai/basin-fabric/regions/${region}/basins_missing.dat" | head -${end_idx} | tail -${ibasins} )
 
 for bb in ${basins} ; do
 
