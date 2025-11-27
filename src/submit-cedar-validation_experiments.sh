@@ -91,9 +91,9 @@ echo "---------------------------------------------"
 
 
 # evaluate all models on a new region (wq-ca-mai)                                                                               # --------- step 2-4 ---------------
-#python 14_run_validation_experiments.py -s wq-ca-mai -u grip-gl-mai-v2       -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
-#python 14_run_validation_experiments.py -s wq-ca-mai -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
-#python 14_run_validation_experiments.py -s wq-ca-mai -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
-#python 14_run_validation_experiments.py -s wq-ca-mai -u conus-zhi-v2         -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
-#python 14_run_validation_experiments.py -s wq-ca-mai -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
-#python 14_run_validation_experiments.py -s wq-ca-mai -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   
+#python 14_run_validation_experiments.py -s wq-ca-mai -u grip-gl-mai-v2       -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   12666848
+#python 14_run_validation_experiments.py -s wq-ca-mai -u grip-gl-mai-v3       -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   12666828
+#python 14_run_validation_experiments.py -s wq-ca-mai -u conus-zhi-v1         -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   12666779 
+#python 14_run_validation_experiments.py -s wq-ca-mai -u conus-zhi-v2         -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   12666770 
+#python 14_run_validation_experiments.py -s wq-ca-mai -u camels-us-newman-v1  -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   12666769
+#python 14_run_validation_experiments.py -s wq-ca-mai -u north-america-mai-v1 -p 1980-01-01:2018-12-31 -f wq-ca-mai-v1          # (2650)   1d   10GB   12666766

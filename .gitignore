@@ -70,6 +70,7 @@ regions/*/predictions/plots/*.pdf
 # Predictions (too large to keep on GitHub)
 regions/north-america-mai/predictions/using_*/ensemble/test_ensemble_results.nc
 regions/wq-us-chang/predictions/using_*/ensemble/test_ensemble_results.nc
+regions/wq-ca-mai/predictions/using_*/ensemble/test_ensemble_results.nc
 
 # Gridded data (too large to get on GitHub)
 
