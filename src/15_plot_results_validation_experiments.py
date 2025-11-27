@@ -37,6 +37,7 @@ from __future__ import print_function
 # python 15_plot_results_validation_experiments.py -s lake-erie-us-gaffney -u grip-gl-mai-v2          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s wrtdsk-mai           -u north-america-mai-v1    -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s wq-us-chang          -u north-america-mai-v1    -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+# python 15_plot_results_validation_experiments.py -s wq-ca-mai            -u north-america-mai-v1    -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 
 # # TIMESERIES + MAP :: plot all available validation experiments (regions/<case_study>/predictions/using_*/ensemble/test_ensemble_results.nc)
 # python 15_plot_results_validation_experiments.py -s wisconsin-lewis      -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
@@ -47,6 +48,7 @@ from __future__ import print_function
 # python 15_plot_results_validation_experiments.py -s lake-erie-us-gaffney -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s wrtdsk-mai           -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 # python 15_plot_results_validation_experiments.py -s wq-us-chang          -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
+# python 15_plot_results_validation_experiments.py -s wq-ca-mai            -p 2000-01-01:2018-12-31,1980-01-01:1999-12-31
 
 
 """
@@ -247,6 +249,14 @@ elif case_study == 'wq-us-chang':
     meridians = np.arange(-180.,181., 15.)
 
 elif case_study == 'wrtdsk-mai':
+    llcrnrlon =  -120.   # lon: -131.36749999999995 to -60.98499999999996
+    urcrnrlon =   -20.
+    llcrnrlat =   20.    # lat: 26.920416654000064 to 59.33374999800003
+    urcrnrlat =   75.
+    parallels = np.arange( -80., 81., 10.)
+    meridians = np.arange(-180.,181., 15.)
+
+elif case_study == 'wq-ca-mai':
     llcrnrlon =  -120.   # lon: -131.36749999999995 to -60.98499999999996
     urcrnrlon =   -20.
     llcrnrlat =   20.    # lat: 26.920416654000064 to 59.33374999800003
